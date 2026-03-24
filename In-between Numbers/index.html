@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>In-Between Numbers Game</title>
+<style>
+body {
+    font-family: 'Comic Sans MS', cursive;
+    text-align: center;
+    background: linear-gradient(to right, #f6d365, #fda085);
+    margin: 0;
+}
+.container { padding: 20px; }
+h1 { color: #9c27b0; }
+.question { font-size: 24px; margin: 20px; }
+.options button {
+    display: block;
+    margin: 10px auto;
+    padding: 15px;
+    width: 80%;
+    max-width: 300px;
+    font-size: 20px;
+    border-radius: 15px;
+    border: none;
+    background-color: #8bc34a;
+    color: white;
+    cursor: pointer;
+}
+.options button:hover { background-color: #7cb342; }
+#restart {
+    margin-top: 30px;
+    padding: 12px 20px;
+    font-size: 18px;
+    background-color: #03a9f4;
+    color: white;
+    border: none;
+    border-radius: 10px;
+}
+#soundControl { margin: 10px; }
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Find the Number In-Between!</h1>
+    <div class="question" id="question"></div>
+    <div class="options" id="options"></div>
+
+    <label>🔊 Sound: </label>
+    <input type="range" id="soundControl" min="0" max="1" step="0.1" value="0.7">
+
+    <br>
+    <button id="restart">Restart Game</button>
+</div>
+
+<canvas id="confetti"></canvas>
+
+<script>
+let questions = [];
+let current = 0;
+let soundVolume = 0.7;
+
+const correctSound = new Audio('https://www.soundjay.com/buttons/sounds/button-3.mp3');
+const wrongSound = new Audio('https://www.soundjay.com/buttons/sounds/button-10.mp3');
+
+function generateQuestions() {
+    questions = [];
+    let nums = Array.from({length: 18}, (_, i) => i + 2); // 2 to 19
+    nums.sort(() => Math.random() - 0.5);
+
+    for (let i = 0; i < 10; i++) {
+        let middle = nums[i];
+        let prev = middle - 1;
+        let next = middle + 1;
+
+        let options = new Set([middle]);
+        while (options.size < 3) {
+            options.add(Math.floor(Math.random() * 20) + 1);
+        }
+
+        questions.push({
+            prev,
+            next,
+            correct: middle,
+            options: Array.from(options).sort(() => Math.random() - 0.5)
+        });
+    }
+}
+
+function loadQuestion() {
+    if (current >= questions.length) {
+        document.getElementById('question').innerText = "🎉 Well Done!";
+        document.getElementById('options').innerHTML = '';
+        launchConfetti();
+        return;
+    }
+
+    let q = questions[current];
+    document.getElementById('question').innerText = `What number comes between ${q.prev} and ${q.next}?`;
+
+    let optionsHTML = '';
+    q.options.forEach(opt => {
+        optionsHTML += `<button onclick="checkAnswer(${opt})">${opt}</button>`;
+    });
+
+    document.getElementById('options').innerHTML = optionsHTML;
+}
+
+function checkAnswer(selected) {
+    let q = questions[current];
+    correctSound.volume = soundVolume;
+    wrongSound.volume = soundVolume;
+
+    if (selected === q.correct) {
+        correctSound.play();
+        launchConfetti();
+    } else {
+        wrongSound.play();
+    }
+
+    current++;
+    setTimeout(loadQuestion, 800);
+}
+
+document.getElementById('restart').onclick = () => {
+    current = 0;
+    generateQuestions();
+    loadQuestion();
+};
+
+document.getElementById('soundControl').oninput = (e) => {
+    soundVolume = e.target.value;
+};
+
+function launchConfetti() {
+    const canvas = document.getElementById('confetti');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let pieces = [];
+    for (let i = 0; i < 100; i++) {
+        pieces.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            r: Math.random() * 6 + 4,
+            d: Math.random() * 100
+        });
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        pieces.forEach(p => {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fillStyle = `hsl(${Math.random()*360},100%,50%)`;
+            ctx.fill();
+        });
+        update();
+    }
+
+    function update() {
+        pieces.forEach(p => {
+            p.y += Math.cos(p.d) + 1;
+            p.x += Math.sin(p.d);
+            if (p.y > canvas.height) {
+                p.y = 0;
+                p.x = Math.random() * canvas.width;
+            }
+        });
+    }
+
+    let count = 0;
+    let interval = setInterval(() => {
+        draw();
+        count++;
+        if (count > 30) clearInterval(interval);
+    }, 30);
+}
+
+window.onload = () => {
+    generateQuestions();
+    loadQuestion();
+};
+</script>
+
+</body>
+</html>
