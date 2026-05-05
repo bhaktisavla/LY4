@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Pattern Game</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+    font-family: 'Comic Sans MS', cursive;
+    background: linear-gradient(to bottom, #d0f0ff, #ffffff);
+    text-align: center;
+    margin: 0;
+    padding: 10px;
+}
+
+h1 { color: #ff6b6b; }
+
+#round { font-size: 20px; margin: 10px; }
+
+.pattern, .options {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 10px 0;
+}
+
+.box, .option {
+    width: 85px;
+    height: 85px;
+    margin: 6px;
+    border-radius: 18px;
+    font-size: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+}
+
+.box {
+    background: #fff;
+    border: 3px dashed #bbb;
+}
+
+.dropzone {
+    border: 3px solid #333;
+}
+
+.option {
+    color: white;
+}
+
+/* colors */
+.c1 { background: #ff7675; }
+.c2 { background: #74b9ff; }
+.c3 { background: #55efc4; }
+.c4 { background: #ffeaa7; color:#333; }
+.c5 { background: #a29bfe; }
+
+.feedback {
+    height: 30px;
+    font-size: 22px;
+}
+
+button {
+    padding: 12px 25px;
+    font-size: 18px;
+    border-radius: 10px;
+    border: none;
+    background: #00b894;
+    color: white;
+    margin: 10px;
+}
+
+/* drag effect */
+.dragging {
+    opacity: 0.6;
+    transform: scale(1.1);
+}
+</style>
+</head>
+
+<body>
+
+<h1>🎨 Pattern Game</h1>
+<div id="round"></div>
+
+<div class="pattern" id="patternRow"></div>
+<div class="options" id="optionsRow"></div>
+
+<div class="feedback" id="feedback"></div>
+
+<button id="nextBtn" onclick="nextRound()" disabled>Next</button>
+<button id="restartBtn" onclick="restartGame()" style="display:none;">🔄 Play Again</button>
+
+<audio id="correctSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c7c1c0c6c4.mp3"></audio>
+<audio id="finishSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_8b5b6b2e0c.mp3"></audio>
+
+<script>
+
+// unlock sound
+document.body.addEventListener("click", () => {
+    let snd = document.getElementById("correctSound");
+    snd.play().then(()=>{ snd.pause(); snd.currentTime=0; }).catch(()=>{});
+}, { once:true });
+
+const rounds = [
+/* AB */ { seq:["🍎","🍌","🍎","🍌",""], ans:"🍎" },
+{ seq:["🚗","🚌","🚗","🚌",""], ans:"🚗" },
+/* AAB */ { seq:["🐶","🐶","🐱","🐶","🐶",""], ans:"🐱" },
+{ seq:["🌟","🌟","🌙","🌟","🌟",""], ans:"🌙" },
+/* ABC */ { seq:["🔺","🔵","⭐","🔺","🔵",""], ans:"⭐" },
+{ seq:["🍓","🍊","🍇","🍓","🍊",""], ans:"🍇" },
+/* AABB */ { seq:["🟥","🟥","🟦","🟦","🟥","🟥",""], ans:"🟦" },
+{ seq:["🐸","🐸","🐼","🐼","🐸","🐸",""], ans:"🐼" },
+/* ABB */ { seq:["🍏","🍎","🍎","🍏","🍎",""], ans:"🍎" },
+{ seq:["🚲","🚗","🚗","🚲","🚗",""], ans:"🚗" }
+];
+
+let current = 0;
+let dragged = null;
+
+function loadRound() {
+
+    document.getElementById("restartBtn").style.display = "none";
+
+    if (current >= rounds.length) {
+        document.getElementById("patternRow").innerHTML = "";
+        document.getElementById("optionsRow").innerHTML = "";
+        document.getElementById("round").innerHTML = "🎉 Finished!";
+        document.getElementById("feedback").innerHTML = "Great Job!";
+        document.getElementById("finishSound").play().catch(()=>{});
+        document.getElementById("nextBtn").style.display = "none";
+        document.getElementById("restartBtn").style.display = "inline-block";
+        return;
+    }
+
+    document.getElementById("nextBtn").style.display = "inline-block";
+    document.getElementById("nextBtn").disabled = true;
+
+    document.getElementById("round").innerHTML = "Round " + (current+1) + " of 10";
+    document.getElementById("feedback").innerHTML = "";
+
+    const patternRow = document.getElementById("patternRow");
+    const optionsRow = document.getElementById("optionsRow");
+
+    patternRow.innerHTML = "";
+    optionsRow.innerHTML = "";
+
+    const data = rounds[current];
+
+    // pattern
+    data.seq.forEach(item => {
+        const box = document.createElement("div");
+        box.className = "box";
+
+        if (item === "") {
+            box.classList.add("dropzone");
+            box.dataset.answer = data.ans;
+
+            box.addEventListener("pointerup", () => {
+                if (!dragged) return;
+
+                if (dragged.innerHTML === box.dataset.answer) {
+                    box.innerHTML = dragged.innerHTML;
+                    document.getElementById("feedback").innerHTML = "✅ Correct!";
+                    document.getElementById("correctSound").play().catch(()=>{});
+                    document.getElementById("nextBtn").disabled = false;
+                } else {
+                    document.getElementById("feedback").innerHTML = "❌ Try Again!";
+                }
+            });
+
+        } else {
+            box.innerHTML = item;
+        }
+
+        patternRow.appendChild(box);
+    });
+
+    // options
+    let options = [...new Set(data.seq.filter(x=>x!==""))];
+    if (!options.includes(data.ans)) options.push(data.ans);
+
+    options.forEach((opt,i)=>{
+        const el = document.createElement("div");
+        el.className = "option c"+((i%5)+1);
+        el.innerHTML = opt;
+
+        el.addEventListener("pointerdown", ()=>{
+            dragged = el;
+            el.classList.add("dragging");
+        });
+
+        el.addEventListener("pointerup", ()=>{
+            if(dragged) dragged.classList.remove("dragging");
+            dragged = null;
+        });
+
+        optionsRow.appendChild(el);
+    });
+}
+
+function nextRound(){
+    current++;
+    loadRound();
+}
+
+function restartGame(){
+    current = 0;
+    document.getElementById("nextBtn").style.display = "inline-block";
+    loadRound();
+}
+
+loadRound();
+
+</script>
+
+</body>
+</html>
