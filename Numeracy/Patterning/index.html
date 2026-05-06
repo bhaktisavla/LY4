@@ -29,42 +29,27 @@ body {
 }
 
 /* GAME */
-#game {
-    display:none;
-    padding:8px;
-}
+#game { display:none; padding:8px; }
 
-/* RESPONSIVE TILE SIZE */
-:root {
-    --tile: clamp(55px, 14vw, 95px);
-}
-
-/* PATTERN ROW */
+/* DYNAMIC TILE SIZE */
 .pattern {
     display:flex;
     justify-content:center;
     flex-wrap:nowrap;
-    gap:6px;
+    gap:5px;
     margin:10px 0;
 }
 
-/* OPTIONS ROW */
-.options {
-    display:flex;
-    justify-content:center;
-    flex-wrap:wrap;
-    gap:8px;
-    margin:10px 0;
-}
-
+/* AUTO FIT TILES */
 .box, .option {
-    width:var(--tile);
-    height:var(--tile);
-    border-radius:12px;
+    flex:1;
+    max-width:70px;
+    height:70px;
+    border-radius:10px;
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size: clamp(24px, 5vw, 40px);
+    font-size:28px;
 }
 
 .box {
@@ -76,9 +61,18 @@ body {
     border:3px solid #333;
 }
 
+.options {
+    display:flex;
+    justify-content:center;
+    gap:12px;
+    margin:10px 0;
+}
+
 .option {
     background:#6c9cff;
     color:white;
+    width:70px;
+    height:70px;
 }
 
 /* DRAG */
@@ -92,8 +86,8 @@ body {
 /* CONFETTI */
 .confetti {
     position: fixed;
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
     top: -10px;
     animation: fall 3s linear infinite;
 }
@@ -101,31 +95,23 @@ body {
     to { transform: translateY(100vh); }
 }
 
-.feedback {
-    height:28px;
-    font-size:16px;
-}
-
 button {
-    padding:8px 12px;
-    margin:4px;
+    padding:8px;
+    margin:5px;
     border:none;
     border-radius:6px;
     background:#4CAF50;
     color:white;
-    font-size:14px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- SPLASH -->
 <div id="splash">
     <img src="assets/innovine-logo.png">
 </div>
 
-<!-- GAME -->
 <div id="game">
 
 <h3 id="round"></h3>
@@ -133,16 +119,14 @@ button {
 <div class="pattern" id="patternRow"></div>
 <div class="options" id="optionsRow"></div>
 
-<div class="feedback" id="feedback"></div>
+<div id="feedback"></div>
 
 <button id="hearBtn" onclick="playQuestion()">🔊 Hear Question</button><br>
-
 <button id="nextBtn" onclick="nextRound()" disabled>Next</button>
 <button id="restartBtn" onclick="restartGame()" style="display:none;">Play Again</button>
 
 </div>
 
-<!-- AUDIO -->
 <audio id="correctSound" src="assets/correct.mp3"></audio>
 <audio id="wrongSound" src="assets/wrong.mp3"></audio>
 <audio id="finishSound" src="assets/freesound_community-claps-44774.mp3"></audio>
@@ -157,28 +141,32 @@ window.onload = () => {
     },5000);
 };
 
-// DATA
 const rounds = [
-{seq:["🍎","🍌","🍎","🍌",""], ans:"🍎", text:"Complete pattern A B"},
-{seq:["🚗","🚌","🚗","🚌",""], ans:"🚗", text:"Complete pattern A B"},
-{seq:["🐶","🐶","🐱","🐶","🐶",""], ans:"🐱", text:"Complete pattern A A B"},
-{seq:["🌟","🌟","🌙","🌟","🌟",""], ans:"🌙", text:"Complete pattern A A B"},
-{seq:["🔺","🔵","⭐","🔺","🔵",""], ans:"⭐", text:"Complete pattern A B C"},
-{seq:["🍓","🍊","🍇","🍓","🍊",""], ans:"🍇", text:"Complete pattern A B C"},
-{seq:["🟥","🟥","🟦","🟦","🟥","🟥",""], ans:"🟦", text:"Complete pattern A A B B"},
-{seq:["🐸","🐸","🐼","🐼","🐸","🐸",""], ans:"🐼", text:"Complete pattern A A B B"},
-{seq:["🍏","🍎","🍎","🍏","🍎",""], ans:"🍎", text:"Complete pattern A B B"},
-{seq:["🚲","🚗","🚗","🚲","🚗",""], ans:"🚗", text:"Complete pattern A B B"}
+{seq:["🟥","🟥","🟦","🟦","🟥","🟥",""], ans:"🟦", text:"A A B B"},
+{seq:["🍎","🍌","🍎","🍌",""], ans:"🍎", text:"A B"},
+{seq:["🐶","🐶","🐱","🐶","🐶",""], ans:"🐱", text:"A A B"},
+{seq:["🔺","🔵","⭐","🔺","🔵",""], ans:"⭐", text:"A B C"},
+{seq:["🍏","🍎","🍎","🍏","🍎",""], ans:"🍎", text:"A B B"},
+{seq:["🚗","🚌","🚗","🚌",""], ans:"🚗", text:"A B"},
+{seq:["🌟","🌟","🌙","🌟","🌟",""], ans:"🌙", text:"A A B"},
+{seq:["🍓","🍊","🍇","🍓","🍊",""], ans:"🍇", text:"A B C"},
+{seq:["🐸","🐸","🐼","🐼","🐸","🐸",""], ans:"🐼", text:"A A B B"},
+{seq:["🚲","🚗","🚗","🚲","🚗",""], ans:"🚗", text:"A B B"}
 ];
 
 let current=0;
 let dragEl=null;
+let dragValue=null;
 
 function clearDrag(){
-    if(dragEl){ dragEl.remove(); dragEl=null; }
+    if(dragEl){
+        dragEl.remove();
+        dragEl=null;
+    }
     document.removeEventListener("pointermove", moveDrag);
 }
 
+// CONFETTI
 function showConfetti(){
     for(let i=0;i<30;i++){
         let c=document.createElement("div");
@@ -190,6 +178,7 @@ function showConfetti(){
     }
 }
 
+// LOAD ROUND
 function loadRound(){
 
     clearDrag();
@@ -201,8 +190,6 @@ function loadRound(){
         hearBtn.style.display="none";
 
         round.innerHTML="🎉 Finished!";
-        feedback.innerHTML="";
-
         nextBtn.style.display="none";
         restartBtn.style.display="inline";
 
@@ -211,21 +198,16 @@ function loadRound(){
         return;
     }
 
-    patternRow.style.display="flex";
-    optionsRow.style.display="flex";
-    hearBtn.style.display="inline";
-
-    nextBtn.style.display="inline";
-    nextBtn.disabled=true;
+    let data=rounds[current];
 
     round.innerHTML="Round "+(current+1)+"/10";
+    nextBtn.disabled=true;
     feedback.innerHTML="";
-
-    let data=rounds[current];
 
     patternRow.innerHTML="";
     optionsRow.innerHTML="";
 
+    // CREATE PATTERN
     data.seq.forEach(item=>{
         let d=document.createElement("div");
         d.className="box";
@@ -233,26 +215,14 @@ function loadRound(){
         if(item===""){
             d.classList.add("dropzone");
             d.dataset.answer=data.ans;
-
-            d.onpointerup=()=>{
-                if(!dragEl) return;
-
-                if(dragEl.innerHTML===d.dataset.answer){
-                    d.innerHTML=dragEl.innerHTML;
-                    feedback.innerHTML="Correct!";
-                    correctSound.play();
-                    nextBtn.disabled=false;
-                } else {
-                    feedback.innerHTML="Try again!";
-                    wrongSound.play();
-                }
-                clearDrag();
-            };
-        } else d.innerHTML=item;
+        } else {
+            d.innerHTML=item;
+        }
 
         patternRow.appendChild(d);
     });
 
+    // OPTIONS
     let options=[...new Set(data.seq.filter(x=>x!=""))];
     if(!options.includes(data.ans)) options.push(data.ans);
 
@@ -261,23 +231,32 @@ function loadRound(){
         d.className="option";
         d.innerHTML=opt;
 
-        d.onpointerdown=(e)=>createDrag(opt,e);
+        d.onpointerdown=(e)=>startDrag(opt,e);
 
         optionsRow.appendChild(d);
     });
 }
 
-function createDrag(content,e){
+// TRUE DRAG
+function startDrag(value,e){
+
     clearDrag();
+
+    dragValue=value;
+
     dragEl=document.createElement("div");
     dragEl.className="option dragging";
-    dragEl.innerHTML=content;
+    dragEl.innerHTML=value;
 
     document.body.appendChild(dragEl);
+
     moveDrag(e);
 
     document.addEventListener("pointermove", moveDrag);
-    document.addEventListener("pointerup", clearDrag);
+
+    document.addEventListener("pointerup",(ev)=>{
+        drop(ev);
+    }, { once:true });
 }
 
 function moveDrag(e){
@@ -287,14 +266,32 @@ function moveDrag(e){
     }
 }
 
-function nextRound(){ current++; loadRound(); }
+// REAL DROP DETECTION
+function drop(e){
 
-function restartGame(){
-    current=0;
-    nextBtn.style.display="inline";
-    loadRound();
+    let target = document.elementFromPoint(e.clientX, e.clientY);
+
+    if(target && target.classList.contains("dropzone")){
+
+        if(dragValue === target.dataset.answer){
+            target.innerHTML = dragValue;
+            feedback.innerHTML="Correct!";
+            correctSound.play();
+            nextBtn.disabled=false;
+        } else {
+            feedback.innerHTML="Try again!";
+            wrongSound.play();
+        }
+    }
+
+    clearDrag();
 }
 
+// NAV
+function nextRound(){ current++; loadRound(); }
+function restartGame(){ current=0; nextBtn.style.display="inline"; loadRound(); }
+
+// VOICE
 function playQuestion(){
     speechSynthesis.speak(new SpeechSynthesisUtterance(rounds[current].text));
 }
