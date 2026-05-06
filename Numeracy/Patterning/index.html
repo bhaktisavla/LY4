@@ -31,16 +31,20 @@ body {
 /* GAME */
 #game { display:none; padding:8px; }
 
-/* DYNAMIC TILE SIZE */
 .pattern {
     display:flex;
     justify-content:center;
-    flex-wrap:nowrap;
     gap:5px;
     margin:10px 0;
 }
 
-/* AUTO FIT TILES */
+.options {
+    display:flex;
+    justify-content:center;
+    gap:12px;
+    margin:10px 0;
+}
+
 .box, .option {
     flex:1;
     max-width:70px;
@@ -61,18 +65,9 @@ body {
     border:3px solid #333;
 }
 
-.options {
-    display:flex;
-    justify-content:center;
-    gap:12px;
-    margin:10px 0;
-}
-
 .option {
     background:#6c9cff;
     color:white;
-    width:70px;
-    height:70px;
 }
 
 /* DRAG */
@@ -108,10 +103,12 @@ button {
 
 <body>
 
+<!-- SPLASH -->
 <div id="splash">
     <img src="assets/innovine-logo.png">
 </div>
 
+<!-- GAME -->
 <div id="game">
 
 <h3 id="round"></h3>
@@ -121,12 +118,12 @@ button {
 
 <div id="feedback"></div>
 
-<button id="hearBtn" onclick="playQuestion()">🔊 Hear Question</button><br>
 <button id="nextBtn" onclick="nextRound()" disabled>Next</button>
 <button id="restartBtn" onclick="restartGame()" style="display:none;">Play Again</button>
 
 </div>
 
+<!-- AUDIO -->
 <audio id="correctSound" src="assets/correct.mp3"></audio>
 <audio id="wrongSound" src="assets/wrong.mp3"></audio>
 <audio id="finishSound" src="assets/freesound_community-claps-44774.mp3"></audio>
@@ -141,17 +138,18 @@ window.onload = () => {
     },5000);
 };
 
+// DATA
 const rounds = [
-{seq:["🟥","🟥","🟦","🟦","🟥","🟥",""], ans:"🟦", text:"A A B B"},
-{seq:["🍎","🍌","🍎","🍌",""], ans:"🍎", text:"A B"},
-{seq:["🐶","🐶","🐱","🐶","🐶",""], ans:"🐱", text:"A A B"},
-{seq:["🔺","🔵","⭐","🔺","🔵",""], ans:"⭐", text:"A B C"},
-{seq:["🍏","🍎","🍎","🍏","🍎",""], ans:"🍎", text:"A B B"},
-{seq:["🚗","🚌","🚗","🚌",""], ans:"🚗", text:"A B"},
-{seq:["🌟","🌟","🌙","🌟","🌟",""], ans:"🌙", text:"A A B"},
-{seq:["🍓","🍊","🍇","🍓","🍊",""], ans:"🍇", text:"A B C"},
-{seq:["🐸","🐸","🐼","🐼","🐸","🐸",""], ans:"🐼", text:"A A B B"},
-{seq:["🚲","🚗","🚗","🚲","🚗",""], ans:"🚗", text:"A B B"}
+{seq:["🟥","🟥","🟦","🟦","🟥","🟥",""], ans:"🟦"},
+{seq:["🍎","🍌","🍎","🍌",""], ans:"🍎"},
+{seq:["🐶","🐶","🐱","🐶","🐶",""], ans:"🐱"},
+{seq:["🔺","🔵","⭐","🔺","🔵",""], ans:"⭐"},
+{seq:["🍏","🍎","🍎","🍏","🍎",""], ans:"🍎"},
+{seq:["🚗","🚌","🚗","🚌",""], ans:"🚗"},
+{seq:["🌟","🌟","🌙","🌟","🌟",""], ans:"🌙"},
+{seq:["🍓","🍊","🍇","🍓","🍊",""], ans:"🍇"},
+{seq:["🐸","🐸","🐼","🐼","🐸","🐸",""], ans:"🐼"},
+{seq:["🚲","🚗","🚗","🚲","🚗",""], ans:"🚗"}
 ];
 
 let current=0;
@@ -187,7 +185,6 @@ function loadRound(){
     if(current>=rounds.length){
         patternRow.style.display="none";
         optionsRow.style.display="none";
-        hearBtn.style.display="none";
 
         round.innerHTML="🎉 Finished!";
         nextBtn.style.display="none";
@@ -207,7 +204,8 @@ function loadRound(){
     patternRow.innerHTML="";
     optionsRow.innerHTML="";
 
-    // CREATE PATTERN
+    let dropBox = null;
+
     data.seq.forEach(item=>{
         let d=document.createElement("div");
         d.className="box";
@@ -215,6 +213,7 @@ function loadRound(){
         if(item===""){
             d.classList.add("dropzone");
             d.dataset.answer=data.ans;
+            dropBox = d;
         } else {
             d.innerHTML=item;
         }
@@ -222,7 +221,6 @@ function loadRound(){
         patternRow.appendChild(d);
     });
 
-    // OPTIONS
     let options=[...new Set(data.seq.filter(x=>x!=""))];
     if(!options.includes(data.ans)) options.push(data.ans);
 
@@ -237,7 +235,7 @@ function loadRound(){
     });
 }
 
-// TRUE DRAG
+// DRAG START
 function startDrag(value,e){
 
     clearDrag();
@@ -254,11 +252,10 @@ function startDrag(value,e){
 
     document.addEventListener("pointermove", moveDrag);
 
-    document.addEventListener("pointerup",(ev)=>{
-        drop(ev);
-    }, { once:true });
+    document.addEventListener("pointerup", drop, { once:true });
 }
 
+// MOVE
 function moveDrag(e){
     if(dragEl){
         dragEl.style.left=e.clientX+"px";
@@ -266,22 +263,19 @@ function moveDrag(e){
     }
 }
 
-// REAL DROP DETECTION
-function drop(e){
+// DROP (AUTO SNAP)
+function drop(){
 
-    let target = document.elementFromPoint(e.clientX, e.clientY);
+    let dropzone = document.querySelector(".dropzone");
 
-    if(target && target.classList.contains("dropzone")){
-
-        if(dragValue === target.dataset.answer){
-            target.innerHTML = dragValue;
-            feedback.innerHTML="Correct!";
-            correctSound.play();
-            nextBtn.disabled=false;
-        } else {
-            feedback.innerHTML="Try again!";
-            wrongSound.play();
-        }
+    if(dragValue === dropzone.dataset.answer){
+        dropzone.innerHTML = dragValue;
+        feedback.innerHTML="Correct!";
+        correctSound.play();
+        nextBtn.disabled=false;
+    } else {
+        feedback.innerHTML="Try again!";
+        wrongSound.play();
     }
 
     clearDrag();
@@ -289,13 +283,14 @@ function drop(e){
 
 // NAV
 function nextRound(){ current++; loadRound(); }
-function restartGame(){ current=0; nextBtn.style.display="inline"; loadRound(); }
 
-// VOICE
-function playQuestion(){
-    speechSynthesis.speak(new SpeechSynthesisUtterance(rounds[current].text));
+function restartGame(){
+    current=0;
+    nextBtn.style.display="inline";
+    loadRound();
 }
 
+// START
 loadRound();
 
 </script>
