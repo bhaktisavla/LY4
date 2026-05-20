@@ -10,9 +10,26 @@
 body{
     margin:0;
     font-family:'Comic Sans MS', sans-serif;
-    background:linear-gradient(to bottom,#dff6ff,#fff7d6);
     overflow-x:hidden;
     text-align:center;
+
+    /* CHILD FRIENDLY BACKGROUND */
+    background:
+    linear-gradient(to bottom,#dff6ff,#fff7d6);
+
+    min-height:100vh;
+}
+
+/* FLOATING CLOUDS */
+body::before{
+    content:"☁️ ☁️ ☁️";
+    position:fixed;
+    top:20px;
+    left:0;
+    width:100%;
+    font-size:50px;
+    opacity:0.25;
+    pointer-events:none;
 }
 
 /* SPLASH SCREEN */
@@ -30,11 +47,11 @@ body{
 }
 
 #splashScreen img{
-    width:230px;
+    width:240px;
     max-width:75%;
 }
 
-/* MAIN GAME */
+/* GAME CONTAINER */
 .game-container{
     max-width:950px;
     margin:auto;
@@ -42,19 +59,38 @@ body{
     display:none;
 }
 
+/* TITLE */
 h1{
     color:#ff6b6b;
-    margin:10px;
+    margin-top:15px;
+    margin-bottom:10px;
+    font-size:38px;
 }
 
+/* INSTRUCTION */
+#instruction{
+    background:#ffffffcc;
+    border-radius:14px;
+    padding:12px;
+    margin:10px auto 20px;
+    width:90%;
+    max-width:700px;
+    font-size:22px;
+    color:#444;
+    font-weight:bold;
+    box-shadow:0 4px 10px rgba(0,0,0,0.08);
+}
+
+/* ROUND */
 #round{
-    font-size:20px;
+    font-size:22px;
     color:#555;
     margin-bottom:10px;
 }
 
+/* WORD DISPLAY */
 #wordDisplay{
-    font-size:46px;
+    font-size:48px;
     font-weight:bold;
     color:#444;
     margin-bottom:20px;
@@ -65,14 +101,15 @@ h1{
     display:flex;
     justify-content:center;
     flex-wrap:wrap;
-    gap:8px;
+    gap:10px;
     margin-bottom:25px;
 }
 
+/* LETTER BOX */
 .letter{
-    width:58px;
-    height:58px;
-    border-radius:12px;
+    width:60px;
+    height:60px;
+    border-radius:14px;
     display:flex;
     justify-content:center;
     align-items:center;
@@ -82,6 +119,7 @@ h1{
     user-select:none;
     border:2px solid rgba(0,0,0,0.1);
     transition:0.2s;
+    box-shadow:0 3px 6px rgba(0,0,0,0.08);
 }
 
 .letter:hover{
@@ -100,22 +138,23 @@ h1{
 .answer-container{
     display:flex;
     justify-content:center;
-    gap:8px;
+    gap:10px;
     flex-wrap:wrap;
     margin-bottom:20px;
 }
 
 .answer-box{
-    width:70px;
-    height:70px;
+    width:72px;
+    height:72px;
     border:3px solid #999;
-    border-radius:12px;
+    border-radius:14px;
     background:white;
     display:flex;
     justify-content:center;
     align-items:center;
     font-size:36px;
     font-weight:bold;
+    box-shadow:0 3px 6px rgba(0,0,0,0.08);
 }
 
 /* MESSAGE */
@@ -131,13 +170,14 @@ h1{
 }
 
 #playAgain{
-    padding:12px 24px;
+    padding:14px 24px;
     font-size:22px;
     border:none;
-    border-radius:12px;
+    border-radius:14px;
     background:#ff8fab;
     color:white;
     cursor:pointer;
+    box-shadow:0 4px 8px rgba(0,0,0,0.12);
 }
 
 /* CONFETTI */
@@ -158,8 +198,17 @@ h1{
 /* MOBILE */
 @media(max-width:600px){
 
+    h1{
+        font-size:30px;
+    }
+
+    #instruction{
+        font-size:18px;
+        padding:10px;
+    }
+
     #wordDisplay{
-        font-size:36px;
+        font-size:38px;
     }
 
     .letter{
@@ -184,7 +233,7 @@ h1{
 
 <body>
 
-<!-- SPLASH -->
+<!-- SPLASH SCREEN -->
 <div id="splashScreen">
     <img src="./assets/innovine-logo.png" alt="Innovine Logo">
 </div>
@@ -193,6 +242,11 @@ h1{
 <div class="game-container" id="gameContainer">
 
     <h1>🌟 Sight Word Builder 🌟</h1>
+
+    <!-- INSTRUCTION -->
+    <div id="instruction">
+        Select the letters to form the sight word.
+    </div>
 
     <div id="round"></div>
 
@@ -220,13 +274,13 @@ h1{
 
 <script>
 
-/* SPLASH SCREEN 5 SECONDS */
+/* SPLASH SCREEN */
 setTimeout(()=>{
     document.getElementById("splashScreen").style.display="none";
     document.getElementById("gameContainer").style.display="block";
 },5000);
 
-/* ALL SIGHT WORDS */
+/* WORDS */
 const words = [
 "I",
 "he",
@@ -287,7 +341,7 @@ function startRound(){
 
     wordDisplay.innerHTML = currentWord;
 
-    /* SAY WORD ALOUD */
+    /* SAY WORD */
     speakWord(currentWord);
 
     /* CREATE BOXES */
@@ -300,7 +354,7 @@ function startRound(){
         answerContainer.appendChild(box);
     }
 
-    /* CREATE LETTERS */
+    /* LETTERS */
     let letters = currentWord.split("");
 
     const alphabet = "abcdefghijklmnopqrstuvwxyz";
