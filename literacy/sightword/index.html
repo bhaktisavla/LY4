@@ -84,7 +84,7 @@ h1{
     margin-bottom:10px;
 }
 
-/* SIGHT WORD */
+/* WORD */
 #wordDisplay{
     font-size:48px;
     font-weight:bold;
@@ -101,7 +101,7 @@ h1{
     margin-bottom:25px;
 }
 
-/* LETTER BOX */
+/* LETTER BUTTON */
 .letter{
     width:60px;
     height:60px;
@@ -159,7 +159,7 @@ h1{
     min-height:40px;
 }
 
-/* FINISH */
+/* FINISH SCREEN */
 #finishScreen{
     display:none;
     margin-top:30px;
@@ -239,7 +239,6 @@ h1{
 
     <h1>🌟 Sight Word Builder 🌟</h1>
 
-    <!-- INSTRUCTION -->
     <div id="instruction">
         Select the letters to form the sight word.
     </div>
@@ -256,7 +255,7 @@ h1{
 
     <div id="message"></div>
 
-    <!-- FINISH SCREEN -->
+    <!-- FINISH -->
     <div id="finishScreen">
         <h1>🎉 Great Job! 🎉</h1>
         <button id="playAgain">Play Again</button>
@@ -270,13 +269,7 @@ h1{
 
 <script>
 
-/* SPLASH SCREEN */
-setTimeout(()=>{
-    document.getElementById("splashScreen").style.display="none";
-    document.getElementById("gameContainer").style.display="block";
-},5000);
-
-/* SIGHT WORDS */
+/* WORD LIST */
 const words = [
 "I",
 "he",
@@ -313,14 +306,44 @@ const wordDisplay = document.getElementById("wordDisplay");
 const roundText = document.getElementById("round");
 const finishScreen = document.getElementById("finishScreen");
 
-const colors = ["c1","c2","c3","c4","c5","c6"];
+const correctSound =
+document.getElementById("correctSound");
 
-/* START GAME */
-startRound();
+const wrongSound =
+document.getElementById("wrongSound");
 
+const colors =
+["c1","c2","c3","c4","c5","c6"];
+
+
+/* SPLASH SCREEN */
+setTimeout(()=>{
+
+    document.getElementById("splashScreen")
+    .style.display="none";
+
+    document.getElementById("gameContainer")
+    .style.display="block";
+
+    startRound();
+
+},5000);
+
+
+/* START ROUND */
 function startRound(){
 
+    /* STOP ALL OLD SOUNDS */
+    correctSound.pause();
+    correctSound.currentTime = 0;
+
+    wrongSound.pause();
+    wrongSound.currentTime = 0;
+
+    speechSynthesis.cancel();
+
     if(currentRound >= words.length){
+
         endGame();
         return;
     }
@@ -330,6 +353,7 @@ function startRound(){
     document.getElementById("message").innerHTML = "";
 
     currentWord = words[currentRound];
+
     selectedLetters = [];
 
     roundText.innerHTML =
@@ -337,8 +361,12 @@ function startRound(){
 
     wordDisplay.innerHTML = currentWord;
 
-    /* SAY THE SIGHT WORD */
-    speakWord(currentWord);
+    /* SAY SIGHT WORD */
+    setTimeout(()=>{
+
+        speakWord(currentWord);
+
+    },500);
 
     /* CREATE EMPTY BOXES */
     for(let i=0;i<currentWord.length;i++){
@@ -350,10 +378,11 @@ function startRound(){
         answerContainer.appendChild(box);
     }
 
-    /* LETTERS */
+    /* CREATE LETTERS */
     let letters = currentWord.split("");
 
-    const alphabet = "abcdefghijklmnopqrstuvwxyz";
+    const alphabet =
+    "abcdefghijklmnopqrstuvwxyz";
 
     while(letters.length < 8){
 
@@ -366,7 +395,7 @@ function startRound(){
         }
     }
 
-    /* SHUFFLE LETTERS */
+    /* SHUFFLE */
     letters.sort(()=>Math.random()-0.5);
 
     /* CREATE LETTER BUTTONS */
@@ -385,23 +414,26 @@ function startRound(){
     });
 }
 
+
 /* SPEAK WORD */
 function speakWord(word){
 
-    if('speechSynthesis' in window){
+    speechSynthesis.cancel();
 
-        let speech =
-        new SpeechSynthesisUtterance(word);
+    const speech =
+    new SpeechSynthesisUtterance(word);
 
-        speech.rate = 0.7;
-        speech.pitch = 1;
-        speech.volume = 1;
+    speech.lang = "en-US";
 
-        speechSynthesis.cancel();
+    speech.rate = 0.7;
 
-        speechSynthesis.speak(speech);
-    }
+    speech.pitch = 1;
+
+    speech.volume = 1;
+
+    speechSynthesis.speak(speech);
 }
+
 
 /* SELECT LETTER */
 function selectLetter(letter,element){
@@ -409,7 +441,8 @@ function selectLetter(letter,element){
     if(selectedLetters.length >= currentWord.length)
     return;
 
-    const nextIndex = selectedLetters.length;
+    const nextIndex =
+    selectedLetters.length;
 
     /* CORRECT LETTER */
     if(letter.toLowerCase() ===
@@ -422,38 +455,55 @@ function selectLetter(letter,element){
 
         element.style.visibility = "hidden";
 
-        /* WORD COMPLETE */
+        /* COMPLETE WORD */
         if(selectedLetters.join("").toLowerCase()
         === currentWord.toLowerCase()){
 
             /* PLAY CLAP SOUND ONLY ONCE */
-            document.getElementById("correctSound")
-            .play();
+            correctSound.pause();
+            correctSound.currentTime = 0;
+            correctSound.play();
 
             document.getElementById("message")
             .innerHTML = "✅ Correct!";
 
             /* SAY WORD AGAIN */
-            speakWord(currentWord);
-
             setTimeout(()=>{
+
+                speakWord(currentWord);
+
+            },300);
+
+            /* NEXT ROUND */
+            setTimeout(()=>{
+
+                correctSound.pause();
+                correctSound.currentTime = 0;
+
                 currentRound++;
+
                 startRound();
-            },1800);
+
+            },2200);
         }
 
     }else{
 
+        wrongSound.pause();
+        wrongSound.currentTime = 0;
+
+        wrongSound.play();
+
         document.getElementById("message")
         .innerHTML = "❌ Wrong Letter";
-
-        document.getElementById("wrongSound")
-        .play();
     }
 }
 
+
 /* END GAME */
 function endGame(){
+
+    speechSynthesis.cancel();
 
     document.getElementById("round")
     .style.display = "none";
@@ -472,6 +522,7 @@ function endGame(){
 
     launchConfetti();
 }
+
 
 /* CONFETTI */
 function launchConfetti(){
@@ -497,14 +548,25 @@ function launchConfetti(){
         document.body.appendChild(confetti);
 
         setTimeout(()=>{
+
             confetti.remove();
+
         },5000);
     }
 }
 
+
 /* PLAY AGAIN */
 document.getElementById("playAgain")
 .onclick = ()=>{
+
+    speechSynthesis.cancel();
+
+    correctSound.pause();
+    correctSound.currentTime = 0;
+
+    wrongSound.pause();
+    wrongSound.currentTime = 0;
 
     currentRound = 0;
 
