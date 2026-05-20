@@ -304,32 +304,29 @@ setTimeout(()=>{
     .style.display = "block";
 
     /* MOBILE AUDIO FIX */
-    document.body.addEventListener(
-    "click",
-    unlockAudio,
-    { once:true });
+    unlockAudio();
 
     startRound();
 
 },5000);
 
 
-/* UNLOCK AUDIO FOR MOBILE */
+/* AUDIO UNLOCK */
 function unlockAudio(){
 
-    let speech =
+    let tempSpeech =
     new SpeechSynthesisUtterance(" ");
 
-    speech.volume = 0;
+    tempSpeech.volume = 0;
 
-    speechSynthesis.speak(speech);
+    speechSynthesis.speak(tempSpeech);
 }
 
 
 /* START ROUND */
 function startRound(){
 
-    /* STOP OLD SOUNDS */
+    /* STOP OLD AUDIO */
     speechSynthesis.cancel();
 
     correctSound.pause();
@@ -364,7 +361,7 @@ function startRound(){
 
         speakWord(currentWord);
 
-    },700);
+    },1200);
 
     /* CREATE EMPTY BOXES */
     for(let i=0;i<currentWord.length;i++){
@@ -433,10 +430,25 @@ function speakWord(word){
 
     speechSynthesis.cancel();
 
-    const speech =
-    new SpeechSynthesisUtterance(word);
+    let speechText = word;
 
-    speech.lang = "en-US";
+    /* BRITISH ENGLISH PRONUNCIATION */
+    if(word === "the"){
+
+        speechText = "thuh";
+
+    }
+
+    if(word === "was"){
+
+        speechText = "woz";
+
+    }
+
+    const speech =
+    new SpeechSynthesisUtterance(speechText);
+
+    speech.lang = "en-GB";
 
     speech.rate = 0.7;
 
@@ -482,7 +494,7 @@ function selectLetter(letter,element){
 
             correctSound.play();
 
-            /* NEXT ROUND AFTER CLAP */
+            /* NEXT ROUND */
             correctSound.onended = function(){
 
                 currentRound++;
