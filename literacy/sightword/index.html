@@ -303,7 +303,6 @@ setTimeout(()=>{
     document.getElementById("gameContainer")
     .style.display = "block";
 
-    /* MOBILE AUDIO FIX */
     unlockAudio();
 
     startRound();
@@ -326,7 +325,6 @@ function unlockAudio(){
 /* START ROUND */
 function startRound(){
 
-    /* STOP OLD AUDIO */
     speechSynthesis.cancel();
 
     correctSound.pause();
@@ -430,27 +428,37 @@ function speakWord(word){
 
     speechSynthesis.cancel();
 
-    let speechText = word;
-
-    /* BRITISH ENGLISH PRONUNCIATION */
-    if(word === "the"){
-
-        speechText = "thuh";
-
-    }
-
-    if(word === "was"){
-
-        speechText = "woz";
-
-    }
-
     const speech =
-    new SpeechSynthesisUtterance(speechText);
+    new SpeechSynthesisUtterance();
+
+    /* FIXED PRONUNCIATIONS */
+
+    if(word === "I"){
+
+        speech.text = "Eye";
+
+    }
+
+    else if(word === "the"){
+
+        speech.text = "thuh";
+
+    }
+
+    else if(word === "was"){
+
+        speech.text = "woz";
+
+    }
+
+    else{
+
+        speech.text = word;
+    }
 
     speech.lang = "en-GB";
 
-    speech.rate = 0.7;
+    speech.rate = 0.75;
 
     speech.pitch = 1;
 
