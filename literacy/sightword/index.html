@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sight Word Builder Game</title>
+
+<style>
+
+body{
+    margin:0;
+    font-family:'Comic Sans MS', sans-serif;
+    background:linear-gradient(to bottom,#dff6ff,#fff7d6);
+    overflow-x:hidden;
+    text-align:center;
+}
+
+/* SPLASH SCREEN */
+#splashScreen{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+}
+
+#splashScreen img{
+    width:230px;
+    max-width:75%;
+}
+
+/* MAIN GAME */
+.game-container{
+    max-width:950px;
+    margin:auto;
+    padding:10px;
+    display:none;
+}
+
+h1{
+    color:#ff6b6b;
+    margin:10px;
+}
+
+#round{
+    font-size:20px;
+    color:#555;
+    margin-bottom:10px;
+}
+
+#wordDisplay{
+    font-size:46px;
+    font-weight:bold;
+    color:#444;
+    margin-bottom:20px;
+}
+
+/* LETTER RIBBON */
+.ribbon{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-bottom:25px;
+}
+
+.letter{
+    width:58px;
+    height:58px;
+    border-radius:12px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:30px;
+    font-weight:bold;
+    cursor:pointer;
+    user-select:none;
+    border:2px solid rgba(0,0,0,0.1);
+    transition:0.2s;
+}
+
+.letter:hover{
+    transform:scale(1.05);
+}
+
+/* LIGHT COLORS */
+.c1{background:#ffd6e0;}
+.c2{background:#d6f5d6;}
+.c3{background:#fff0b3;}
+.c4{background:#d6eaff;}
+.c5{background:#f5d6ff;}
+.c6{background:#ffe4cc;}
+
+/* ANSWER BOX */
+.answer-container{
+    display:flex;
+    justify-content:center;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-bottom:20px;
+}
+
+.answer-box{
+    width:70px;
+    height:70px;
+    border:3px solid #999;
+    border-radius:12px;
+    background:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:36px;
+    font-weight:bold;
+}
+
+/* MESSAGE */
+#message{
+    font-size:28px;
+    min-height:40px;
+}
+
+/* FINISH */
+#finishScreen{
+    display:none;
+    margin-top:30px;
+}
+
+#playAgain{
+    padding:12px 24px;
+    font-size:22px;
+    border:none;
+    border-radius:12px;
+    background:#ff8fab;
+    color:white;
+    cursor:pointer;
+}
+
+/* CONFETTI */
+.confetti{
+    position:fixed;
+    width:12px;
+    height:12px;
+    top:-20px;
+    animation:fall linear forwards;
+}
+
+@keyframes fall{
+    to{
+        transform:translateY(110vh) rotate(720deg);
+    }
+}
+
+/* MOBILE */
+@media(max-width:600px){
+
+    #wordDisplay{
+        font-size:36px;
+    }
+
+    .letter{
+        width:50px;
+        height:50px;
+        font-size:26px;
+    }
+
+    .answer-box{
+        width:58px;
+        height:58px;
+        font-size:30px;
+    }
+
+    #message{
+        font-size:24px;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- SPLASH -->
+<div id="splashScreen">
+    <img src="./assets/innovine-logo.png" alt="Innovine Logo">
+</div>
+
+<!-- GAME -->
+<div class="game-container" id="gameContainer">
+
+    <h1>🌟 Sight Word Builder 🌟</h1>
+
+    <div id="round"></div>
+
+    <div id="wordDisplay"></div>
+
+    <!-- LETTER RIBBON -->
+    <div class="ribbon" id="ribbon"></div>
+
+    <!-- ANSWER BOX -->
+    <div class="answer-container" id="answerContainer"></div>
+
+    <div id="message"></div>
+
+    <!-- FINISH -->
+    <div id="finishScreen">
+        <h1>🎉 Great Job! 🎉</h1>
+        <button id="playAgain">Play Again</button>
+    </div>
+
+</div>
+
+<!-- AUDIO -->
+<audio id="correctSound" src="./assets/correct.mp3"></audio>
+<audio id="wrongSound" src="./assets/wrong.mp3"></audio>
+
+<script>
+
+/* SPLASH SCREEN 5 SECONDS */
+setTimeout(()=>{
+    document.getElementById("splashScreen").style.display="none";
+    document.getElementById("gameContainer").style.display="block";
+},5000);
+
+/* ALL SIGHT WORDS */
+const words = [
+"I",
+"he",
+"she",
+"you",
+"me",
+"we",
+"the",
+"to",
+"this",
+"that",
+"all",
+"my",
+"are",
+"no",
+"his",
+"your",
+"was",
+"and",
+"they",
+"go",
+"our",
+"here",
+"her"
+];
+
+let currentRound = 0;
+let currentWord = "";
+let selectedLetters = [];
+
+const ribbon = document.getElementById("ribbon");
+const answerContainer = document.getElementById("answerContainer");
+const wordDisplay = document.getElementById("wordDisplay");
+const roundText = document.getElementById("round");
+const finishScreen = document.getElementById("finishScreen");
+
+const colors = ["c1","c2","c3","c4","c5","c6"];
+
+/* START GAME */
+startRound();
+
+function startRound(){
+
+    if(currentRound >= words.length){
+        endGame();
+        return;
+    }
+
+    ribbon.innerHTML = "";
+    answerContainer.innerHTML = "";
+    document.getElementById("message").innerHTML = "";
+
+    currentWord = words[currentRound];
+    selectedLetters = [];
+
+    roundText.innerHTML =
+    `Round ${currentRound + 1} of ${words.length}`;
+
+    wordDisplay.innerHTML = currentWord;
+
+    /* SAY WORD ALOUD */
+    speakWord(currentWord);
+
+    /* CREATE BOXES */
+    for(let i=0;i<currentWord.length;i++){
+
+        let box = document.createElement("div");
+
+        box.className = "answer-box";
+
+        answerContainer.appendChild(box);
+    }
+
+    /* CREATE LETTERS */
+    let letters = currentWord.split("");
+
+    const alphabet = "abcdefghijklmnopqrstuvwxyz";
+
+    while(letters.length < 8){
+
+        let randomLetter =
+        alphabet[Math.floor(Math.random()*alphabet.length)];
+
+        if(!letters.includes(randomLetter)){
+
+            letters.push(randomLetter);
+        }
+    }
+
+    /* SHUFFLE */
+    letters.sort(()=>Math.random()-0.5);
+
+    /* CREATE LETTER BUTTONS */
+    letters.forEach((letter,index)=>{
+
+        let div = document.createElement("div");
+
+        div.className =
+        `letter ${colors[index % colors.length]}`;
+
+        div.innerHTML = letter;
+
+        div.onclick = ()=>selectLetter(letter,div);
+
+        ribbon.appendChild(div);
+    });
+}
+
+/* SPEAK WORD */
+function speakWord(word){
+
+    if('speechSynthesis' in window){
+
+        let speech =
+        new SpeechSynthesisUtterance(word);
+
+        speech.rate = 0.7;
+        speech.pitch = 1;
+        speech.volume = 1;
+
+        speechSynthesis.cancel();
+        speechSynthesis.speak(speech);
+    }
+}
+
+/* SELECT LETTER */
+function selectLetter(letter,element){
+
+    if(selectedLetters.length >= currentWord.length)
+    return;
+
+    const nextIndex = selectedLetters.length;
+
+    /* CORRECT LETTER */
+    if(letter.toLowerCase() ===
+    currentWord[nextIndex].toLowerCase()){
+
+        selectedLetters.push(letter);
+
+        answerContainer.children[nextIndex]
+        .innerHTML = letter;
+
+        element.style.visibility = "hidden";
+
+        document.getElementById("correctSound")
+        .play();
+
+        /* WORD COMPLETE */
+        if(selectedLetters.join("").toLowerCase()
+        === currentWord.toLowerCase()){
+
+            document.getElementById("message")
+            .innerHTML = "✅ Correct!";
+
+            setTimeout(()=>{
+                currentRound++;
+                startRound();
+            },1200);
+        }
+
+    }else{
+
+        document.getElementById("message")
+        .innerHTML = "❌ Wrong Letter";
+
+        document.getElementById("wrongSound")
+        .play();
+    }
+}
+
+/* END GAME */
+function endGame(){
+
+    document.getElementById("round")
+    .style.display = "none";
+
+    document.getElementById("wordDisplay")
+    .style.display = "none";
+
+    ribbon.style.display = "none";
+
+    answerContainer.style.display = "none";
+
+    document.getElementById("message")
+    .style.display = "none";
+
+    finishScreen.style.display = "block";
+
+    launchConfetti();
+}
+
+/* CONFETTI */
+function launchConfetti(){
+
+    for(let i=0;i<150;i++){
+
+        const confetti =
+        document.createElement("div");
+
+        confetti.className = "confetti";
+
+        confetti.style.left =
+        Math.random()*100 + "vw";
+
+        confetti.style.background =
+        ["#ffadad","#ffd6a5","#fdffb6",
+        "#caffbf","#9bf6ff","#bdb2ff"]
+        [Math.floor(Math.random()*6)];
+
+        confetti.style.animationDuration =
+        (Math.random()*3 + 2) + "s";
+
+        document.body.appendChild(confetti);
+
+        setTimeout(()=>{
+            confetti.remove();
+        },5000);
+    }
+}
+
+/* PLAY AGAIN */
+document.getElementById("playAgain")
+.onclick = ()=>{
+
+    currentRound = 0;
+
+    finishScreen.style.display = "none";
+
+    document.getElementById("round")
+    .style.display = "block";
+
+    document.getElementById("wordDisplay")
+    .style.display = "block";
+
+    ribbon.style.display = "flex";
+
+    answerContainer.style.display = "flex";
+
+    document.getElementById("message")
+    .style.display = "block";
+
+    startRound();
+};
+
+</script>
+
+</body>
+</html>
