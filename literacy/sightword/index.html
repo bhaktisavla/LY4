@@ -12,15 +12,11 @@ body{
     font-family:'Comic Sans MS', sans-serif;
     overflow-x:hidden;
     text-align:center;
-
-    /* CHILD FRIENDLY BACKGROUND */
-    background:
-    linear-gradient(to bottom,#dff6ff,#fff7d6);
-
+    background:linear-gradient(to bottom,#dff6ff,#fff7d6);
     min-height:100vh;
 }
 
-/* FLOATING CLOUDS */
+/* CLOUD BACKGROUND */
 body::before{
     content:"☁️ ☁️ ☁️";
     position:fixed;
@@ -51,7 +47,7 @@ body::before{
     max-width:75%;
 }
 
-/* GAME CONTAINER */
+/* MAIN GAME */
 .game-container{
     max-width:950px;
     margin:auto;
@@ -88,7 +84,7 @@ h1{
     margin-bottom:10px;
 }
 
-/* WORD DISPLAY */
+/* SIGHT WORD */
 #wordDisplay{
     font-size:48px;
     font-weight:bold;
@@ -252,15 +248,15 @@ h1{
 
     <div id="wordDisplay"></div>
 
-    <!-- LETTER RIBBON -->
+    <!-- LETTERS -->
     <div class="ribbon" id="ribbon"></div>
 
-    <!-- ANSWER BOX -->
+    <!-- ANSWER BOXES -->
     <div class="answer-container" id="answerContainer"></div>
 
     <div id="message"></div>
 
-    <!-- FINISH -->
+    <!-- FINISH SCREEN -->
     <div id="finishScreen">
         <h1>🎉 Great Job! 🎉</h1>
         <button id="playAgain">Play Again</button>
@@ -280,7 +276,7 @@ setTimeout(()=>{
     document.getElementById("gameContainer").style.display="block";
 },5000);
 
-/* WORDS */
+/* SIGHT WORDS */
 const words = [
 "I",
 "he",
@@ -341,10 +337,10 @@ function startRound(){
 
     wordDisplay.innerHTML = currentWord;
 
-    /* SAY WORD */
+    /* SAY THE SIGHT WORD */
     speakWord(currentWord);
 
-    /* CREATE BOXES */
+    /* CREATE EMPTY BOXES */
     for(let i=0;i<currentWord.length;i++){
 
         let box = document.createElement("div");
@@ -370,7 +366,7 @@ function startRound(){
         }
     }
 
-    /* SHUFFLE */
+    /* SHUFFLE LETTERS */
     letters.sort(()=>Math.random()-0.5);
 
     /* CREATE LETTER BUTTONS */
@@ -402,6 +398,7 @@ function speakWord(word){
         speech.volume = 1;
 
         speechSynthesis.cancel();
+
         speechSynthesis.speak(speech);
     }
 }
@@ -425,20 +422,24 @@ function selectLetter(letter,element){
 
         element.style.visibility = "hidden";
 
-        document.getElementById("correctSound")
-        .play();
-
         /* WORD COMPLETE */
         if(selectedLetters.join("").toLowerCase()
         === currentWord.toLowerCase()){
 
+            /* PLAY CLAP SOUND ONLY ONCE */
+            document.getElementById("correctSound")
+            .play();
+
             document.getElementById("message")
             .innerHTML = "✅ Correct!";
+
+            /* SAY WORD AGAIN */
+            speakWord(currentWord);
 
             setTimeout(()=>{
                 currentRound++;
                 startRound();
-            },1200);
+            },1800);
         }
 
     }else{
