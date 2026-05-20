@@ -248,7 +248,7 @@ h1{
     <!-- LETTERS -->
     <div class="ribbon" id="ribbon"></div>
 
-    <!-- ANSWERS -->
+    <!-- ANSWER BOX -->
     <div class="answer-container" id="answerContainer"></div>
 
     <div id="message"></div>
@@ -298,14 +298,32 @@ const colors =
 setTimeout(()=>{
 
     document.getElementById("splashScreen")
-    .style.display="none";
+    .style.display = "none";
 
     document.getElementById("gameContainer")
-    .style.display="block";
+    .style.display = "block";
+
+    /* MOBILE AUDIO FIX */
+    document.body.addEventListener(
+    "click",
+    unlockAudio,
+    { once:true });
 
     startRound();
 
 },5000);
+
+
+/* UNLOCK AUDIO FOR MOBILE */
+function unlockAudio(){
+
+    let speech =
+    new SpeechSynthesisUtterance(" ");
+
+    speech.volume = 0;
+
+    speechSynthesis.speak(speech);
+}
 
 
 /* START ROUND */
@@ -328,7 +346,9 @@ function startRound(){
 
     ribbon.innerHTML = "";
     answerContainer.innerHTML = "";
-    document.getElementById("message").innerHTML = "";
+
+    document.getElementById("message")
+    .innerHTML = "";
 
     currentWord = words[currentRound];
 
@@ -339,40 +359,46 @@ function startRound(){
 
     wordDisplay.innerHTML = currentWord;
 
-    /* SAY WORD ONLY ONCE AT START */
+    /* SAY WORD ONLY AT START */
     setTimeout(()=>{
 
         speakWord(currentWord);
 
-    },800);
+    },700);
 
     /* CREATE EMPTY BOXES */
     for(let i=0;i<currentWord.length;i++){
 
-        let box = document.createElement("div");
+        let box =
+        document.createElement("div");
 
         box.className = "answer-box";
 
         answerContainer.appendChild(box);
     }
 
-    /* LETTER OPTIONS */
-    let letters = currentWord.split("");
+    /* LETTERS */
+    let letters;
 
-    const alphabet =
-    "abcdefghijkmnopqrstuvwxyz";
-
-    /* REMOVE L FOR WORD I */
+    /* SPECIAL LETTERS FOR I */
     if(currentWord === "I"){
 
-        letters = ["I","a","t","m","s","p","r","n"];
+        letters =
+        ["I","a","m","s","t","p","r","n"];
 
     }else{
+
+        letters =
+        currentWord.split("");
+
+        const alphabet =
+        "abcdefghijkmnopqrstuvwxyz";
 
         while(letters.length < 8){
 
             let randomLetter =
-            alphabet[Math.floor(Math.random()*alphabet.length)];
+            alphabet[Math.floor(
+            Math.random()*alphabet.length)];
 
             if(!letters.includes(randomLetter)){
 
@@ -386,14 +412,16 @@ function startRound(){
     /* CREATE LETTER BUTTONS */
     letters.forEach((letter,index)=>{
 
-        let div = document.createElement("div");
+        let div =
+        document.createElement("div");
 
         div.className =
         `letter ${colors[index % colors.length]}`;
 
         div.innerHTML = letter;
 
-        div.onclick = ()=>selectLetter(letter,div);
+        div.onclick =
+        ()=>selectLetter(letter,div);
 
         ribbon.appendChild(div);
     });
@@ -409,8 +437,11 @@ function speakWord(word){
     new SpeechSynthesisUtterance(word);
 
     speech.lang = "en-US";
+
     speech.rate = 0.7;
+
     speech.pitch = 1;
+
     speech.volume = 1;
 
     speechSynthesis.speak(speech);
@@ -420,7 +451,8 @@ function speakWord(word){
 /* SELECT LETTER */
 function selectLetter(letter,element){
 
-    if(selectedLetters.length >= currentWord.length)
+    if(selectedLetters.length >=
+    currentWord.length)
     return;
 
     const nextIndex =
@@ -437,19 +469,20 @@ function selectLetter(letter,element){
 
         element.style.visibility = "hidden";
 
-        /* WORD COMPLETE */
+        /* COMPLETE WORD */
         if(selectedLetters.join("").toLowerCase()
         === currentWord.toLowerCase()){
 
             document.getElementById("message")
             .innerHTML = "✅ Correct!";
 
-            /* PLAY CLAP ONLY */
+            /* ONLY CLAP SOUND */
             correctSound.pause();
             correctSound.currentTime = 0;
+
             correctSound.play();
 
-            /* GO TO NEXT WORD AFTER SOUND */
+            /* NEXT ROUND AFTER CLAP */
             correctSound.onended = function(){
 
                 currentRound++;
