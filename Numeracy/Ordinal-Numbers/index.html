@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-<title>Pet Parade - Ordinal Numbers</title>
+<title>Pet Parade</title>
 
 <style>
 
@@ -113,24 +114,34 @@ color:#5c47ff;
 margin-top:2px;
 }
 
-/* QUESTION */
+/* QUESTION BOX */
 
 .questionBox{
-width:95%;
-max-width:1100px;
-background:#ffffffde;
+width:90%;
+max-width:720px;
+background:
+linear-gradient(135deg,
+#fff0a6,
+#ffd6f0,
+#c8f1ff);
 border-radius:24px;
-padding:12px;
-margin-top:8px;
+padding:10px 14px;
+margin-top:6px;
 text-align:center;
-box-shadow:0 5px 18px rgba(0,0,0,0.12);
+box-shadow:0 5px 14px rgba(0,0,0,0.12);
+border:3px solid white;
 }
 
 .question{
-font-size:clamp(18px,2vw,30px);
+font-size:clamp(18px,2vw,28px);
 font-weight:bold;
 line-height:1.4;
-background:linear-gradient(90deg,#ff4f8b,#ff9800,#5c47ff,#00a86b);
+background:
+linear-gradient(90deg,
+#ff4f8b,
+#ff9800,
+#5c47ff,
+#00a86b);
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
 }
@@ -163,26 +174,22 @@ width:100%;
 max-width:1300px;
 background:#ffffffdd;
 border-radius:28px;
-padding:12px 8px;
+padding:10px 6px;
 display:flex;
 justify-content:space-evenly;
-align-items:flex-end;
-gap:4px;
+align-items:center;
+gap:2px;
 box-shadow:0 6px 18px rgba(0,0,0,0.12);
 }
 
-/* PET */
-
 .petBox{
 display:flex;
-flex-direction:column;
-align-items:center;
 justify-content:center;
+align-items:center;
 cursor:pointer;
-padding:6px;
+padding:4px;
 border-radius:16px;
 transition:0.2s;
-min-width:70px;
 }
 
 .petBox img{
@@ -282,16 +289,6 @@ transform:translateY(110vh) rotate(720deg);
 
 @media(max-width:900px){
 
-.paradeRow{
-gap:1px;
-padding:8px 4px;
-}
-
-.petBox{
-min-width:unset;
-padding:2px;
-}
-
 .petBox img{
 width:48px;
 height:48px;
@@ -306,6 +303,10 @@ font-size:15px;
 padding:8px 14px;
 }
 
+.paradeRow{
+padding:8px 2px;
+}
+
 }
 
 @media(max-width:500px){
@@ -313,10 +314,6 @@ padding:8px 14px;
 .petBox img{
 width:40px;
 height:40px;
-}
-
-.paradeRow{
-padding:6px 2px;
 }
 
 }
@@ -328,7 +325,8 @@ padding:6px 2px;
 
 <audio id="rightSound" src="assets/correct.mp3"></audio>
 <audio id="wrongSound" src="assets/wrong.mp3"></audio>
-<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
+<audio id="clapSound"
+src="assets/freesound_community-claps-44774.mp3"></audio>
 
 <!-- LOGO -->
 
@@ -346,7 +344,8 @@ padding:6px 2px;
 Ordinal Numbers Game
 </div>
 
-<button class="startBtn" onclick="startGame()">
+<button class="startBtn"
+onclick="startGame()">
 Start Game
 </button>
 
@@ -360,15 +359,18 @@ Start Game
 
 <h1>Pet Parade</h1>
 
-<div class="roundText" id="roundText"></div>
+<div class="roundText"
+id="roundText"></div>
 
 </div>
 
 <div class="questionBox">
 
-<div class="question" id="questionText"></div>
+<div class="question"
+id="questionText"></div>
 
-<button class="listenBtn" onclick="speakQuestion()">
+<button class="listenBtn"
+onclick="speakQuestion()">
 🔊 Hear Again
 </button>
 
@@ -376,11 +378,13 @@ Start Game
 
 <div class="paradeArea">
 
-<div class="paradeRow" id="paradeRow"></div>
+<div class="paradeRow"
+id="paradeRow"></div>
 
 </div>
 
-<div class="feedback" id="feedback"></div>
+<div class="feedback"
+id="feedback"></div>
 
 </div>
 
@@ -392,7 +396,8 @@ Start Game
 
 <p>You completed all the rounds!</p>
 
-<button class="startBtn" onclick="restartGame()">
+<button class="startBtn"
+onclick="restartGame()">
 Play Again
 </button>
 
@@ -424,9 +429,11 @@ const ordinals = [
 "6th","7th","8th","9th","10th"
 ];
 
-/* UNIQUE RANDOM POSITIONS */
+/* FIXED QUESTION ORDER */
 
-let shuffledPositions = [];
+const questionOrder =
+[3,4,9,6,0,5,1,8,2,7];
+
 let currentRound = 0;
 let wrongAttempts = 0;
 
@@ -458,23 +465,6 @@ document.getElementById("titleScreen")
 
 };
 
-/* SHUFFLE */
-
-function shuffle(array){
-
-for(let i=array.length-1;i>0;i--){
-
-const j=Math.floor(Math.random()*(i+1));
-
-[array[i],array[j]]=
-[array[j],array[i]];
-
-}
-
-return array;
-
-}
-
 /* START */
 
 function startGame(){
@@ -484,11 +474,6 @@ document.getElementById("titleScreen")
 
 document.getElementById("gameContainer")
 .style.display="flex";
-
-/* UNIQUE RANDOM QUESTIONS */
-
-shuffledPositions =
-shuffle([0,1,2,3,4,5,6,7,8,9]);
 
 currentRound=0;
 
@@ -507,7 +492,7 @@ feedback.innerHTML="";
 paradeRow.innerHTML="";
 
 const correctPosition =
-shuffledPositions[currentRound];
+questionOrder[currentRound];
 
 roundText.innerHTML =
 `Round ${currentRound+1} / 10`;
@@ -544,12 +529,12 @@ paradeRow.appendChild(petBox);
 
 }
 
-/* CHECK */
+/* CHECK ANSWER */
 
 function checkAnswer(index,box){
 
 const correctPosition =
-shuffledPositions[currentRound];
+questionOrder[currentRound];
 
 if(index===correctPosition){
 
@@ -612,7 +597,7 @@ function speakQuestion(){
 speechSynthesis.cancel();
 
 const correctPosition =
-shuffledPositions[currentRound];
+questionOrder[currentRound];
 
 const speech =
 new SpeechSynthesisUtterance(
@@ -657,7 +642,9 @@ confetti.style.left =
 Math.random()*100+"vw";
 
 confetti.style.background =
-["#ff4f8b","#ff9800","#5c47ff","#00c2ff","#78d64b"]
+["#ff4f8b","#ff9800",
+"#5c47ff","#00c2ff",
+"#78d64b"]
 [Math.floor(Math.random()*5)];
 
 confetti.style.animationDuration =
@@ -683,7 +670,9 @@ document.getElementById("endScreen")
 document.getElementById("gameContainer")
 .style.display="flex";
 
-startGame();
+currentRound=0;
+
+loadRound();
 
 }
 
