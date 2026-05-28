@@ -12,7 +12,7 @@ header { width:100%; text-align:center; font-size:2rem; font-weight:bold; backgr
 
 #gameContainer {
     width:100%;
-    max-width:1024px;
+    min-height:100vh;
     display:none;
     flex-direction:column;
     align-items:center;
@@ -48,14 +48,13 @@ header { width:100%; text-align:center; font-size:2rem; font-weight:bold; backgr
 #petsContainer { display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin-bottom:10px; }
 .petCard { width:80px; height:80px; border-radius:10px; background:#FFF; display:flex; align-items:center; justify-content:center; border:3px solid transparent; cursor:pointer; transition: transform 0.2s, border 0.2s; position:relative; }
 .petCard img { max-width:70%; max-height:70%; }
-.ordinalLabel { position:absolute; top:2px; right:2px; background:#FFB77D; color:white; font-weight:bold; border-radius:4px; padding:2px 4px; font-size:0.8rem; }
 .petCard.wrong { animation: wiggle 0.3s; }
 .petCard.correct { border:3px solid green; }
 #messageBox { font-size:1.4rem; margin:5px; color:green; font-weight:bold; min-height:2em; text-align:center; }
 #nextBtn { padding:10px 20px; font-size:1.2rem; border:none; border-radius:10px; background:#FFB77D; color:white; cursor:pointer; display:none; margin-top:5px; }
 #confettiCanvas { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:1000; }
 @keyframes wiggle {0%{transform:rotate(0deg);}25%{transform:rotate(10deg);}50%{transform:rotate(-10deg);}75%{transform:rotate(10deg);}100%{transform:rotate(0deg);}}
-@media(max-width:600px){ .petCard{width:60px;height:60px;} .ordinalBox{width:45px;height:45px;font-size:0.9rem;} .ordinalLabel{font-size:0.7rem;} #questionBox img{width:50px;} }
+@media(max-width:600px){ .petCard{width:60px;height:60px;} .ordinalBox{width:45px;height:45px;font-size:0.9rem;} #questionBox img{width:50px;} }
 </style>
 </head>
 <body>
@@ -84,13 +83,13 @@ header { width:100%; text-align:center; font-size:2rem; font-weight:bold; backgr
 <audio id="wrongSound" src="assets/wrong.mp3"></audio>
 
 <script>
+// Define rounds with pets and questions
 const rounds = [
     {type:'click', question:'Who is in 1st place?', correct:'dog', pets:['dog','cat','bunny','turtle','bird','hamster','fish','guineapig','hedgehog','puppy'], voice:'Who is in first place?'},
     {type:'click', question:'Who is in 3rd place?', correct:'bunny', pets:['dog','cat','bunny','turtle','bird','hamster','fish','guineapig','hedgehog','puppy'], voice:'Who is in third place?'},
     {type:'click', question:'Who is in 5th place?', correct:'bird', pets:['dog','cat','bunny','turtle','bird','hamster','fish','guineapig','hedgehog','puppy'], voice:'Who is in fifth place?'},
     {type:'click', question:'Who is in 7th place?', correct:'fish', pets:['dog','cat','bunny','turtle','bird','hamster','fish','guineapig','hedgehog','puppy'], voice:'Who is in seventh place?'},
     {type:'click', question:'Who is in 10th place?', correct:'puppy', pets:['dog','cat','bunny','turtle','bird','hamster','fish','guineapig','hedgehog','puppy'], voice:'Who is in tenth place?'},
-
     {type:'arrange', question:'Place the dog in 1st position', correctOrder:['dog','cat','bunny','turtle','bird','hamster','fish','guineapig','hedgehog','puppy'], voice:'Place the dog in first position'},
     {type:'arrange', question:'Place the cat in 2nd position', correctOrder:['dog','cat','bunny','turtle','bird','hamster','fish','guineapig','hedgehog','puppy'], voice:'Place the cat in second position'},
     {type:'arrange', question:'Place the bunny in 3rd position', correctOrder:['dog','cat','bunny','turtle','bird','hamster','fish','guineapig','hedgehog','puppy'], voice:'Place the bunny in third position'},
@@ -98,103 +97,65 @@ const rounds = [
     {type:'arrange', question:'Place the bird in 5th position', correctOrder:['dog','cat','bunny','turtle','bird','hamster','fish','guineapig','hedgehog','puppy'], voice:'Place the bird in fifth position'}
 ];
 
-let currentRound = 0;
-let attempts = 0;
-const gameContainer = document.getElementById('gameContainer');
-const questionText = document.getElementById('questionText');
-const petsContainer = document.getElementById('petsContainer');
-const ordinalRow = document.getElementById('ordinalRow');
-const messageBox = document.getElementById('messageBox');
-const nextBtn = document.getElementById('nextBtn');
-const replayBtn = document.getElementById('replayBtn');
-const correctSound = document.getElementById('correctSound');
-const wrongSound = document.getElementById('wrongSound');
+let currentRound=0, attempts=0;
+const gameContainer=document.getElementById('gameContainer');
+const questionText=document.getElementById('questionText');
+const petsContainer=document.getElementById('petsContainer');
+const ordinalRow=document.getElementById('ordinalRow');
+const messageBox=document.getElementById('messageBox');
+const nextBtn=document.getElementById('nextBtn');
+const replayBtn=document.getElementById('replayBtn');
+const correctSound=document.getElementById('correctSound');
+const wrongSound=document.getElementById('wrongSound');
 
-window.addEventListener('load',()=>{
-    setTimeout(()=>{
-        document.getElementById('logoSplash').style.display='none';
-        gameContainer.style.display='flex';
-        loadRound();
-    },5000);
-});
+// Show logo 5s
+window.addEventListener('load',()=>{ setTimeout(()=>{ document.getElementById('logoSplash').style.display='none'; gameContainer.style.display='flex'; loadRound(); },5000); });
 
 replayBtn.addEventListener('click', ()=> playVoice(rounds[currentRound].voice));
-function playVoice(text){ const utter = new SpeechSynthesisUtterance(text); utter.rate=0.9; speechSynthesis.speak(utter); }
+function playVoice(text){ const utter=new SpeechSynthesisUtterance(text); utter.rate=0.9; speechSynthesis.speak(utter); }
 
 function loadRound(){
-    attempts=0;
-    nextBtn.style.display='none';
-    petsContainer.innerHTML='';
-    ordinalRow.innerHTML='';
-    messageBox.innerText='';
-    const round = rounds[currentRound];
-    questionText.innerText = round.question;
-    playVoice(round.voice);
+    attempts=0; nextBtn.style.display='none'; petsContainer.innerHTML=''; ordinalRow.innerHTML=''; messageBox.innerText='';
+    const round=rounds[currentRound];
+    questionText.innerText=round.question; playVoice(round.voice);
 
+    // Create ordinal boxes above pets
     for(let i=0;i<10;i++){
         const box=document.createElement('div');
-        box.classList.add('ordinalBox');
-        box.dataset.index=i;
-        box.innerText = `${i+1}${['st','nd','rd','th','th','th','th','th','th','th'][i]}`;
+        box.classList.add('ordinalBox'); box.dataset.index=i;
+        box.innerText=`${i+1}${['st','nd','rd','th','th','th','th','th','th','th'][i]}`;
         ordinalRow.appendChild(box);
     }
 
-    const pets = [...round.pets].sort(()=> Math.random()-0.5);
-    pets.forEach((p,i)=>{
+    const pets=[...round.pets].sort(()=>Math.random()-0.5);
+    pets.forEach(p=>{
         const card=document.createElement('div');
         card.classList.add('petCard');
-        const img=document.createElement('img');
-        img.src=`assets/${p}.png`;
-        img.alt=p;
-        card.appendChild(img);
-
-        const label = document.createElement('span');
-        label.classList.add('ordinalLabel');
-        label.innerText = `${i+1}${['st','nd','rd','th','th','th','th','th','th','th'][i]}`;
-        card.appendChild(label);
-
+        const img=document.createElement('img'); img.src=`assets/${p}.png`; img.alt=p; card.appendChild(img);
         petsContainer.appendChild(card);
 
-        if(round.type==='click'){
-            card.addEventListener('click', ()=> handleClick(p, card));
-        } else {
-            card.setAttribute('draggable','true');
-            card.addEventListener('dragstart', dragStart);
-            card.addEventListener('dragover', dragOver);
-            card.addEventListener('drop', drop);
-            card.addEventListener('dragend', dragEnd);
-        }
+        if(round.type==='click'){ card.addEventListener('click', ()=> handleClick(p,card)); }
+        else { card.setAttribute('draggable','true'); card.addEventListener('dragstart', dragStart); card.addEventListener('dragover', dragOver); card.addEventListener('drop', drop); card.addEventListener('dragend', dragEnd); }
     });
 }
 
-function handleClick(p, card){
-    const round = rounds[currentRound];
+function handleClick(p,card){
+    const round=rounds[currentRound];
     if(p===round.correct){ card.classList.add('correct'); correctSound.play(); messageBox.innerText='Good Job!'; nextBtn.style.display='inline-block'; }
-    else { attempts++; card.classList.add('wrong'); wrongSound.play(); setTimeout(()=> card.classList.remove('wrong'),300); 
-        if(attempts>=2){ const correctCard = [...document.querySelectorAll('.petCard')].find(c=>c.querySelector('img').alt===round.correct); correctCard.classList.add('correct'); nextBtn.style.display='inline-block'; } }
+    else{ attempts++; card.classList.add('wrong'); wrongSound.play(); setTimeout(()=>card.classList.remove('wrong'),300);
+        if(attempts>=2){ const correctCard=[...document.querySelectorAll('.petCard')].find(c=>c.querySelector('img').alt===round.correct); correctCard.classList.add('correct'); nextBtn.style.display='inline-block'; } }
 }
 
-nextBtn.addEventListener('click', ()=>{
-    currentRound++;
-    if(currentRound>=rounds.length){ showConfetti(); }
-    else{ loadRound(); }
-});
+nextBtn.addEventListener('click',()=>{ currentRound++; if(currentRound>=rounds.length){ showConfetti(); } else{ loadRound(); } });
 
 let dragged;
 function dragStart(e){ dragged=e.target; }
 function dragOver(e){ e.preventDefault(); }
 function drop(e){
     if(e.target.classList.contains('ordinalBox')){
-        const card = dragged;
-        const box = e.target;
-        box.appendChild(card);
-        card.dataset.position = box.dataset.index;
-
-        const round = rounds[currentRound];
-        const placedCorrect = [...ordinalRow.children].every((b,i)=>{
-            const child = b.querySelector('.petCard');
-            return child && child.querySelector('img').alt===round.correctOrder[i];
-        });
+        const card=dragged, box=e.target; box.appendChild(card); card.dataset.position=box.dataset.index;
+        const round=rounds[currentRound];
+        const placedCorrect=[...ordinalRow.children].every((b,i)=>{ const child=b.querySelector('.petCard'); return child && child.querySelector('img').alt===round.correctOrder[i]; });
         if(placedCorrect){ correctSound.play(); messageBox.innerText='Well Done!'; nextBtn.style.display='inline-block'; }
     }
 }
@@ -202,24 +163,13 @@ function dragEnd(){}
 
 function showConfetti(){
     messageBox.innerText='🎉 Congratulations! You completed all rounds!';
-    const canvas=document.getElementById('confettiCanvas');
-    const ctx=canvas.getContext('2d');
-    canvas.width=window.innerWidth;
-    canvas.height=window.innerHeight;
+    const canvas=document.getElementById('confettiCanvas'); const ctx=canvas.getContext('2d');
+    canvas.width=window.innerWidth; canvas.height=window.innerHeight;
     let confettis=[];
     for(let i=0;i<150;i++){ confettis.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*6+4,d:Math.random()*10+2,color:`hsl(${Math.random()*360},70%,60%)`}); }
-    let timer=setInterval(()=>{
-        ctx.clearRect(0,0,canvas.width,canvas.height);
-        confettis.forEach(c=>{ ctx.fillStyle=c.color; ctx.beginPath(); ctx.arc(c.x,c.y,c.r,0,2*Math.PI); ctx.fill(); c.y+=c.d; if(c.y>canvas.height)c.y=0; });
-    },30);
-    nextBtn.innerText='Play Again';
-    nextBtn.style.display='inline-block';
-    nextBtn.onclick=()=>{
-        timer && clearInterval(timer);
-        currentRound=0;
-        nextBtn.innerText='Next';
-        loadRound();
-    }
+    let timer=setInterval(()=>{ ctx.clearRect(0,0,canvas.width,canvas.height); confettis.forEach(c=>{ ctx.fillStyle=c.color; ctx.beginPath(); ctx.arc(c.x,c.y,c.r,0,2*Math.PI); ctx.fill(); c.y+=c.d; if(c.y>canvas.height)c.y=0; }); },30);
+    nextBtn.innerText='Play Again'; nextBtn.style.display='inline-block';
+    nextBtn.onclick=()=>{ timer && clearInterval(timer); currentRound=0; nextBtn.innerText='Next'; loadRound(); };
 }
 </script>
 </body>
