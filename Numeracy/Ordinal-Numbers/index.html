@@ -16,14 +16,15 @@ header { width:100%; text-align:center; font-size:2rem; font-weight:bold; backgr
 #questionBox button { margin-left:10px; border:none; padding:6px 10px; border-radius:5px; background:#FFB77D; color:white; font-weight:bold; cursor:pointer;}
 #ordinalRow { display:flex; justify-content:center; flex-wrap:wrap; margin-bottom:10px; gap:8px;}
 .ordinalBox { width:60px; height:60px; border:2px dashed #4E4E4E; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:1rem; background:#fff; position:relative;}
-#petsContainer { display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin-bottom:10px;}
-.petCard { width:80px; height:80px; border-radius:10px; background:#FFF; display:flex; align-items:center; justify-content:center; border:3px solid transparent; cursor:pointer; transition: transform 0.3s, border 0.3s; position:relative; animation: hop 1.5s ease-in-out infinite alternate;}
+#petsContainer { display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin-bottom:10px; position:relative;}
+.petCard { width:80px; height:80px; border-radius:10px; background:#FFF; display:flex; align-items:center; justify-content:center; border:3px solid transparent; cursor:pointer; transition: transform 0.3s, border 0.3s; position:relative; }
 .petCard img { max-width:70%; max-height:70%;}
 .petCard.wrong { animation: wiggle 0.3s;}
 .petCard.correct { border:3px solid green;}
 #messageBox { font-size:1.4rem; margin:5px; color:green; font-weight:bold; min-height:2em; text-align:center;}
 #nextBtn { padding:10px 20px; font-size:1.2rem; border:none; border-radius:10px; background:#FFB77D; color:white; cursor:pointer; display:none; margin-top:5px;}
 #confettiCanvas { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:1000;}
+
 @keyframes wiggle {0%{transform:rotate(0deg);}25%{transform:rotate(10deg);}50%{transform:rotate(-10deg);}75%{transform:rotate(10deg);}100%{transform:rotate(0deg);}}
 @keyframes hop {0%{transform:translateY(0px);}100%{transform:translateY(-10px);}}
 @media(max-width:600px){ .petCard{width:60px;height:60px;} .ordinalBox{width:45px;height:45px;font-size:0.9rem;} #questionBox img{width:50px;} #questionStory{font-size:0.9rem;} }
@@ -81,15 +82,13 @@ const correctSound=document.getElementById('correctSound');
 const wrongSound=document.getElementById('wrongSound');
 
 window.addEventListener('load',()=>{ setTimeout(()=>{ document.getElementById('logoSplash').style.display='none'; gameContainer.style.display='flex'; loadRound(); },5000); });
-
 replayBtn.addEventListener('click', ()=> playVoice(rounds[currentRound].voice));
 function playVoice(text){ const utter=new SpeechSynthesisUtterance(text); utter.rate=0.9; speechSynthesis.speak(utter); }
 
 function loadRound(){
     attempts=0; nextBtn.style.display='none'; petsContainer.innerHTML=''; ordinalRow.innerHTML=''; messageBox.innerText='';
     const round=rounds[currentRound];
-    questionText.innerText=round.question; 
-    questionStory.innerText=round.story;
+    questionText.innerText=round.question; questionStory.innerText=round.story;
     playVoice(round.voice);
 
     for(let i=0;i<10;i++){
@@ -98,10 +97,16 @@ function loadRound(){
         ordinalRow.appendChild(box);
     }
 
-    const pets=[...round.pets].sort(()=>Math.random()-0.5);
-    pets.forEach(p=>{
+    const pets=[...round.pets];
+    pets.forEach((p,index)=>{
         const card=document.createElement('div'); card.classList.add('petCard');
         const img=document.createElement('img'); img.src=`assets/${p}.png`; img.alt=p; card.appendChild(img);
+
+        // Parade animation with delay to indicate position
+        card.style.animation = `hop 1.5s ease-in-out infinite alternate`;
+        card.style.animationDelay = `${index*0.2}s`;
+        card.style.zIndex = 10 - index;
+
         petsContainer.appendChild(card);
 
         if(round.type==='click'){ card.addEventListener('click', ()=> handleClick(p,card)); }
