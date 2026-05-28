@@ -5,56 +5,28 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ordinal Numbers - Pet Parade</title>
 <style>
-body { margin:0; font-family:'Comic Sans MS', cursive, sans-serif; background:#FFF7E6; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; min-height:100vh; }
-header { width:100%; text-align:center; font-size:2rem; font-weight:bold; background:#FFD6A5; color:#4E4E4E; padding:10px; }
-#logoSplash { position:fixed; top:0; left:0; width:100%; height:100%; background:#fff; display:flex; justify-content:center; align-items:center; z-index:999; }
-#logoSplash img { width:200px; }
-
-#gameContainer {
-    width:100%;
-    min-height:100vh;
-    display:none;
-    flex-direction:column;
-    align-items:center;
-    padding:10px;
-    background: url('assets/racetrack.png') no-repeat center center;
-    background-size: cover;
-    border-radius: 10px;
-}
-
-#questionBox {
-    background:#FFEDD5;
-    padding:12px 15px;
-    border-radius:10px;
-    margin-bottom:10px;
-    display:flex;
-    align-items:center;
-    justify-content:flex-start;
-    font-size:1.2rem;
-    color:#4E4E4E;
-}
-
-#questionBox img {
-    width:60px;
-    height:auto;
-    margin-right:10px;
-    object-fit:contain;
-    border-radius:5px;
-}
-
-#questionBox button { margin-left:10px; border:none; padding:6px 10px; border-radius:5px; background:#FFB77D; color:white; font-weight:bold; cursor:pointer; }
-#ordinalRow { display:flex; justify-content:center; flex-wrap:wrap; margin-bottom:10px; gap:8px; }
-.ordinalBox { width:60px; height:60px; border:2px dashed #4E4E4E; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:1rem; background:#fff; position:relative; }
-#petsContainer { display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin-bottom:10px; }
-.petCard { width:80px; height:80px; border-radius:10px; background:#FFF; display:flex; align-items:center; justify-content:center; border:3px solid transparent; cursor:pointer; transition: transform 0.2s, border 0.2s; position:relative; }
-.petCard img { max-width:70%; max-height:70%; }
-.petCard.wrong { animation: wiggle 0.3s; }
-.petCard.correct { border:3px solid green; }
-#messageBox { font-size:1.4rem; margin:5px; color:green; font-weight:bold; min-height:2em; text-align:center; }
-#nextBtn { padding:10px 20px; font-size:1.2rem; border:none; border-radius:10px; background:#FFB77D; color:white; cursor:pointer; display:none; margin-top:5px; }
-#confettiCanvas { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:1000; }
+body { margin:0; font-family:'Comic Sans MS', cursive, sans-serif; background:#FFF7E6; display:flex; flex-direction:column; align-items:center; min-height:100vh;}
+header { width:100%; text-align:center; font-size:2rem; font-weight:bold; background:#FFD6A5; color:#4E4E4E; padding:10px;}
+#logoSplash { position:fixed; top:0; left:0; width:100%; height:100%; background:#fff; display:flex; justify-content:center; align-items:center; z-index:999;}
+#logoSplash img { width:200px;}
+#gameContainer { width:100%; min-height:100vh; display:none; flex-direction:column; align-items:center; padding:10px; background:url('assets/racetrack.png') no-repeat center center; background-size:cover; border-radius:10px;}
+#questionBox { background:#FFEDD5; padding:12px 15px; border-radius:10px; margin-bottom:5px; display:flex; align-items:center; justify-content:flex-start; font-size:1.2rem; color:#4E4E4E; width:95%; max-width:1024px;}
+#questionBox img { width:60px; height:auto; margin-right:10px; object-fit:contain; border-radius:5px;}
+#questionStory { font-size:1rem; margin:5px; color:#4E4E4E; text-align:center; max-width:800px;}
+#questionBox button { margin-left:10px; border:none; padding:6px 10px; border-radius:5px; background:#FFB77D; color:white; font-weight:bold; cursor:pointer;}
+#ordinalRow { display:flex; justify-content:center; flex-wrap:wrap; margin-bottom:10px; gap:8px;}
+.ordinalBox { width:60px; height:60px; border:2px dashed #4E4E4E; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:1rem; background:#fff; position:relative;}
+#petsContainer { display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin-bottom:10px;}
+.petCard { width:80px; height:80px; border-radius:10px; background:#FFF; display:flex; align-items:center; justify-content:center; border:3px solid transparent; cursor:pointer; transition: transform 0.3s, border 0.3s; position:relative; animation: hop 1.5s ease-in-out infinite alternate;}
+.petCard img { max-width:70%; max-height:70%;}
+.petCard.wrong { animation: wiggle 0.3s;}
+.petCard.correct { border:3px solid green;}
+#messageBox { font-size:1.4rem; margin:5px; color:green; font-weight:bold; min-height:2em; text-align:center;}
+#nextBtn { padding:10px 20px; font-size:1.2rem; border:none; border-radius:10px; background:#FFB77D; color:white; cursor:pointer; display:none; margin-top:5px;}
+#confettiCanvas { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:1000;}
 @keyframes wiggle {0%{transform:rotate(0deg);}25%{transform:rotate(10deg);}50%{transform:rotate(-10deg);}75%{transform:rotate(10deg);}100%{transform:rotate(0deg);}}
-@media(max-width:600px){ .petCard{width:60px;height:60px;} .ordinalBox{width:45px;height:45px;font-size:0.9rem;} #questionBox img{width:50px;} }
+@keyframes hop {0%{transform:translateY(0px);}100%{transform:translateY(-10px);}}
+@media(max-width:600px){ .petCard{width:60px;height:60px;} .ordinalBox{width:45px;height:45px;font-size:0.9rem;} #questionBox img{width:50px;} #questionStory{font-size:0.9rem;} }
 </style>
 </head>
 <body>
@@ -70,7 +42,7 @@ header { width:100%; text-align:center; font-size:2rem; font-weight:bold; backgr
         <span id="questionText"></span>
         <button id="replayBtn">🔊</button>
     </div>
-
+    <div id="questionStory"></div>
     <div id="ordinalRow"></div>
     <div id="petsContainer"></div>
     <div id="messageBox"></div>
@@ -83,23 +55,23 @@ header { width:100%; text-align:center; font-size:2rem; font-weight:bold; backgr
 <audio id="wrongSound" src="assets/wrong.mp3"></audio>
 
 <script>
-// Define rounds with pets and questions
-const rounds = [
-    {type:'click', question:'Who is in 1st place?', correct:'dog', pets:['dog','cat','bunny','turtle','bird','hamster','fish','guineapig','hedgehog','puppy'], voice:'Who is in first place?'},
-    {type:'click', question:'Who is in 3rd place?', correct:'bunny', pets:['dog','cat','bunny','turtle','bird','hamster','fish','guineapig','hedgehog','puppy'], voice:'Who is in third place?'},
-    {type:'click', question:'Who is in 5th place?', correct:'bird', pets:['dog','cat','bunny','turtle','bird','hamster','fish','guineapig','hedgehog','puppy'], voice:'Who is in fifth place?'},
-    {type:'click', question:'Who is in 7th place?', correct:'fish', pets:['dog','cat','bunny','turtle','bird','hamster','fish','guineapig','hedgehog','puppy'], voice:'Who is in seventh place?'},
-    {type:'click', question:'Who is in 10th place?', correct:'puppy', pets:['dog','cat','bunny','turtle','bird','hamster','fish','guineapig','hedgehog','puppy'], voice:'Who is in tenth place?'},
-    {type:'arrange', question:'Place the dog in 1st position', correctOrder:['dog','cat','bunny','turtle','bird','hamster','fish','guineapig','hedgehog','puppy'], voice:'Place the dog in first position'},
-    {type:'arrange', question:'Place the cat in 2nd position', correctOrder:['dog','cat','bunny','turtle','bird','hamster','fish','guineapig','hedgehog','puppy'], voice:'Place the cat in second position'},
-    {type:'arrange', question:'Place the bunny in 3rd position', correctOrder:['dog','cat','bunny','turtle','bird','hamster','fish','guineapig','hedgehog','puppy'], voice:'Place the bunny in third position'},
-    {type:'arrange', question:'Place the turtle in 4th position', correctOrder:['dog','cat','bunny','turtle','bird','hamster','fish','guineapig','hedgehog','puppy'], voice:'Place the turtle in fourth position'},
-    {type:'arrange', question:'Place the bird in 5th position', correctOrder:['dog','cat','bunny','turtle','bird','hamster','fish','guineapig','hedgehog','puppy'], voice:'Place the bird in fifth position'}
+const rounds=[
+{type:'click', question:'Who is in 1st place?', story:'The dog is fastest and leads the parade!', correct:'dog', pets:['dog','cat','bunny','turtle','bird','hamster','fish','guineapig','hedgehog','puppy'], voice:'Who is in first place?'},
+{type:'click', question:'Who is in 3rd place?', story:'The bunny hops faster than the turtle but slower than the dog.', correct:'bunny', pets:['dog','cat','bunny','turtle','bird','hamster','fish','guineapig','hedgehog','puppy'], voice:'Who is in third place?'},
+{type:'click', question:'Who is in 5th place?', story:'The bird is flying mid-pack in the parade.', correct:'bird', pets:['dog','cat','bunny','turtle','bird','hamster','fish','guineapig','hedgehog','puppy'], voice:'Who is in fifth place?'},
+{type:'click', question:'Who is in 7th place?', story:'The blue bird is coming after some pets.', correct:'fish', pets:['dog','cat','bunny','turtle','bird','hamster','fish','guineapig','hedgehog','puppy'], voice:'Who is in seventh place?'},
+{type:'click', question:'Who is in 10th place?', story:'The puppy comes last in the parade.', correct:'puppy', pets:['dog','cat','bunny','turtle','bird','hamster','fish','guineapig','hedgehog','puppy'], voice:'Who is in tenth place?'},
+{type:'arrange', question:'Place the dog in 1st position', story:'Arrange the pets in parade order.', correctOrder:['dog','cat','bunny','turtle','bird','hamster','fish','guineapig','hedgehog','puppy'], voice:'Place the dog in first position'},
+{type:'arrange', question:'Place the cat in 2nd position', story:'Arrange the pets in parade order.', correctOrder:['dog','cat','bunny','turtle','bird','hamster','fish','guineapig','hedgehog','puppy'], voice:'Place the cat in second position'},
+{type:'arrange', question:'Place the bunny in 3rd position', story:'Arrange the pets in parade order.', correctOrder:['dog','cat','bunny','turtle','bird','hamster','fish','guineapig','hedgehog','puppy'], voice:'Place the bunny in third position'},
+{type:'arrange', question:'Place the turtle in 4th position', story:'Arrange the pets in parade order.', correctOrder:['dog','cat','bunny','turtle','bird','hamster','fish','guineapig','hedgehog','puppy'], voice:'Place the turtle in fourth position'},
+{type:'arrange', question:'Place the bird in 5th position', story:'Arrange the pets in parade order.', correctOrder:['dog','cat','bunny','turtle','bird','hamster','fish','guineapig','hedgehog','puppy'], voice:'Place the bird in fifth position'}
 ];
 
 let currentRound=0, attempts=0;
 const gameContainer=document.getElementById('gameContainer');
 const questionText=document.getElementById('questionText');
+const questionStory=document.getElementById('questionStory');
 const petsContainer=document.getElementById('petsContainer');
 const ordinalRow=document.getElementById('ordinalRow');
 const messageBox=document.getElementById('messageBox');
@@ -108,7 +80,6 @@ const replayBtn=document.getElementById('replayBtn');
 const correctSound=document.getElementById('correctSound');
 const wrongSound=document.getElementById('wrongSound');
 
-// Show logo 5s
 window.addEventListener('load',()=>{ setTimeout(()=>{ document.getElementById('logoSplash').style.display='none'; gameContainer.style.display='flex'; loadRound(); },5000); });
 
 replayBtn.addEventListener('click', ()=> playVoice(rounds[currentRound].voice));
@@ -117,20 +88,19 @@ function playVoice(text){ const utter=new SpeechSynthesisUtterance(text); utter.
 function loadRound(){
     attempts=0; nextBtn.style.display='none'; petsContainer.innerHTML=''; ordinalRow.innerHTML=''; messageBox.innerText='';
     const round=rounds[currentRound];
-    questionText.innerText=round.question; playVoice(round.voice);
+    questionText.innerText=round.question; 
+    questionStory.innerText=round.story;
+    playVoice(round.voice);
 
-    // Create ordinal boxes above pets
     for(let i=0;i<10;i++){
-        const box=document.createElement('div');
-        box.classList.add('ordinalBox'); box.dataset.index=i;
+        const box=document.createElement('div'); box.classList.add('ordinalBox'); box.dataset.index=i;
         box.innerText=`${i+1}${['st','nd','rd','th','th','th','th','th','th','th'][i]}`;
         ordinalRow.appendChild(box);
     }
 
     const pets=[...round.pets].sort(()=>Math.random()-0.5);
     pets.forEach(p=>{
-        const card=document.createElement('div');
-        card.classList.add('petCard');
+        const card=document.createElement('div'); card.classList.add('petCard');
         const img=document.createElement('img'); img.src=`assets/${p}.png`; img.alt=p; card.appendChild(img);
         petsContainer.appendChild(card);
 
