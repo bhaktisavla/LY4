@@ -93,7 +93,7 @@ height:100vh;
 display:none;
 flex-direction:column;
 align-items:center;
-padding:8px;
+padding:6px;
 overflow:hidden;
 }
 
@@ -108,7 +108,7 @@ text-shadow:3px 3px white;
 }
 
 .roundText{
-font-size:clamp(18px,3vw,28px);
+font-size:clamp(16px,2vw,24px);
 font-weight:bold;
 color:#5c47ff;
 margin-top:2px;
@@ -117,25 +117,25 @@ margin-top:2px;
 /* QUESTION BOX */
 
 .questionBox{
-width:90%;
-max-width:720px;
+width:78%;
+max-width:620px;
 background:
 linear-gradient(135deg,
 #fff0a6,
 #ffd6f0,
 #c8f1ff);
-border-radius:24px;
-padding:10px 14px;
-margin-top:6px;
+border-radius:20px;
+padding:6px 10px;
+margin-top:4px;
 text-align:center;
-box-shadow:0 5px 14px rgba(0,0,0,0.12);
-border:3px solid white;
+box-shadow:0 4px 10px rgba(0,0,0,0.10);
+border:2px solid white;
 }
 
 .question{
-font-size:clamp(18px,2vw,28px);
+font-size:clamp(16px,1.8vw,24px);
 font-weight:bold;
-line-height:1.4;
+line-height:1.3;
 background:
 linear-gradient(90deg,
 #ff4f8b,
@@ -147,9 +147,9 @@ linear-gradient(90deg,
 }
 
 .listenBtn{
-margin-top:10px;
-padding:10px 18px;
-font-size:18px;
+margin-top:8px;
+padding:8px 16px;
+font-size:16px;
 border:none;
 border-radius:14px;
 background:#58c7ff;
@@ -166,7 +166,7 @@ display:flex;
 justify-content:center;
 align-items:center;
 overflow:hidden;
-padding:0 5px;
+padding:0 4px;
 }
 
 .paradeRow{
@@ -174,7 +174,7 @@ width:100%;
 max-width:1300px;
 background:#ffffffdd;
 border-radius:28px;
-padding:10px 6px;
+padding:8px 4px;
 display:flex;
 justify-content:space-evenly;
 align-items:center;
@@ -187,7 +187,7 @@ display:flex;
 justify-content:center;
 align-items:center;
 cursor:pointer;
-padding:4px;
+padding:3px;
 border-radius:16px;
 transition:0.2s;
 }
@@ -201,11 +201,11 @@ object-fit:contain;
 /* FEEDBACK */
 
 .feedback{
-height:42px;
+height:38px;
 display:flex;
 justify-content:center;
 align-items:center;
-font-size:30px;
+font-size:28px;
 font-weight:bold;
 color:#24a148;
 }
@@ -289,22 +289,27 @@ transform:translateY(110vh) rotate(720deg);
 
 @media(max-width:900px){
 
+.questionBox{
+width:92%;
+padding:5px 8px;
+}
+
 .petBox img{
 width:48px;
 height:48px;
 }
 
 .question{
-font-size:16px;
+font-size:15px;
 }
 
 .listenBtn{
-font-size:15px;
-padding:8px 14px;
+font-size:14px;
+padding:7px 12px;
 }
 
 .paradeRow{
-padding:8px 2px;
+padding:6px 2px;
 }
 
 }
@@ -314,6 +319,10 @@ padding:8px 2px;
 .petBox img{
 width:40px;
 height:40px;
+}
+
+.questionBox{
+width:96%;
 }
 
 }
@@ -422,8 +431,6 @@ const pets = [
 
 ];
 
-/* ORDINALS */
-
 const ordinals = [
 "1st","2nd","3rd","4th","5th",
 "6th","7th","8th","9th","10th"
@@ -512,10 +519,7 @@ document.createElement("div");
 petBox.classList.add("petBox");
 
 petBox.innerHTML =
-
-`
-<img src="${pet.image}">
-`;
+`<img src="${pet.image}">`;
 
 petBox.addEventListener("click",()=>{
 
