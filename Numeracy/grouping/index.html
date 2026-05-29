@@ -3,43 +3,37 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Grouping Game - Draw Around Objects</title>
+<title>Grouping Game - Draw to Group</title>
 <style>
-* { box-sizing: border-box; margin:0; padding:0; font-family: Arial, sans-serif; }
-body { background: url('assets/background.jpg') no-repeat center center fixed; background-size: cover; }
-#splash { position: fixed; top:0; left:0; width:100%; height:100%; display:flex; justify-content:center; align-items:center; background:white; z-index:1000; }
+* { box-sizing:border-box; margin:0; padding:0; font-family:Arial,sans-serif; }
+body { background:url('assets/background.jpg') no-repeat center center fixed; background-size:cover; }
+#splash { position:fixed; top:0; left:0; width:100%; height:100%; display:flex; justify-content:center; align-items:center; background:white; z-index:1000; }
 #splash img { max-width:300px; max-height:300px; }
 #game-container { display:none; padding:10px; text-align:center; }
 h1 { font-size:2rem; color:#2d2dff; margin-bottom:10px; }
 #question { font-size:1.5rem; margin:10px 0; color:#ff6600; }
 #repeatBtn { margin-bottom:10px; padding:5px 10px; font-size:1rem; cursor:pointer; background:#6fa8dc; border:none; border-radius:5px; color:white; }
-#objects-box { background:white; border-radius:10px; padding:15px; display:flex; flex-wrap: wrap; justify-content:center; min-height:300px; margin-top:10px; position:relative; touch-action: none; }
+#objects-box { background:white; border-radius:10px; padding:15px; display:flex; flex-wrap:wrap; justify-content:center; min-height:300px; margin-top:10px; position:relative; touch-action:none; }
 .obj { margin:5px; cursor:pointer; position:relative; }
 .obj img { width:60px; height:60px; object-fit:contain; user-select:none; -webkit-user-drag:none; }
-#drawingCanvas { position:absolute; top:0; left:0; pointer-events:none; z-index:10; }
+#drawingCanvas { position:absolute; top:0; left:0; z-index:10; }
 #nextBtn { display:none; margin-top:20px; padding:10px 20px; font-size:1rem; cursor:pointer; background:#28a745; color:white; border:none; border-radius:5px; }
 #confetti-canvas { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:999; display:none; }
 
-@media(max-width:600px){
-    .obj img { width:50px; height:50px; }
-    h1{ font-size:1.5rem; }
-    #question{ font-size:1.2rem; }
-}
+@media(max-width:600px){ .obj img{width:50px;height:50px;} h1{font-size:1.5rem;} #question{font-size:1.2rem;} }
 </style>
 </head>
 <body>
 
-<div id="splash">
-    <img src="assets/innovine-logo.png" alt="Innovine Logo">
-</div>
+<div id="splash"><img src="assets/innovine-logo.png" alt="Innovine Logo"></div>
 
 <div id="game-container">
-    <h1>Grouping</h1>
-    <div id="question"></div>
-    <button id="repeatBtn">🔊 Hear Question Again</button>
-    <div id="objects-box"></div>
-    <canvas id="drawingCanvas"></canvas>
-    <button id="nextBtn">Next Round</button>
+<h1>Grouping</h1>
+<div id="question"></div>
+<button id="repeatBtn">🔊 Hear Question Again</button>
+<div id="objects-box"></div>
+<canvas id="drawingCanvas"></canvas>
+<button id="nextBtn">Next Round</button>
 </div>
 
 <canvas id="confetti-canvas"></canvas>
@@ -60,72 +54,50 @@ const rounds = [
     { question: 'Draw around blue balloons to group them into 10', img:'assets/blue-balloon.png', total:20, group:10 }
 ];
 
-let currentRound = 0;
-let objects = [];
-let groupedObjects = new Set();
-let drawing=false;
-let path=[];
+let currentRound=0, objects=[], groupedObjects=new Set(), path=[], drawing=false;
 
-const splash = document.getElementById('splash');
-const gameContainer = document.getElementById('game-container');
-const questionDiv = document.getElementById('question');
-const objectsBox = document.getElementById('objects-box');
-const repeatBtn = document.getElementById('repeatBtn');
-const nextBtn = document.getElementById('nextBtn');
-const correctAudio = document.getElementById('correctAudio');
-const wrongAudio = document.getElementById('wrongAudio');
-const clapAudio = document.getElementById('clapAudio');
-const drawingCanvas = document.getElementById('drawingCanvas');
-const ctx = drawingCanvas.getContext('2d');
-const confettiCanvas = document.getElementById('confetti-canvas');
+const splash=document.getElementById('splash');
+const gameContainer=document.getElementById('game-container');
+const questionDiv=document.getElementById('question');
+const objectsBox=document.getElementById('objects-box');
+const repeatBtn=document.getElementById('repeatBtn');
+const nextBtn=document.getElementById('nextBtn');
+const correctAudio=document.getElementById('correctAudio');
+const wrongAudio=document.getElementById('wrongAudio');
+const clapAudio=document.getElementById('clapAudio');
+const drawingCanvas=document.getElementById('drawingCanvas');
+const ctx=drawingCanvas.getContext('2d');
+const confettiCanvas=document.getElementById('confetti-canvas');
 
 setTimeout(()=>{ splash.style.display='none'; gameContainer.style.display='block'; loadRound(); },5000);
 
-function speak(text){
-    if('speechSynthesis' in window){
-        const utter = new SpeechSynthesisUtterance(text);
-        utter.rate=0.9;
-        speechSynthesis.speak(utter);
-    }
-}
 repeatBtn.addEventListener('click', ()=>speak(rounds[currentRound].question));
 
+function speak(text){ if('speechSynthesis' in window){ const u=new SpeechSynthesisUtterance(text); u.rate=0.9; speechSynthesis.speak(u); }}
+
 function loadRound(){
-    objectsBox.innerHTML='';
-    objects=[];
-    groupedObjects.clear();
-    nextBtn.style.display='none';
-    const round = rounds[currentRound];
-    questionDiv.textContent = round.question;
-    speak(round.question);
-
+    objectsBox.innerHTML=''; objects=[]; groupedObjects.clear(); nextBtn.style.display='none';
+    const round=rounds[currentRound];
+    questionDiv.textContent=round.question; speak(round.question);
     for(let i=0;i<round.total;i++){
-        const div = document.createElement('div');
-        div.classList.add('obj');
-        const img = document.createElement('img');
-        img.src=round.img;
-        div.appendChild(img);
-        objectsBox.appendChild(div);
-        objects.push(div);
+        const div=document.createElement('div'); div.classList.add('obj');
+        const img=document.createElement('img'); img.src=round.img; div.appendChild(img);
+        objectsBox.appendChild(div); objects.push(div);
     }
-
     drawingCanvas.width=objectsBox.clientWidth;
     drawingCanvas.height=objectsBox.clientHeight;
-    drawingCanvas.style.top = objectsBox.offsetTop+'px';
-    drawingCanvas.style.left = objectsBox.offsetLeft+'px';
-    drawingCanvas.style.pointerEvents = 'auto';
+    drawingCanvas.style.top=objectsBox.offsetTop+'px';
+    drawingCanvas.style.left=objectsBox.offsetLeft+'px';
 }
 
-// Unified touch/mouse coordinates
 function getPos(e){
-    const rect = drawingCanvas.getBoundingClientRect();
+    const rect=drawingCanvas.getBoundingClientRect();
     let clientX, clientY;
     if(e.touches){ clientX=e.touches[0].clientX; clientY=e.touches[0].clientY; }
-    else{ clientX=e.clientX; clientY=e.clientY; }
-    return {x: clientX - rect.left, y: clientY - rect.top};
+    else { clientX=e.clientX; clientY=e.clientY; }
+    return {x:clientX-rect.left, y:clientY-rect.top};
 }
 
-// Drawing events
 drawingCanvas.addEventListener('mousedown', startDraw);
 drawingCanvas.addEventListener('touchstart', e=>{ e.preventDefault(); startDraw(e.touches[0]); });
 drawingCanvas.addEventListener('mousemove', draw);
@@ -134,67 +106,36 @@ drawingCanvas.addEventListener('mouseup', endDraw);
 drawingCanvas.addEventListener('mouseleave', endDraw);
 drawingCanvas.addEventListener('touchend', endDraw);
 
-function startDraw(e){
-    e.preventDefault();
-    drawing=true;
-    path=[];
-    const pos=getPos(e);
-    path.push(pos);
-    ctx.clearRect(0,0,drawingCanvas.width,drawingCanvas.height);
-    ctx.beginPath();
-    ctx.moveTo(pos.x,pos.y);
-}
-function draw(e){
-    if(!drawing) return;
-    const pos=getPos(e);
-    path.push(pos);
-    ctx.lineTo(pos.x,pos.y);
-    ctx.strokeStyle='green';
-    ctx.lineWidth=3;
-    ctx.stroke();
-}
-function endDraw(){
-    if(!drawing) return;
-    drawing=false;
-    ctx.closePath();
-    validateDrawnGroup();
-    ctx.clearRect(0,0,drawingCanvas.width,drawingCanvas.height);
-}
+function startDraw(e){ drawing=true; path=[]; const pos=getPos(e); path.push(pos); ctx.clearRect(0,0,drawingCanvas.width,drawingCanvas.height); ctx.beginPath(); ctx.moveTo(pos.x,pos.y);}
+function draw(e){ if(!drawing) return; const pos=getPos(e); path.push(pos); ctx.lineTo(pos.x,pos.y); ctx.strokeStyle='green'; ctx.lineWidth=3; ctx.stroke(); }
+function endDraw(){ if(!drawing) return; drawing=false; ctx.closePath(); validateDrawnGroup(); ctx.clearRect(0,0,drawingCanvas.width,drawingCanvas.height); }
 
-// Check if object is inside drawn path
-function pointInPath(x,y){
-    ctx.beginPath();
-    ctx.moveTo(path[0].x,path[0].y);
-    for(let i=1;i<path.length;i++){ ctx.lineTo(path[i].x,path[i].y); }
-    ctx.closePath();
-    const inside = ctx.isPointInPath(x,y);
+function pointInPolygon(x,y,poly){
+    let inside=false;
+    for(let i=0,j=poly.length-1;i<poly.length;j=i++){
+        if(((poly[i].y>y)!=(poly[j].y>y)) && (x<(poly[j].x-poly[i].x)*(y-poly[i].y)/(poly[j].y-poly[i].y)+poly[i].x)) inside=!inside;
+    }
     return inside;
 }
 
 function validateDrawnGroup(){
-    const round=rounds[currentRound];
-    let selected=[];
+    const round=rounds[currentRound]; let selected=[];
     objects.forEach(obj=>{
         if(groupedObjects.has(obj)) return;
-        const rect = obj.getBoundingClientRect();
-        const parentRect = objectsBox.getBoundingClientRect();
-        const cx = rect.left+rect.width/2-parentRect.left;
-        const cy = rect.top+rect.height/2-parentRect.top;
-        if(pointInPath(cx,cy)) selected.push(obj);
+        const rect=obj.getBoundingClientRect();
+        const parentRect=objectsBox.getBoundingClientRect();
+        const cx=rect.left+rect.width/2-parentRect.left;
+        const cy=rect.top+rect.height/2-parentRect.top;
+        if(pointInPolygon(cx,cy,path)) selected.push(obj);
     });
     if(selected.length===round.group){
-        selected.forEach(o=>groupedObjects.add(o));
-        selected.forEach(o=>o.style.border='4px solid green');
-        clapAudio.play();
-    } else wrongAudio.play();
-
+        selected.forEach(o=>groupedObjects.add(o)); selected.forEach(o=>o.style.border='4px solid green'); clapAudio.play();
+    } else { wrongAudio.play(); }
     if(groupedObjects.size===round.total) nextBtn.style.display='inline-block';
 }
 
 nextBtn.addEventListener('click', ()=>{
-    currentRound++;
-    if(currentRound<rounds.length) loadRound();
-    else showConfetti();
+    currentRound++; if(currentRound<rounds.length) loadRound(); else showConfetti();
 });
 
 function showConfetti(){
@@ -203,12 +144,7 @@ function showConfetti(){
     confetti({ particleCount:200, spread:100, origin:{y:0.6} });
     setTimeout(()=>{ confettiCanvas.style.display='none'; resetGame(); },3000);
 }
-function resetGame(){
-    if(confirm('🎉 Great Job! Do you want to play again?')){
-        currentRound=0;
-        loadRound();
-    }
-}
+function resetGame(){ if(confirm('🎉 Great Job! Do you want to play again?')){ currentRound=0; loadRound(); } }
 </script>
 </body>
 </html>
