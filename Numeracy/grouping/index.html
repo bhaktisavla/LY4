@@ -426,8 +426,6 @@ function createItems(round){
 const screenW = gameArea.clientWidth;
 const screenH = gameArea.clientHeight;
 
-/* SMALLER SIZE FOR PERFECT FIT */
-
 let size;
 
 if(screenW < 500){
@@ -444,32 +442,34 @@ size = 58;
 
 }
 
-/* COMPACT GRID */
-
 const cols = 5;
 
 const rows =
 Math.ceil(round.count / cols);
 
-/* REDUCED GAPS */
+/* REDUCED ROW GAPS */
 
 const sidePadding = 30;
 
-const topPadding = 25;
+/* MAIN FIX */
 
-const bottomPadding = 25;
+const topPadding = 10;
 
 const usableWidth =
 screenW - sidePadding*2;
 
+/* REDUCED TOTAL HEIGHT */
+
 const usableHeight =
-screenH - topPadding - bottomPadding;
+screenH * 0.68;
+
+/* COMPACT ROWS */
 
 const gapX =
 usableWidth / (cols-1);
 
 const gapY =
-usableHeight / (rows);
+usableHeight / (rows-1);
 
 for(let i=0;i<round.count;i++){
 
@@ -498,10 +498,10 @@ const row = Math.floor(i / cols);
 /* VERY SMALL RANDOMNESS */
 
 const randomX =
-Math.random()*6 - 3;
+Math.random()*4 - 2;
 
 const randomY =
-Math.random()*6 - 3;
+Math.random()*4 - 2;
 
 item.style.left =
 (sidePadding + gapX*col - size/2 + randomX)+"px";
