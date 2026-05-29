@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Grouping Game - Draw to Group</title>
+<title>Grouping Game - Draw Around Objects</title>
 <style>
 * { box-sizing: border-box; margin:0; padding:0; font-family: Arial, sans-serif; }
 body { background: url('assets/background.jpg') no-repeat center center fixed; background-size: cover; }
@@ -13,7 +13,7 @@ body { background: url('assets/background.jpg') no-repeat center center fixed; b
 h1 { font-size:2rem; color:#2d2dff; margin-bottom:10px; }
 #question { font-size:1.5rem; margin:10px 0; color:#ff6600; }
 #repeatBtn { margin-bottom:10px; padding:5px 10px; font-size:1rem; cursor:pointer; background:#6fa8dc; border:none; border-radius:5px; color:white; }
-#objects-box { background:white; border-radius:10px; padding:15px; display:flex; flex-wrap: wrap; justify-content:center; min-height:300px; margin-top:10px; position:relative; }
+#objects-box { background:white; border-radius:10px; padding:15px; display:flex; flex-wrap: wrap; justify-content:center; min-height:300px; margin-top:10px; position:relative; touch-action: none; }
 .obj { margin:5px; cursor:pointer; position:relative; }
 .obj img { width:60px; height:60px; object-fit:contain; user-select:none; -webkit-user-drag:none; }
 #drawingCanvas { position:absolute; top:0; left:0; pointer-events:none; z-index:10; }
@@ -63,6 +63,8 @@ const rounds = [
 let currentRound = 0;
 let objects = [];
 let groupedObjects = new Set();
+let drawing=false;
+let path=[];
 
 const splash = document.getElementById('splash');
 const gameContainer = document.getElementById('game-container');
@@ -76,9 +78,6 @@ const clapAudio = document.getElementById('clapAudio');
 const drawingCanvas = document.getElementById('drawingCanvas');
 const ctx = drawingCanvas.getContext('2d');
 const confettiCanvas = document.getElementById('confetti-canvas');
-
-let drawing=false;
-let path=[];
 
 setTimeout(()=>{ splash.style.display='none'; gameContainer.style.display='block'; loadRound(); },5000);
 
@@ -99,7 +98,7 @@ function loadRound(){
     const round = rounds[currentRound];
     questionDiv.textContent = round.question;
     speak(round.question);
-    
+
     for(let i=0;i<round.total;i++){
         const div = document.createElement('div');
         div.classList.add('obj');
@@ -114,64 +113,66 @@ function loadRound(){
     drawingCanvas.height=objectsBox.clientHeight;
     drawingCanvas.style.top = objectsBox.offsetTop+'px';
     drawingCanvas.style.left = objectsBox.offsetLeft+'px';
+    drawingCanvas.style.pointerEvents = 'auto';
 }
 
-function getMousePos(evt){
+// Unified touch/mouse coordinates
+function getPos(e){
     const rect = drawingCanvas.getBoundingClientRect();
-    let x = evt.clientX-rect.left;
-    let y = evt.clientY-rect.top;
-    return {x,y};
+    let clientX, clientY;
+    if(e.touches){ clientX=e.touches[0].clientX; clientY=e.touches[0].clientY; }
+    else{ clientX=e.clientX; clientY=e.clientY; }
+    return {x: clientX - rect.left, y: clientY - rect.top};
 }
 
-drawingCanvas.addEventListener('mousedown', startDrawing);
-drawingCanvas.addEventListener('touchstart', e=>{ e.preventDefault(); startDrawing(e.touches[0]); });
-
+// Drawing events
+drawingCanvas.addEventListener('mousedown', startDraw);
+drawingCanvas.addEventListener('touchstart', e=>{ e.preventDefault(); startDraw(e.touches[0]); });
 drawingCanvas.addEventListener('mousemove', draw);
 drawingCanvas.addEventListener('touchmove', e=>{ e.preventDefault(); draw(e.touches[0]); });
+drawingCanvas.addEventListener('mouseup', endDraw);
+drawingCanvas.addEventListener('mouseleave', endDraw);
+drawingCanvas.addEventListener('touchend', endDraw);
 
-drawingCanvas.addEventListener('mouseup', endDrawing);
-drawingCanvas.addEventListener('mouseleave', endDrawing);
-drawingCanvas.addEventListener('touchend', endDrawing);
-
-function startDrawing(evt){
+function startDraw(e){
+    e.preventDefault();
     drawing=true;
     path=[];
-    ctx.clearRect(0,0,drawingCanvas.width,drawingCanvas.height);
-    const pos=getMousePos(evt);
+    const pos=getPos(e);
     path.push(pos);
+    ctx.clearRect(0,0,drawingCanvas.width,drawingCanvas.height);
     ctx.beginPath();
     ctx.moveTo(pos.x,pos.y);
 }
-function draw(evt){
+function draw(e){
     if(!drawing) return;
-    const pos=getMousePos(evt);
+    const pos=getPos(e);
     path.push(pos);
     ctx.lineTo(pos.x,pos.y);
     ctx.strokeStyle='green';
     ctx.lineWidth=3;
     ctx.stroke();
 }
-function endDrawing(){
+function endDraw(){
     if(!drawing) return;
     drawing=false;
     ctx.closePath();
-    validateGroup();
+    validateDrawnGroup();
+    ctx.clearRect(0,0,drawingCanvas.width,drawingCanvas.height);
 }
 
+// Check if object is inside drawn path
 function pointInPath(x,y){
     ctx.beginPath();
     ctx.moveTo(path[0].x,path[0].y);
-    for(let i=1;i<path.length;i++){
-        ctx.lineTo(path[i].x,path[i].y);
-    }
+    for(let i=1;i<path.length;i++){ ctx.lineTo(path[i].x,path[i].y); }
     ctx.closePath();
     const inside = ctx.isPointInPath(x,y);
-    ctx.closePath();
     return inside;
 }
 
-function validateGroup(){
-    const round = rounds[currentRound];
+function validateDrawnGroup(){
+    const round=rounds[currentRound];
     let selected=[];
     objects.forEach(obj=>{
         if(groupedObjects.has(obj)) return;
@@ -179,30 +180,21 @@ function validateGroup(){
         const parentRect = objectsBox.getBoundingClientRect();
         const cx = rect.left+rect.width/2-parentRect.left;
         const cy = rect.top+rect.height/2-parentRect.top;
-        if(pointInPath(cx,cy)){
-            selected.push(obj);
-        }
+        if(pointInPath(cx,cy)) selected.push(obj);
     });
     if(selected.length===round.group){
         selected.forEach(o=>groupedObjects.add(o));
         selected.forEach(o=>o.style.border='4px solid green');
         clapAudio.play();
-    } else {
-        wrongAudio.play();
-    }
-    ctx.clearRect(0,0,drawingCanvas.width,drawingCanvas.height);
-    if(groupedObjects.size===round.total){
-        nextBtn.style.display='inline-block';
-    }
+    } else wrongAudio.play();
+
+    if(groupedObjects.size===round.total) nextBtn.style.display='inline-block';
 }
 
 nextBtn.addEventListener('click', ()=>{
     currentRound++;
-    if(currentRound<rounds.length){
-        loadRound();
-    } else {
-        showConfetti();
-    }
+    if(currentRound<rounds.length) loadRound();
+    else showConfetti();
 });
 
 function showConfetti(){
