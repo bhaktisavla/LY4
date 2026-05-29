@@ -85,7 +85,6 @@ function loadRound(){
         const img=document.createElement('img'); img.src=round.img; div.appendChild(img);
         objectsBox.appendChild(div); objects.push(div);
     }
-    // Set canvas size over objects box
     drawingCanvas.width=objectsBox.clientWidth;
     drawingCanvas.height=objectsBox.clientHeight;
     drawingCanvas.style.top=objectsBox.offsetTop+'px';
@@ -113,7 +112,7 @@ drawingCanvas.addEventListener('touchend',endDraw);
 
 function startDraw(e){drawing=true; path=[]; ctx.beginPath(); const pos=getPos(e); path.push(pos); ctx.moveTo(pos.x,pos.y);}
 function draw(e){if(!drawing) return; const pos=getPos(e); path.push(pos); ctx.lineTo(pos.x,pos.y); ctx.strokeStyle='green'; ctx.lineWidth=3; ctx.stroke();}
-function endDraw(){if(!drawing) return; drawing=false; validateDrawnGroup();}
+function endDraw(){if(!drawing) return; drawing=false; validateDrawnGroup();} // keep path visible
 
 // Tolerant object detection using corners of each object
 function pointInPolygon(x,y,poly){let inside=false; for(let i=0,j=poly.length-1;i<poly.length;j=i++){if(((poly[i].y>y)!=(poly[j].y>y))&&(x<(poly[j].x-poly[i].x)*(y-poly[i].y)/(poly[j].y-poly[i].y)+poly[i].x)) inside=!inside;} return inside;}
@@ -128,12 +127,13 @@ function objectIntersectsPath(obj){
     return points.some(p=>pointInPolygon(p.x,p.y,path));
 }
 
-// Validate drawn group
+// Validate drawn group and keep track of all grouped objects
 function validateDrawnGroup(){
     const round=rounds[currentRound]; let selected=[];
     objects.forEach(obj=>{if(groupedObjects.has(obj)) return; if(objectIntersectsPath(obj)) selected.push(obj);});
     if(selected.length===round.group){selected.forEach(o=>groupedObjects.add(o)); clapAudio.play();}
     else wrongAudio.play();
+    // Show next round only if all objects grouped
     if(groupedObjects.size===round.total) nextBtn.style.display='inline-block';
 }
 
