@@ -3,6 +3,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+
 <meta name="viewport"
 content="width=device-width,
 initial-scale=1.0,
@@ -82,6 +83,7 @@ text-align:center;
 font-size:clamp(18px,2.2vw,30px);
 font-weight:bold;
 color:#4b3f72;
+line-height:1.3;
 }
 
 #speakBtn{
@@ -111,6 +113,7 @@ position:absolute;
 display:flex;
 justify-content:center;
 align-items:center;
+transition:0.2s;
 }
 
 .item img{
@@ -232,7 +235,10 @@ opacity:0;
 
 <div id="instructionBox">
 <div id="instruction"></div>
-<button id="speakBtn">🔊 Hear Again</button>
+
+<button id="speakBtn">
+🔊 Hear Again
+</button>
 </div>
 
 <div id="gameArea">
@@ -242,8 +248,13 @@ opacity:0;
 <div id="feedback"></div>
 
 <div id="endScreen">
+
 <h2>🎉 Great Job! 🎉</h2>
-<button id="playAgain">Play Again</button>
+
+<button id="playAgain">
+Play Again
+</button>
+
 </div>
 
 </div>
@@ -310,17 +321,28 @@ group:10
 ];
 
 const gameArea = document.getElementById("gameArea");
+
 const canvas = document.getElementById("drawCanvas");
+
 const ctx = canvas.getContext("2d");
 
-const instruction = document.getElementById("instruction");
-const roundText = document.getElementById("roundText");
+const instruction =
+document.getElementById("instruction");
 
-const rightSound = document.getElementById("rightSound");
-const wrongSound = document.getElementById("wrongSound");
-const clapSound = document.getElementById("clapSound");
+const roundText =
+document.getElementById("roundText");
 
-const feedback = document.getElementById("feedback");
+const rightSound =
+document.getElementById("rightSound");
+
+const wrongSound =
+document.getElementById("wrongSound");
+
+const clapSound =
+document.getElementById("clapSound");
+
+const feedback =
+document.getElementById("feedback");
 
 let currentRound = 0;
 
@@ -335,6 +357,7 @@ let wrongAttempts = 0;
 function resizeCanvas(){
 
 canvas.width = gameArea.clientWidth;
+
 canvas.height = gameArea.clientHeight;
 
 }
@@ -351,7 +374,8 @@ function speak(text){
 
 speechSynthesis.cancel();
 
-const msg = new SpeechSynthesisUtterance(text);
+const msg =
+new SpeechSynthesisUtterance(text);
 
 msg.rate = 0.9;
 
@@ -359,7 +383,8 @@ speechSynthesis.speak(msg);
 
 }
 
-document.getElementById("speakBtn").onclick=()=>{
+document.getElementById("speakBtn")
+.onclick=()=>{
 
 speak(rounds[currentRound].instruction);
 
@@ -371,13 +396,17 @@ grouped = [];
 
 wrongAttempts = 0;
 
+points = [];
+
 ctx.clearRect(0,0,canvas.width,canvas.height);
 
-document.querySelectorAll(".item").forEach(el=>el.remove());
+document.querySelectorAll(".item")
+.forEach(el=>el.remove());
 
 const round = rounds[currentRound];
 
-instruction.textContent = round.instruction;
+instruction.textContent =
+round.instruction;
 
 roundText.textContent =
 `Round ${currentRound+1} / 7`;
@@ -391,17 +420,18 @@ createItems(round);
 function createItems(round){
 
 const screenW = gameArea.clientWidth;
+
 const screenH = gameArea.clientHeight;
 
 let size;
 
 if(screenW < 500){
 
-size = 48;
+size = 50;
 
 }else if(screenW < 900){
 
-size = 58;
+size = 60;
 
 }else{
 
@@ -419,44 +449,50 @@ cols = 2;
 
 cols = 3;
 
-}else if(round.group === 5){
-
-cols = 5;
-
 }else{
 
 cols = 5;
 
 }
 
-const rows = Math.ceil(round.count / cols);
+const rows =
+Math.ceil(round.count / cols);
 
-const gapX = screenW / (cols + 1);
+const gapX =
+screenW / (cols + 1);
 
-const gapY = screenH / (rows + 1);
+const gapY =
+screenH / (rows + 1);
 
 for(let i=0;i<round.count;i++){
 
-const item = document.createElement("div");
+const item =
+document.createElement("div");
 
 item.className = "item";
 
 item.dataset.index = i;
 
 item.style.width = size + "px";
+
 item.style.height = size + "px";
 
-const img = document.createElement("img");
+const img =
+document.createElement("img");
 
 img.src = round.image;
 
 item.appendChild(img);
 
 const col = i % cols;
+
 const row = Math.floor(i / cols);
 
-const randomX = Math.random()*15 - 7;
-const randomY = Math.random()*15 - 7;
+const randomX =
+Math.random()*15 - 7;
+
+const randomY =
+Math.random()*15 - 7;
 
 item.style.left =
 (gapX*(col+1)-size/2+randomX)+"px";
@@ -483,25 +519,33 @@ setTimeout(()=>{
 
 feedback.style.display = "none";
 
-},1000);
+},900);
 
 }
 
 function pointInPolygon(point, vs){
 
-let x = point.x, y = point.y;
+let x = point.x;
+let y = point.y;
 
 let inside = false;
 
-for(let i=0,j=vs.length-1;i<vs.length;j=i++){
+for(let i=0,j=vs.length-1;
+i<vs.length;
+j=i++){
 
-let xi = vs[i].x, yi = vs[i].y;
-let xj = vs[j].x, yj = vs[j].y;
+let xi = vs[i].x;
+let yi = vs[i].y;
+
+let xj = vs[j].x;
+let yj = vs[j].y;
 
 let intersect =
 ((yi > y)!=(yj > y))
 &&
-(x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+(x < (xj - xi) *
+(y - yi) /
+(yj - yi) + xi);
 
 if(intersect) inside = !inside;
 
@@ -521,7 +565,8 @@ return items.filter(item=>{
 if(grouped.includes(item.dataset.index))
 return false;
 
-const rect = item.getBoundingClientRect();
+const rect =
+item.getBoundingClientRect();
 
 const parent =
 gameArea.getBoundingClientRect();
@@ -598,18 +643,21 @@ ctx.stroke();
 
 function getPos(e){
 
-const rect = canvas.getBoundingClientRect();
+const rect =
+canvas.getBoundingClientRect();
 
 let x,y;
 
 if(e.touches){
 
 x = e.touches[0].clientX - rect.left;
+
 y = e.touches[0].clientY - rect.top;
 
 }else{
 
 x = e.clientX - rect.left;
+
 y = e.clientY - rect.top;
 
 }
@@ -652,34 +700,57 @@ return;
 
 }
 
+/* CLOSE SHAPE */
+
 points.push(points[0]);
 
 drawPath();
 
-const selected = getSelectedItems();
+const selected =
+getSelectedItems();
 
-const needed = rounds[currentRound].group;
+const needed =
+rounds[currentRound].group;
+
+/* CORRECT */
 
 if(selected.length === needed){
 
 selected.forEach(item=>{
 
+if(!grouped.includes(item.dataset.index)){
+
 grouped.push(item.dataset.index);
 
 item.classList.add("glow");
 
+}
+
 });
 
 rightSound.currentTime = 0;
+
 rightSound.play();
 
 showFeedback("✔",true);
 
-if(grouped.length === rounds[currentRound].count){
+/* CLEAR GREEN LINE */
+
+setTimeout(()=>{
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+},500);
+
+/* ROUND COMPLETE */
+
+if(grouped.length >=
+rounds[currentRound].count){
 
 setTimeout(()=>{
 
 clapSound.currentTime = 0;
+
 clapSound.play();
 
 currentRound++;
@@ -696,21 +767,18 @@ startRound();
 
 },1400);
 
-}else{
-
-setTimeout(()=>{
-
-ctx.clearRect(0,0,canvas.width,canvas.height);
-
-},800);
+}
 
 }
 
-}else{
+/* WRONG */
+
+else{
 
 wrongAttempts++;
 
 wrongSound.currentTime = 0;
+
 wrongSound.play();
 
 showFeedback("✖",false);
@@ -723,11 +791,15 @@ gameArea.classList.remove("shake");
 
 },400);
 
+/* REMOVE WRONG LINE */
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
 setTimeout(()=>{
 
 ctx.clearRect(0,0,canvas.width,canvas.height);
 
-},500);
+},100);
 
 if(wrongAttempts >= 2){
 
@@ -752,13 +824,37 @@ items[i].classList.add("glow");
 
 }
 
-canvas.addEventListener("mousedown",startDraw);
-canvas.addEventListener("mousemove",moveDraw);
-canvas.addEventListener("mouseup",endDraw);
+canvas.addEventListener(
+"mousedown",
+startDraw
+);
 
-canvas.addEventListener("touchstart",startDraw,{passive:false});
-canvas.addEventListener("touchmove",moveDraw,{passive:false});
-canvas.addEventListener("touchend",endDraw);
+canvas.addEventListener(
+"mousemove",
+moveDraw
+);
+
+canvas.addEventListener(
+"mouseup",
+endDraw
+);
+
+canvas.addEventListener(
+"touchstart",
+startDraw,
+{passive:false}
+);
+
+canvas.addEventListener(
+"touchmove",
+moveDraw,
+{passive:false}
+);
+
+canvas.addEventListener(
+"touchend",
+endDraw
+);
 
 function endGame(){
 
@@ -773,7 +869,8 @@ function createConfetti(){
 
 for(let i=0;i<120;i++){
 
-const confetti = document.createElement("div");
+const confetti =
+document.createElement("div");
 
 confetti.className = "confetti";
 
