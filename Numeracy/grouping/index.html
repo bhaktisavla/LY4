@@ -1,150 +1,635 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Grouping Game - Draw to Group</title>
-<style>
-* { box-sizing:border-box; margin:0; padding:0; font-family:Arial,sans-serif; }
-body { background:url('assets/background.jpg') no-repeat center center fixed; background-size:cover; }
-#splash { position:fixed; top:0; left:0; width:100%; height:100%; display:flex; justify-content:center; align-items:center; background:white; z-index:1000; }
-#splash img { max-width:300px; max-height:300px; }
-#game-container { display:none; padding:10px; text-align:center; }
-h1 { font-size:2rem; color:#2d2dff; margin-bottom:10px; }
-#question { font-size:1.5rem; margin:10px 0; color:#ff6600; }
-#repeatBtn { margin-bottom:10px; padding:5px 10px; font-size:1rem; cursor:pointer; background:#6fa8dc; border:none; border-radius:5px; color:white; }
-#objects-box { background:white; border-radius:10px; padding:15px; display:flex; flex-wrap:wrap; justify-content:center; min-height:300px; margin-top:10px; position:relative; touch-action:none; }
-.obj { margin:5px; cursor:pointer; position:relative; }
-.obj img { width:60px; height:60px; object-fit:contain; user-select:none; -webkit-user-drag:none; }
-#drawingCanvas { position:absolute; top:0; left:0; z-index:10; }
-#nextBtn { display:none; margin-top:20px; padding:10px 20px; font-size:1rem; cursor:pointer; background:#28a745; color:white; border:none; border-radius:5px; }
-#confetti-canvas { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:999; display:none; }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Grouping Game</title>
 
-@media(max-width:600px){ .obj img{width:50px;height:50px;} h1{font-size:1.5rem;} #question{font-size:1.2rem;} }
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    touch-action:none;
+}
+
+body{
+    font-family:Arial, sans-serif;
+    overflow:hidden;
+    background:url('assets/background.jpg') center center/cover no-repeat;
+    height:100vh;
+}
+
+#gameContainer{
+    width:100vw;
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+    position:relative;
+    background:rgba(255,255,255,0.15);
+    backdrop-filter:blur(2px);
+}
+
+header{
+    width:100%;
+    padding:10px;
+    text-align:center;
+    background:rgba(255,255,255,0.9);
+    box-shadow:0 2px 5px rgba(0,0,0,0.1);
+}
+
+h1{
+    color:#ff6b6b;
+    font-size:clamp(24px,4vw,42px);
+}
+
+#roundText{
+    margin-top:5px;
+    font-size:clamp(14px,2vw,20px);
+    color:#444;
+    font-weight:bold;
+}
+
+#instructionBox{
+    margin-top:10px;
+    background:#fff8e7;
+    border-radius:20px;
+    padding:12px 16px;
+    width:95%;
+    max-width:1000px;
+    text-align:center;
+    box-shadow:0 4px 8px rgba(0,0,0,0.15);
+}
+
+#instruction{
+    font-size:clamp(18px,2.2vw,32px);
+    color:#4b3f72;
+    font-weight:bold;
+}
+
+#speakBtn{
+    margin-top:10px;
+    padding:8px 14px;
+    border:none;
+    border-radius:12px;
+    background:#ffd166;
+    font-size:16px;
+    cursor:pointer;
+}
+
+#gameArea{
+    position:relative;
+    width:95%;
+    flex:1;
+    margin:10px auto;
+    background:white;
+    border-radius:25px;
+    overflow:hidden;
+    border:5px solid #ffffff;
+    box-shadow:0 5px 15px rgba(0,0,0,0.2);
+}
+
+.item{
+    position:absolute;
+    width:clamp(45px,7vw,80px);
+    height:clamp(45px,7vw,80px);
+    user-select:none;
+}
+
+.item img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    pointer-events:none;
+}
+
+canvas{
+    position:absolute;
+    top:0;
+    left:0;
+    z-index:10;
+}
+
+#feedback{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    font-size:clamp(40px,7vw,90px);
+    font-weight:bold;
+    display:none;
+    z-index:20;
+}
+
+.correct{
+    color:#28a745;
+}
+
+.wrong{
+    color:#ff3b3b;
+}
+
+.glow{
+    animation:glow 1s infinite alternate;
+}
+
+@keyframes glow{
+    from{
+        box-shadow:0 0 10px #00ff88;
+    }
+    to{
+        box-shadow:0 0 25px #00ff88;
+    }
+}
+
+.shake{
+    animation:shake 0.4s;
+}
+
+@keyframes shake{
+    0%{transform:translateX(0);}
+    25%{transform:translateX(-5px);}
+    50%{transform:translateX(5px);}
+    75%{transform:translateX(-5px);}
+    100%{transform:translateX(0);}
+}
+
+#logoScreen{
+    position:fixed;
+    inset:0;
+    background:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:9999;
+}
+
+#logoScreen img{
+    width:min(60vw,300px);
+}
+
+#endScreen{
+    position:absolute;
+    inset:0;
+    background:rgba(255,255,255,0.95);
+    display:none;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    z-index:50;
+}
+
+#endScreen h2{
+    font-size:clamp(32px,5vw,60px);
+    color:#ff6b6b;
+    margin-bottom:20px;
+}
+
+#playAgain{
+    padding:14px 30px;
+    font-size:24px;
+    border:none;
+    border-radius:18px;
+    background:#06d6a0;
+    color:white;
+    cursor:pointer;
+}
+
+.confetti{
+    position:absolute;
+    width:10px;
+    height:10px;
+    background:red;
+    top:-20px;
+    animation:fall linear forwards;
+}
+
+@keyframes fall{
+    to{
+        transform:translateY(110vh) rotate(720deg);
+        opacity:0;
+    }
+}
 </style>
 </head>
+
 <body>
 
-<div id="splash"><img src="assets/innovine-logo.png" alt="Innovine Logo"></div>
-
-<div id="game-container">
-<h1>Grouping</h1>
-<div id="question"></div>
-<button id="repeatBtn">🔊 Hear Question Again</button>
-<div id="objects-box"></div>
-<canvas id="drawingCanvas"></canvas>
-<button id="nextBtn">Next Round</button>
+<div id="logoScreen">
+    <img src="assets/innovine-logo.png">
 </div>
 
-<canvas id="confetti-canvas"></canvas>
+<div id="gameContainer">
 
-<audio id="correctAudio" src="assets/correct.mp3"></audio>
-<audio id="wrongAudio" src="assets/wrong.mp3"></audio>
-<audio id="clapAudio" src="assets/freesound_community-claps-44774.mp3"></audio>
+<header>
+    <h1>Grouping</h1>
+    <div id="roundText">Round 1 / 7</div>
+</header>
 
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<div id="instructionBox">
+    <div id="instruction"></div>
+    <button id="speakBtn">🔊 Hear Again</button>
+</div>
+
+<div id="gameArea">
+    <canvas id="drawCanvas"></canvas>
+
+    <div id="feedback"></div>
+
+    <div id="endScreen">
+        <h2>🎉 Great Job! 🎉</h2>
+        <button id="playAgain">Play Again</button>
+    </div>
+
+</div>
+
+</div>
+
+<audio id="rightSound" src="assets/right.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="clapSound" src="assets/clapping.mp3"></audio>
+
 <script>
+
 const rounds = [
-    { question: 'Draw around socks to group them into 2', img:'assets/sock.png', total:10, group:2 },
-    { question: 'Draw around marbles to group them into 3', img:'assets/marble.png', total:12, group:3 },
-    { question: 'Draw around dice to group them into 5', img:'assets/dice.png', total:15, group:5 },
-    { question: 'Draw around balls to group them into 10', img:'assets/ball.png', total:20, group:10 },
-    { question: 'Draw around pink balloons to group them into 3', img:'assets/pink-balloon.png', total:15, group:3 },
-    { question: 'Draw around apples to group them into 5', img:'assets/apple.png', total:20, group:5 },
-    { question: 'Draw around blue balloons to group them into 10', img:'assets/blue-balloon.png', total:20, group:10 }
+{
+instruction:"Circle the socks to group them into 2.",
+image:"assets/sock.png",
+count:10,
+group:2
+},
+{
+instruction:"Circle the marbles to group them into 3.",
+image:"assets/marble.png",
+count:12,
+group:3
+},
+{
+instruction:"Circle the dice to group them into 5.",
+image:"assets/dice.png",
+count:15,
+group:5
+},
+{
+instruction:"Circle the balls to group them into 10.",
+image:"assets/ball.png",
+count:20,
+group:10
+},
+{
+instruction:"Circle the balloons to group them into 3.",
+image:"assets/pink-balloon.png",
+count:15,
+group:3
+},
+{
+instruction:"Circle the apples to group them into 5.",
+image:"assets/apple.png",
+count:20,
+group:5
+},
+{
+instruction:"Circle the balloons to group them into 10.",
+image:"assets/blue-balloon.png",
+count:20,
+group:10
+}
 ];
 
-let currentRound=0, objects=[], groupedObjects=new Set(), path=[], drawing=false;
+const gameArea = document.getElementById("gameArea");
+const instruction = document.getElementById("instruction");
+const roundText = document.getElementById("roundText");
+const feedback = document.getElementById("feedback");
+const canvas = document.getElementById("drawCanvas");
+const ctx = canvas.getContext("2d");
 
-const splash=document.getElementById('splash');
-const gameContainer=document.getElementById('game-container');
-const questionDiv=document.getElementById('question');
-const objectsBox=document.getElementById('objects-box');
-const repeatBtn=document.getElementById('repeatBtn');
-const nextBtn=document.getElementById('nextBtn');
-const correctAudio=document.getElementById('correctAudio');
-const wrongAudio=document.getElementById('wrongAudio');
-const clapAudio=document.getElementById('clapAudio');
-const drawingCanvas=document.getElementById('drawingCanvas');
-const ctx=drawingCanvas.getContext('2d');
-const confettiCanvas=document.getElementById('confetti-canvas');
+const rightSound = document.getElementById("rightSound");
+const wrongSound = document.getElementById("wrongSound");
+const clapSound = document.getElementById("clapSound");
 
-setTimeout(()=>{ splash.style.display='none'; gameContainer.style.display='block'; loadRound(); },5000);
+let currentRound = 0;
+let grouped = [];
+let wrongAttempts = 0;
 
-repeatBtn.addEventListener('click', ()=>speak(rounds[currentRound].question));
+let drawing = false;
+let points = [];
 
-function speak(text){ if('speechSynthesis' in window){ const u=new SpeechSynthesisUtterance(text); u.rate=0.9; speechSynthesis.speak(u); }}
+function resizeCanvas(){
+    canvas.width = gameArea.clientWidth;
+    canvas.height = gameArea.clientHeight;
+}
+window.addEventListener("resize", resizeCanvas);
 
-function loadRound(){
-    objectsBox.innerHTML=''; objects=[]; groupedObjects.clear(); nextBtn.style.display='none';
-    const round=rounds[currentRound];
-    questionDiv.textContent=round.question; speak(round.question);
-    for(let i=0;i<round.total;i++){
-        const div=document.createElement('div'); div.classList.add('obj');
-        const img=document.createElement('img'); img.src=round.img; div.appendChild(img);
-        objectsBox.appendChild(div); objects.push(div);
-    }
-    drawingCanvas.width=objectsBox.clientWidth;
-    drawingCanvas.height=objectsBox.clientHeight;
-    drawingCanvas.style.top=objectsBox.offsetTop+'px';
-    drawingCanvas.style.left=objectsBox.offsetLeft+'px';
+function speak(text){
+    speechSynthesis.cancel();
+    const msg = new SpeechSynthesisUtterance(text);
+    msg.rate = 0.9;
+    speechSynthesis.speak(msg);
 }
 
-function getPos(e){
-    const rect=drawingCanvas.getBoundingClientRect();
-    let clientX, clientY;
-    if(e.touches){ clientX=e.touches[0].clientX; clientY=e.touches[0].clientY; }
-    else { clientX=e.clientX; clientY=e.clientY; }
-    return {x:clientX-rect.left, y:clientY-rect.top};
+document.getElementById("speakBtn").addEventListener("click",()=>{
+    speak(rounds[currentRound].instruction);
+});
+
+function startRound(){
+
+    grouped = [];
+    wrongAttempts = 0;
+
+    gameArea.querySelectorAll(".item").forEach(el=>el.remove());
+
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    const round = rounds[currentRound];
+
+    instruction.textContent = round.instruction;
+    roundText.textContent = `Round ${currentRound+1} / 7`;
+
+    speak(round.instruction);
+
+    createItems(round);
+
 }
 
-drawingCanvas.addEventListener('mousedown', startDraw);
-drawingCanvas.addEventListener('touchstart', e=>{ e.preventDefault(); startDraw(e.touches[0]); });
-drawingCanvas.addEventListener('mousemove', draw);
-drawingCanvas.addEventListener('touchmove', e=>{ e.preventDefault(); draw(e.touches[0]); });
-drawingCanvas.addEventListener('mouseup', endDraw);
-drawingCanvas.addEventListener('mouseleave', endDraw);
-drawingCanvas.addEventListener('touchend', endDraw);
+function createItems(round){
 
-function startDraw(e){ drawing=true; path=[]; const pos=getPos(e); path.push(pos); ctx.clearRect(0,0,drawingCanvas.width,drawingCanvas.height); ctx.beginPath(); ctx.moveTo(pos.x,pos.y);}
-function draw(e){ if(!drawing) return; const pos=getPos(e); path.push(pos); ctx.lineTo(pos.x,pos.y); ctx.strokeStyle='green'; ctx.lineWidth=3; ctx.stroke(); }
-function endDraw(){ if(!drawing) return; drawing=false; ctx.closePath(); validateDrawnGroup(); ctx.clearRect(0,0,drawingCanvas.width,drawingCanvas.height); }
+    const cols = Math.ceil(Math.sqrt(round.count));
 
-function pointInPolygon(x,y,poly){
-    let inside=false;
-    for(let i=0,j=poly.length-1;i<poly.length;j=i++){
-        if(((poly[i].y>y)!=(poly[j].y>y)) && (x<(poly[j].x-poly[i].x)*(y-poly[i].y)/(poly[j].y-poly[i].y)+poly[i].x)) inside=!inside;
+    const paddingX = gameArea.clientWidth / (cols+1);
+
+    const rows = Math.ceil(round.count / cols);
+
+    const paddingY = gameArea.clientHeight / (rows+1);
+
+    for(let i=0;i<round.count;i++){
+
+        const item = document.createElement("div");
+        item.className = "item";
+        item.dataset.index = i;
+
+        const img = document.createElement("img");
+        img.src = round.image;
+
+        item.appendChild(img);
+
+        const col = i % cols;
+        const row = Math.floor(i / cols);
+
+        item.style.left = (paddingX*(col+1)-35) + "px";
+        item.style.top = (paddingY*(row+1)-35) + "px";
+
+        gameArea.appendChild(item);
     }
+}
+
+function showFeedback(text,correct=true){
+
+    feedback.innerHTML = text;
+    feedback.className = correct ? "correct" : "wrong";
+    feedback.style.display = "block";
+
+    setTimeout(()=>{
+        feedback.style.display = "none";
+    },1000);
+}
+
+function pointInPolygon(point, vs) {
+
+    let x = point.x, y = point.y;
+
+    let inside = false;
+
+    for (let i = 0, j = vs.length - 1; i < vs.length; j = i++) {
+
+        let xi = vs[i].x, yi = vs[i].y;
+        let xj = vs[j].x, yj = vs[j].y;
+
+        let intersect = ((yi > y) != (yj > y))
+            && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+
+        if (intersect) inside = !inside;
+    }
+
     return inside;
 }
 
-function validateDrawnGroup(){
-    const round=rounds[currentRound]; let selected=[];
-    objects.forEach(obj=>{
-        if(groupedObjects.has(obj)) return;
-        const rect=obj.getBoundingClientRect();
-        const parentRect=objectsBox.getBoundingClientRect();
-        const cx=rect.left+rect.width/2-parentRect.left;
-        const cy=rect.top+rect.height/2-parentRect.top;
-        if(pointInPolygon(cx,cy,path)) selected.push(obj);
+function getSelectedItems(){
+
+    const items = [...document.querySelectorAll(".item")];
+
+    return items.filter(item=>{
+
+        if(grouped.includes(item.dataset.index)) return false;
+
+        const rect = item.getBoundingClientRect();
+        const parentRect = gameArea.getBoundingClientRect();
+
+        const center = {
+            x: rect.left - parentRect.left + rect.width/2,
+            y: rect.top - parentRect.top + rect.height/2
+        };
+
+        return pointInPolygon(center, points);
     });
-    if(selected.length===round.group){
-        selected.forEach(o=>groupedObjects.add(o)); selected.forEach(o=>o.style.border='4px solid green'); clapAudio.play();
-    } else { wrongAudio.play(); }
-    if(groupedObjects.size===round.total) nextBtn.style.display='inline-block';
 }
 
-nextBtn.addEventListener('click', ()=>{
-    currentRound++; if(currentRound<rounds.length) loadRound(); else showConfetti();
+function drawPath(){
+
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    if(points.length < 2) return;
+
+    ctx.beginPath();
+    ctx.moveTo(points[0].x, points[0].y);
+
+    for(let p of points){
+        ctx.lineTo(p.x,p.y);
+    }
+
+    ctx.strokeStyle = "#00c853";
+    ctx.lineWidth = 6;
+    ctx.lineJoin = "round";
+    ctx.lineCap = "round";
+    ctx.stroke();
+}
+
+function pointerPos(e){
+
+    const rect = canvas.getBoundingClientRect();
+
+    let x,y;
+
+    if(e.touches){
+        x = e.touches[0].clientX - rect.left;
+        y = e.touches[0].clientY - rect.top;
+    }else{
+        x = e.clientX - rect.left;
+        y = e.clientY - rect.top;
+    }
+
+    return {x,y};
+}
+
+function startDraw(e){
+
+    drawing = true;
+    points = [];
+
+    const pos = pointerPos(e);
+
+    points.push(pos);
+}
+
+function moveDraw(e){
+
+    if(!drawing) return;
+
+    const pos = pointerPos(e);
+
+    points.push(pos);
+
+    drawPath();
+}
+
+function endDraw(){
+
+    if(!drawing) return;
+
+    drawing = false;
+
+    const selected = getSelectedItems();
+
+    const needed = rounds[currentRound].group;
+
+    if(selected.length === needed){
+
+        selected.forEach(item=>{
+            grouped.push(item.dataset.index);
+            item.classList.add("glow");
+        });
+
+        rightSound.play();
+
+        showFeedback("✔ Good Job!",true);
+
+        if(grouped.length === rounds[currentRound].count){
+
+            setTimeout(()=>{
+
+                clapSound.play();
+
+                currentRound++;
+
+                if(currentRound >= rounds.length){
+
+                    endGame();
+
+                }else{
+
+                    startRound();
+
+                }
+
+            },1200);
+        }
+
+    }else{
+
+        wrongAttempts++;
+
+        wrongSound.play();
+
+        showFeedback("✖ Try Again",false);
+
+        gameArea.classList.add("shake");
+
+        setTimeout(()=>{
+            gameArea.classList.remove("shake");
+        },400);
+
+        if(wrongAttempts >= 2){
+
+            const items = [...document.querySelectorAll(".item")]
+            .filter(item=>!grouped.includes(item.dataset.index));
+
+            for(let i=0;i<rounds[currentRound].group;i++){
+
+                if(items[i]){
+                    items[i].classList.add("glow");
+                }
+            }
+        }
+    }
+
+    setTimeout(()=>{
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+    },500);
+
+}
+
+canvas.addEventListener("mousedown",startDraw);
+canvas.addEventListener("mousemove",moveDraw);
+canvas.addEventListener("mouseup",endDraw);
+
+canvas.addEventListener("touchstart",startDraw);
+canvas.addEventListener("touchmove",moveDraw);
+canvas.addEventListener("touchend",endDraw);
+
+function endGame(){
+
+    document.getElementById("endScreen").style.display = "flex";
+
+    createConfetti();
+}
+
+function createConfetti(){
+
+    for(let i=0;i<120;i++){
+
+        const confetti = document.createElement("div");
+
+        confetti.className = "confetti";
+
+        confetti.style.left = Math.random()*100 + "vw";
+
+        confetti.style.background = `hsl(${Math.random()*360},80%,60%)`;
+
+        confetti.style.animationDuration = (Math.random()*3+2)+"s";
+
+        confetti.style.width = (Math.random()*8+6)+"px";
+        confetti.style.height = confetti.style.width;
+
+        document.body.appendChild(confetti);
+
+        setTimeout(()=>{
+            confetti.remove();
+        },5000);
+    }
+}
+
+document.getElementById("playAgain").addEventListener("click",()=>{
+
+    currentRound = 0;
+
+    document.getElementById("endScreen").style.display = "none";
+
+    startRound();
+
 });
 
-function showConfetti(){
-    confettiCanvas.style.display='block';
-    confetti({ particleCount:200, spread:70, origin:{y:0.6} });
-    confetti({ particleCount:200, spread:100, origin:{y:0.6} });
-    setTimeout(()=>{ confettiCanvas.style.display='none'; resetGame(); },3000);
-}
-function resetGame(){ if(confirm('🎉 Great Job! Do you want to play again?')){ currentRound=0; loadRound(); } }
+setTimeout(()=>{
+
+    document.getElementById("logoScreen").style.display = "none";
+
+    resizeCanvas();
+
+    startRound();
+
+},5000);
+
 </script>
+
 </body>
 </html>
