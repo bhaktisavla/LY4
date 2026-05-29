@@ -5,21 +5,27 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Grouping Game</title>
 <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
-    body { background: url('assets/background.jpg') no-repeat center center fixed; background-size: cover; }
-    #splash { position: fixed; top: 0; left:0; width: 100%; height: 100%; background: #fff; display:flex; align-items:center; justify-content:center; z-index:1000; }
-    #splash img { max-width: 300px; max-height: 300px; }
-    #game-container { display: none; padding: 10px; text-align:center; }
-    h1 { color: #2d2dff; margin-bottom: 10px; font-size: 2rem; }
-    #question { font-size: 1.5rem; margin: 10px 0; color: #ff6600; }
-    #repeatBtn { margin-bottom: 10px; padding:5px 10px; font-size:1rem; cursor:pointer; background:#6fa8dc; border:none; border-radius:5px; color:#fff; }
-    #objects-container { display:flex; flex-wrap: wrap; justify-content:center; margin-top:10px; }
-    .obj { margin: 5px; position:relative; cursor:pointer; border-radius:50%; transition: transform 0.2s; }
-    .obj img { width:60px; height:60px; object-fit:contain; }
-    .circled { border: 4px solid green; border-radius:50%; }
-    #nextBtn { display:none; margin-top:20px; padding:10px 20px; font-size:1rem; cursor:pointer; background:#28a745; color:#fff; border:none; border-radius:5px; }
-    #confetti-canvas { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:999; display:none; }
-    @media (max-width:600px){ .obj img{ width:50px; height:50px; } h1{ font-size:1.5rem; } #question{ font-size:1.2rem; } }
+* { box-sizing: border-box; margin:0; padding:0; font-family: Arial, sans-serif; }
+body { background: url('assets/background.jpg') no-repeat center center fixed; background-size: cover; }
+#splash { position: fixed; top:0; left:0; width:100%; height:100%; display:flex; justify-content:center; align-items:center; background:white; z-index:1000; }
+#splash img { max-width:300px; max-height:300px; }
+#game-container { display:none; padding:10px; text-align:center; }
+h1 { font-size:2rem; color:#2d2dff; margin-bottom:10px; }
+#question { font-size:1.5rem; margin:10px 0; color:#ff6600; }
+#repeatBtn { margin-bottom:10px; padding:5px 10px; font-size:1rem; cursor:pointer; background:#6fa8dc; border:none; border-radius:5px; color:white; }
+#objects-box { background:white; border-radius:10px; padding:15px; display:flex; flex-wrap: wrap; justify-content:center; min-height:200px; margin-top:10px; position:relative; }
+.obj { margin:5px; cursor:pointer; position:relative; transition: transform 0.2s; }
+.obj img { width:60px; height:60px; object-fit:contain; user-select:none; -webkit-user-drag:none; }
+.group-oval { position:absolute; border:4px solid green; border-radius:50%; pointer-events:none; transform: scale(0); transform-origin: center center; transition: transform 0.4s ease-out; }
+.group-oval.show { transform: scale(1); }
+#nextBtn { display:none; margin-top:20px; padding:10px 20px; font-size:1rem; cursor:pointer; background:#28a745; color:white; border:none; border-radius:5px; }
+#confetti-canvas { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:999; display:none; }
+
+@media(max-width:600px){
+    .obj img { width:50px; height:50px; }
+    h1{ font-size:1.5rem; }
+    #question{ font-size:1.2rem; }
+}
 </style>
 </head>
 <body>
@@ -32,7 +38,7 @@
     <h1>Grouping</h1>
     <div id="question"></div>
     <button id="repeatBtn">🔊 Hear Question Again</button>
-    <div id="objects-container"></div>
+    <div id="objects-box"></div>
     <button id="nextBtn">Next Round</button>
 </div>
 
@@ -55,13 +61,13 @@ const rounds = [
 ];
 
 let currentRound = 0;
-let circledCount = 0;
-let wrongAttempts = 0;
+let selectedObjs = [];
+let groups = [];
 
 const splash = document.getElementById('splash');
 const gameContainer = document.getElementById('game-container');
 const questionDiv = document.getElementById('question');
-const objectsContainer = document.getElementById('objects-container');
+const objectsBox = document.getElementById('objects-box');
 const repeatBtn = document.getElementById('repeatBtn');
 const nextBtn = document.getElementById('nextBtn');
 const correctAudio = document.getElementById('correctAudio');
@@ -69,10 +75,10 @@ const wrongAudio = document.getElementById('wrongAudio');
 const clapAudio = document.getElementById('clapAudio');
 const confettiCanvas = document.getElementById('confetti-canvas');
 
-// Splash for 5 seconds
-setTimeout(()=>{ splash.style.display='none'; gameContainer.style.display='block'; loadRound(); }, 5000);
+// Splash screen for 5 seconds
+setTimeout(()=>{ splash.style.display='none'; gameContainer.style.display='block'; loadRound(); },5000);
 
-function speak(text){ 
+function speak(text){
     if('speechSynthesis' in window){
         const utter = new SpeechSynthesisUtterance(text);
         utter.rate = 0.9;
@@ -83,58 +89,70 @@ function speak(text){
 repeatBtn.addEventListener('click', ()=>speak(rounds[currentRound].question));
 
 function loadRound(){
-    circledCount = 0;
-    wrongAttempts = 0;
-    nextBtn.style.display = 'none';
+    selectedObjs=[];
+    groups=[];
+    nextBtn.style.display='none';
     const round = rounds[currentRound];
     questionDiv.textContent = round.question;
     speak(round.question);
-    objectsContainer.innerHTML = '';
-    let indices = Array.from({length: round.total}, (_, i)=>i);
-    indices = indices.sort(()=> Math.random()-0.5); // Shuffle
-    indices.forEach((_,i)=>{
+    objectsBox.innerHTML = '';
+    let indices = Array.from({length:round.total},(_,i)=>i).sort(()=>Math.random()-0.5);
+    indices.forEach(_=>{
         const div = document.createElement('div');
         div.classList.add('obj');
         const img = document.createElement('img');
         img.src = round.img;
-        img.draggable = false;
         div.appendChild(img);
-        div.addEventListener('click', ()=>handleClick(div, round.group));
-        objectsContainer.appendChild(div);
+        div.addEventListener('click',()=>handleClick(div, round.group));
+        objectsBox.appendChild(div);
     });
 }
 
 function handleClick(div, groupSize){
-    if(div.classList.contains('circled')) return;
+    if(selectedObjs.includes(div) || groups.some(g=>g.includes(div))) return;
+    selectedObjs.push(div);
 
-    div.classList.add('circled');
-    circledCount++;
-
-    if(circledCount % groupSize === 0){
-        correctAudio.play();
-    } else {
-        wrongAudio.play();
-    }
-
-    // If user clicks wrong number of objects (not multiple of group)
-    if(circledCount % groupSize !== 0 && circledCount % groupSize !== 1){
-        wrongAttempts++;
-        div.style.transform = 'translateX(5px)';
-        setTimeout(()=>{ div.style.transform='translateX(0)'; },200);
-        if(wrongAttempts>=2){
-            // Highlight correct option (just next available)
-            const objs = Array.from(objectsContainer.children).filter(o=>!o.classList.contains('circled'));
-            if(objs.length>0) objs[0].style.border = '4px solid yellow';
-        }
-    }
-
-    if(circledCount === rounds[currentRound].total){
+    if(selectedObjs.length === groupSize){
+        createOval(selectedObjs);
         clapAudio.play();
+        groups.push([...selectedObjs]);
+        selectedObjs=[];
+    }
+}
+
+function createOval(objs){
+    const box = document.createElement('div');
+    box.classList.add('group-oval');
+
+    let minX = Infinity, minY=Infinity, maxX=-Infinity, maxY=-Infinity;
+    objs.forEach(o=>{
+        const rect = o.getBoundingClientRect();
+        const parentRect = objectsBox.getBoundingClientRect();
+        const x = rect.left - parentRect.left;
+        const y = rect.top - parentRect.top;
+        if(x<minX) minX=x;
+        if(y<minY) minY=y;
+        if(x+rect.width>maxX) maxX=x+rect.width;
+        if(y+rect.height>maxY) maxY=y+rect.height;
+    });
+
+    box.style.left = minX - 5 +'px';
+    box.style.top = minY - 5 +'px';
+    box.style.width = (maxX - minX + 10)+'px';
+    box.style.height = (maxY - minY + 10)+'px';
+
+    objectsBox.appendChild(box);
+
+    // Trigger smooth grow animation
+    requestAnimationFrame(()=>{ box.classList.add('show'); });
+
+    // Check if round completed
+    if(groups.flat().length === rounds[currentRound].total){
         nextBtn.style.display='inline-block';
     }
 }
 
-nextBtn.addEventListener('click', ()=>{
+nextBtn.addEventListener('click',()=>{
     currentRound++;
     if(currentRound<rounds.length){
         loadRound();
@@ -143,11 +161,10 @@ nextBtn.addEventListener('click', ()=>{
     }
 });
 
-// Confetti and Play Again
 function showConfetti(){
     confettiCanvas.style.display='block';
-    confetti({ particleCount:200, spread: 70, origin:{y:0.6} });
-    confetti({ particleCount:200, spread: 100, origin:{y:0.6} });
+    confetti({ particleCount:200, spread:70, origin:{y:0.6} });
+    confetti({ particleCount:200, spread:100, origin:{y:0.6} });
     setTimeout(()=>{ confettiCanvas.style.display='none'; resetGame(); },3000);
 }
 
