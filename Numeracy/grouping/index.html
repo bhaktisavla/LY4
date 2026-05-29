@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Grouping Game</title>
+<title>Grouping Game - Draw to Group</title>
 <style>
 * { box-sizing: border-box; margin:0; padding:0; font-family: Arial, sans-serif; }
 body { background: url('assets/background.jpg') no-repeat center center fixed; background-size: cover; }
@@ -13,11 +13,10 @@ body { background: url('assets/background.jpg') no-repeat center center fixed; b
 h1 { font-size:2rem; color:#2d2dff; margin-bottom:10px; }
 #question { font-size:1.5rem; margin:10px 0; color:#ff6600; }
 #repeatBtn { margin-bottom:10px; padding:5px 10px; font-size:1rem; cursor:pointer; background:#6fa8dc; border:none; border-radius:5px; color:white; }
-#objects-box { background:white; border-radius:10px; padding:15px; display:flex; flex-wrap: wrap; justify-content:center; min-height:200px; margin-top:10px; position:relative; }
-.obj { margin:5px; cursor:pointer; position:relative; transition: transform 0.2s; }
+#objects-box { background:white; border-radius:10px; padding:15px; display:flex; flex-wrap: wrap; justify-content:center; min-height:300px; margin-top:10px; position:relative; }
+.obj { margin:5px; cursor:pointer; position:relative; }
 .obj img { width:60px; height:60px; object-fit:contain; user-select:none; -webkit-user-drag:none; }
-.group-oval { position:absolute; border:4px solid green; border-radius:50%; pointer-events:none; transform: scale(0); transform-origin: center center; transition: transform 0.4s ease-out; }
-.group-oval.show { transform: scale(1); }
+#drawingCanvas { position:absolute; top:0; left:0; pointer-events:none; z-index:10; }
 #nextBtn { display:none; margin-top:20px; padding:10px 20px; font-size:1rem; cursor:pointer; background:#28a745; color:white; border:none; border-radius:5px; }
 #confetti-canvas { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:999; display:none; }
 
@@ -39,6 +38,7 @@ h1 { font-size:2rem; color:#2d2dff; margin-bottom:10px; }
     <div id="question"></div>
     <button id="repeatBtn">🔊 Hear Question Again</button>
     <div id="objects-box"></div>
+    <canvas id="drawingCanvas"></canvas>
     <button id="nextBtn">Next Round</button>
 </div>
 
@@ -51,18 +51,18 @@ h1 { font-size:2rem; color:#2d2dff; margin-bottom:10px; }
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 <script>
 const rounds = [
-    { question: 'Circle the socks to group them into 2', img:'assets/sock.png', total:10, group:2 },
-    { question: 'Circle the marbles to group them into 3', img:'assets/marble.png', total:12, group:3 },
-    { question: 'Circle the dice to group them into 5', img:'assets/dice.png', total:15, group:5 },
-    { question: 'Circle the balls to group them into 10', img:'assets/ball.png', total:20, group:10 },
-    { question: 'Circle the balloons to group them into 3', img:'assets/pink-balloon.png', total:15, group:3 },
-    { question: 'Circle the apples to group them into 5', img:'assets/apple.png', total:20, group:5 },
-    { question: 'Circle the balloons to group them into 10', img:'assets/blue-balloon.png', total:20, group:10 }
+    { question: 'Draw around socks to group them into 2', img:'assets/sock.png', total:10, group:2 },
+    { question: 'Draw around marbles to group them into 3', img:'assets/marble.png', total:12, group:3 },
+    { question: 'Draw around dice to group them into 5', img:'assets/dice.png', total:15, group:5 },
+    { question: 'Draw around balls to group them into 10', img:'assets/ball.png', total:20, group:10 },
+    { question: 'Draw around pink balloons to group them into 3', img:'assets/pink-balloon.png', total:15, group:3 },
+    { question: 'Draw around apples to group them into 5', img:'assets/apple.png', total:20, group:5 },
+    { question: 'Draw around blue balloons to group them into 10', img:'assets/blue-balloon.png', total:20, group:10 }
 ];
 
 let currentRound = 0;
-let selectedObjs = [];
-let groups = [];
+let objects = [];
+let groupedObjects = new Set();
 
 const splash = document.getElementById('splash');
 const gameContainer = document.getElementById('game-container');
@@ -73,86 +73,130 @@ const nextBtn = document.getElementById('nextBtn');
 const correctAudio = document.getElementById('correctAudio');
 const wrongAudio = document.getElementById('wrongAudio');
 const clapAudio = document.getElementById('clapAudio');
+const drawingCanvas = document.getElementById('drawingCanvas');
+const ctx = drawingCanvas.getContext('2d');
 const confettiCanvas = document.getElementById('confetti-canvas');
 
-// Splash screen for 5 seconds
+let drawing=false;
+let path=[];
+
 setTimeout(()=>{ splash.style.display='none'; gameContainer.style.display='block'; loadRound(); },5000);
 
 function speak(text){
     if('speechSynthesis' in window){
         const utter = new SpeechSynthesisUtterance(text);
-        utter.rate = 0.9;
+        utter.rate=0.9;
         speechSynthesis.speak(utter);
     }
 }
-
 repeatBtn.addEventListener('click', ()=>speak(rounds[currentRound].question));
 
 function loadRound(){
-    selectedObjs=[];
-    groups=[];
+    objectsBox.innerHTML='';
+    objects=[];
+    groupedObjects.clear();
     nextBtn.style.display='none';
     const round = rounds[currentRound];
     questionDiv.textContent = round.question;
     speak(round.question);
-    objectsBox.innerHTML = '';
-    let indices = Array.from({length:round.total},(_,i)=>i).sort(()=>Math.random()-0.5);
-    indices.forEach(_=>{
+    
+    for(let i=0;i<round.total;i++){
         const div = document.createElement('div');
         div.classList.add('obj');
         const img = document.createElement('img');
-        img.src = round.img;
+        img.src=round.img;
         div.appendChild(img);
-        div.addEventListener('click',()=>handleClick(div, round.group));
         objectsBox.appendChild(div);
-    });
-}
-
-function handleClick(div, groupSize){
-    if(selectedObjs.includes(div) || groups.some(g=>g.includes(div))) return;
-    selectedObjs.push(div);
-
-    if(selectedObjs.length === groupSize){
-        createOval(selectedObjs);
-        clapAudio.play();
-        groups.push([...selectedObjs]);
-        selectedObjs=[];
+        objects.push(div);
     }
+
+    drawingCanvas.width=objectsBox.clientWidth;
+    drawingCanvas.height=objectsBox.clientHeight;
+    drawingCanvas.style.top = objectsBox.offsetTop+'px';
+    drawingCanvas.style.left = objectsBox.offsetLeft+'px';
 }
 
-function createOval(objs){
-    const box = document.createElement('div');
-    box.classList.add('group-oval');
+function getMousePos(evt){
+    const rect = drawingCanvas.getBoundingClientRect();
+    let x = evt.clientX-rect.left;
+    let y = evt.clientY-rect.top;
+    return {x,y};
+}
 
-    let minX = Infinity, minY=Infinity, maxX=-Infinity, maxY=-Infinity;
-    objs.forEach(o=>{
-        const rect = o.getBoundingClientRect();
+drawingCanvas.addEventListener('mousedown', startDrawing);
+drawingCanvas.addEventListener('touchstart', e=>{ e.preventDefault(); startDrawing(e.touches[0]); });
+
+drawingCanvas.addEventListener('mousemove', draw);
+drawingCanvas.addEventListener('touchmove', e=>{ e.preventDefault(); draw(e.touches[0]); });
+
+drawingCanvas.addEventListener('mouseup', endDrawing);
+drawingCanvas.addEventListener('mouseleave', endDrawing);
+drawingCanvas.addEventListener('touchend', endDrawing);
+
+function startDrawing(evt){
+    drawing=true;
+    path=[];
+    ctx.clearRect(0,0,drawingCanvas.width,drawingCanvas.height);
+    const pos=getMousePos(evt);
+    path.push(pos);
+    ctx.beginPath();
+    ctx.moveTo(pos.x,pos.y);
+}
+function draw(evt){
+    if(!drawing) return;
+    const pos=getMousePos(evt);
+    path.push(pos);
+    ctx.lineTo(pos.x,pos.y);
+    ctx.strokeStyle='green';
+    ctx.lineWidth=3;
+    ctx.stroke();
+}
+function endDrawing(){
+    if(!drawing) return;
+    drawing=false;
+    ctx.closePath();
+    validateGroup();
+}
+
+function pointInPath(x,y){
+    ctx.beginPath();
+    ctx.moveTo(path[0].x,path[0].y);
+    for(let i=1;i<path.length;i++){
+        ctx.lineTo(path[i].x,path[i].y);
+    }
+    ctx.closePath();
+    const inside = ctx.isPointInPath(x,y);
+    ctx.closePath();
+    return inside;
+}
+
+function validateGroup(){
+    const round = rounds[currentRound];
+    let selected=[];
+    objects.forEach(obj=>{
+        if(groupedObjects.has(obj)) return;
+        const rect = obj.getBoundingClientRect();
         const parentRect = objectsBox.getBoundingClientRect();
-        const x = rect.left - parentRect.left;
-        const y = rect.top - parentRect.top;
-        if(x<minX) minX=x;
-        if(y<minY) minY=y;
-        if(x+rect.width>maxX) maxX=x+rect.width;
-        if(y+rect.height>maxY) maxY=y+rect.height;
+        const cx = rect.left+rect.width/2-parentRect.left;
+        const cy = rect.top+rect.height/2-parentRect.top;
+        if(pointInPath(cx,cy)){
+            selected.push(obj);
+        }
     });
-
-    box.style.left = minX - 5 +'px';
-    box.style.top = minY - 5 +'px';
-    box.style.width = (maxX - minX + 10)+'px';
-    box.style.height = (maxY - minY + 10)+'px';
-
-    objectsBox.appendChild(box);
-
-    // Trigger smooth grow animation
-    requestAnimationFrame(()=>{ box.classList.add('show'); });
-
-    // Check if round completed
-    if(groups.flat().length === rounds[currentRound].total){
+    if(selected.length===round.group){
+        selected.forEach(o=>groupedObjects.add(o));
+        selected.forEach(o=>o.style.border='4px solid green');
+        clapAudio.play();
+    } else {
+        wrongAudio.play();
+    }
+    ctx.clearRect(0,0,drawingCanvas.width,drawingCanvas.height);
+    if(groupedObjects.size===round.total){
         nextBtn.style.display='inline-block';
     }
 }
 
-nextBtn.addEventListener('click',()=>{
+nextBtn.addEventListener('click', ()=>{
     currentRound++;
     if(currentRound<rounds.length){
         loadRound();
@@ -167,7 +211,6 @@ function showConfetti(){
     confetti({ particleCount:200, spread:100, origin:{y:0.6} });
     setTimeout(()=>{ confettiCanvas.style.display='none'; resetGame(); },3000);
 }
-
 function resetGame(){
     if(confirm('🎉 Great Job! Do you want to play again?')){
         currentRound=0;
