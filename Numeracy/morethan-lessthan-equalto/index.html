@@ -310,8 +310,6 @@ body{
 
 <body>
 
-<!-- AUDIO -->
-
 <audio id="rightSound" src="assets/right.mp3"></audio>
 <audio id="wrongSound" src="assets/wrong.mp3"></audio>
 <audio id="clapSound" src="assets/clapping.mp3"></audio>
@@ -341,7 +339,7 @@ body{
 
     <div class="instruction-wrap">
 
-      <div class="instruction" id="instructionText">
+      <div class="instruction">
         Count the objects on both the sides and insert the correct symbol.
       </div>
 
@@ -473,28 +471,20 @@ const rightSound = document.getElementById("rightSound");
 const wrongSound = document.getElementById("wrongSound");
 const clapSound = document.getElementById("clapSound");
 
-/* LOGO DELAY */
-
 setTimeout(()=>{
 
   document.getElementById("logoScreen").classList.add("hidden");
-
   document.getElementById("startScreen").classList.remove("hidden");
 
 },5000);
 
-/* START GAME */
-
 function startGame(){
 
   document.getElementById("startScreen").classList.add("hidden");
-
   document.getElementById("gameScreen").classList.remove("hidden");
 
   loadRound();
 }
-
-/* LOAD ROUND */
 
 function loadRound(){
 
@@ -527,8 +517,6 @@ function loadRound(){
   speakInstruction();
 }
 
-/* SPEECH */
-
 function speakInstruction(){
 
   const text =
@@ -544,8 +532,6 @@ function speakInstruction(){
   speechSynthesis.speak(utterance);
 }
 
-/* DRAG */
-
 const symbols = document.querySelectorAll(".symbol");
 
 symbols.forEach(symbol=>{
@@ -554,8 +540,6 @@ symbols.forEach(symbol=>{
 
     e.dataTransfer.setData("text",symbol.dataset.symbol);
   });
-
-  /* MOBILE TOUCH */
 
   symbol.addEventListener("touchstart",touchStart,{passive:false});
 });
@@ -573,8 +557,6 @@ dropZone.addEventListener("drop",(e)=>{
 
   checkAnswer(symbol);
 });
-
-/* TOUCH SUPPORT */
 
 let draggedSymbol = null;
 
@@ -603,8 +585,6 @@ function touchEnd(e){
 
   document.removeEventListener("touchend",touchEnd);
 }
-
-/* CHECK ANSWER */
 
 function checkAnswer(symbol){
 
@@ -673,8 +653,6 @@ function checkAnswer(symbol){
   }
 }
 
-/* END GAME */
-
 function endGame(){
 
   document.getElementById("gameScreen").classList.add("hidden");
@@ -692,4 +670,3 @@ function endGame(){
 
 </body>
 </html>
-```
