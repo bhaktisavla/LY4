@@ -14,7 +14,7 @@ h1 { font-size:2rem; color:#2d2dff; margin-bottom:10px; }
 #question { font-size:1.5rem; margin:10px 0; color:#ff6600; }
 #repeatBtn { margin-bottom:10px; padding:5px 10px; font-size:1rem; cursor:pointer; background:#6fa8dc; border:none; border-radius:5px; color:white; }
 #objects-box { background:white; border-radius:10px; padding:15px; display:flex; flex-wrap:wrap; justify-content:center; min-height:300px; margin-top:10px; position:relative; touch-action:none; }
-.obj { margin:5px; cursor:pointer; position:relative; }
+.obj { margin:5px; position:relative; }
 .obj img { width:60px; height:60px; object-fit:contain; user-select:none; -webkit-user-drag:none; }
 #drawingCanvas { position:absolute; top:0; left:0; z-index:10; }
 #nextBtn { display:none; margin-top:20px; padding:10px 20px; font-size:1rem; cursor:pointer; background:#28a745; color:white; border:none; border-radius:5px; }
@@ -54,7 +54,7 @@ const rounds=[
     {question:'Draw around blue balloons to group them into 10',img:'assets/blue-balloon.png',total:20,group:10}
 ];
 
-let currentRound=0,objects=[],groupedObjects=new Set(),path=[],drawing=false;
+let currentRound=0, objects=[], groupedObjects=new Set(), path=[], drawing=false;
 
 const splash=document.getElementById('splash');
 const gameContainer=document.getElementById('game-container');
@@ -69,11 +69,14 @@ const drawingCanvas=document.getElementById('drawingCanvas');
 const ctx=drawingCanvas.getContext('2d');
 const confettiCanvas=document.getElementById('confetti-canvas');
 
-setTimeout(()=>{splash.style.display='none'; gameContainer.style.display='block'; loadRound();},5000);
+// Splash screen
+setTimeout(()=>{ splash.style.display='none'; gameContainer.style.display='block'; loadRound();},5000);
 
+// Voice narration
 repeatBtn.addEventListener('click',()=>speak(rounds[currentRound].question));
 function speak(text){if('speechSynthesis' in window){const u=new SpeechSynthesisUtterance(text);u.rate=0.9;speechSynthesis.speak(u);}}
 
+// Load round
 function loadRound(){
     objectsBox.innerHTML=''; objects=[]; groupedObjects.clear(); nextBtn.style.display='none';
     const round=rounds[currentRound]; questionDiv.textContent=round.question; speak(round.question);
@@ -82,6 +85,7 @@ function loadRound(){
         const img=document.createElement('img'); img.src=round.img; div.appendChild(img);
         objectsBox.appendChild(div); objects.push(div);
     }
+    // Set canvas size over objects box
     drawingCanvas.width=objectsBox.clientWidth;
     drawingCanvas.height=objectsBox.clientHeight;
     drawingCanvas.style.top=objectsBox.offsetTop+'px';
@@ -89,26 +93,32 @@ function loadRound(){
     drawingCanvas.style.pointerEvents='auto';
 }
 
-function getPos(e){const rect=drawingCanvas.getBoundingClientRect(); let clientX,clientY;if(e.touches){clientX=e.touches[0].clientX; clientY=e.touches[0].clientY;}else{clientX=e.clientX;clientY=e.clientY;}return{x:clientX-rect.left,y:clientY-rect.top};}
+// Mouse/touch positions
+function getPos(e){
+    const rect=drawingCanvas.getBoundingClientRect();
+    let clientX,clientY;
+    if(e.touches){ clientX=e.touches[0].clientX; clientY=e.touches[0].clientY; }
+    else { clientX=e.clientX; clientY=e.clientY; }
+    return {x:clientX-rect.left, y:clientY-rect.top};
+}
 
+// Drawing events
 drawingCanvas.addEventListener('mousedown',startDraw);
-drawingCanvas.addEventListener('touchstart',e=>{e.preventDefault();startDraw(e.touches[0]);});
+drawingCanvas.addEventListener('touchstart',e=>{e.preventDefault(); startDraw(e.touches[0]);});
 drawingCanvas.addEventListener('mousemove',draw);
-drawingCanvas.addEventListener('touchmove',e=>{e.preventDefault();draw(e.touches[0]);});
+drawingCanvas.addEventListener('touchmove',e=>{e.preventDefault(); draw(e.touches[0]);});
 drawingCanvas.addEventListener('mouseup',endDraw);
 drawingCanvas.addEventListener('mouseleave',endDraw);
 drawingCanvas.addEventListener('touchend',endDraw);
 
-function startDraw(e){drawing=true; path=[]; const pos=getPos(e); path.push(pos); ctx.clearRect(0,0,drawingCanvas.width,drawingCanvas.height); ctx.beginPath(); ctx.moveTo(pos.x,pos.y);}
+function startDraw(e){drawing=true; path=[]; ctx.beginPath(); const pos=getPos(e); path.push(pos); ctx.moveTo(pos.x,pos.y);}
 function draw(e){if(!drawing) return; const pos=getPos(e); path.push(pos); ctx.lineTo(pos.x,pos.y); ctx.strokeStyle='green'; ctx.lineWidth=3; ctx.stroke();}
-function endDraw(){if(!drawing) return; drawing=false; ctx.closePath(); validateDrawnGroup(); ctx.clearRect(0,0,drawingCanvas.width,drawingCanvas.height);}
+function endDraw(){if(!drawing) return; drawing=false; validateDrawnGroup();}
 
-// Tolerant detection: any corner of object inside path
+// Tolerant object detection using corners of each object
 function pointInPolygon(x,y,poly){let inside=false; for(let i=0,j=poly.length-1;i<poly.length;j=i++){if(((poly[i].y>y)!=(poly[j].y>y))&&(x<(poly[j].x-poly[i].x)*(y-poly[i].y)/(poly[j].y-poly[i].y)+poly[i].x)) inside=!inside;} return inside;}
-
 function objectIntersectsPath(obj){
-    const rect=obj.getBoundingClientRect();
-    const parent=objectsBox.getBoundingClientRect();
+    const rect=obj.getBoundingClientRect(); const parent=objectsBox.getBoundingClientRect();
     const points=[
         {x:rect.left-parent.left, y:rect.top-parent.top},
         {x:rect.right-parent.left, y:rect.top-parent.top},
@@ -118,22 +128,19 @@ function objectIntersectsPath(obj){
     return points.some(p=>pointInPolygon(p.x,p.y,path));
 }
 
+// Validate drawn group
 function validateDrawnGroup(){
     const round=rounds[currentRound]; let selected=[];
-    objects.forEach(obj=>{
-        if(groupedObjects.has(obj)) return;
-        if(objectIntersectsPath(obj)) selected.push(obj);
-    });
-    if(selected.length===round.group){
-        selected.forEach(o=>groupedObjects.add(o));
-        selected.forEach(o=>o.style.border='4px solid green');
-        clapAudio.play();
-    } else wrongAudio.play();
+    objects.forEach(obj=>{if(groupedObjects.has(obj)) return; if(objectIntersectsPath(obj)) selected.push(obj);});
+    if(selected.length===round.group){selected.forEach(o=>groupedObjects.add(o)); clapAudio.play();}
+    else wrongAudio.play();
     if(groupedObjects.size===round.total) nextBtn.style.display='inline-block';
 }
 
+// Next round
 nextBtn.addEventListener('click',()=>{currentRound++; if(currentRound<rounds.length) loadRound(); else showConfetti();});
 
+// Confetti & reset
 function showConfetti(){ confettiCanvas.style.display='block'; confetti({particleCount:200,spread:70,origin:{y:0.6}}); confetti({particleCount:200,spread:100,origin:{y:0.6}}); setTimeout(()=>{confettiCanvas.style.display='none'; resetGame();},3000);}
 function resetGame(){if(confirm('🎉 Great Job! Do you want to play again?')){currentRound=0; loadRound();}}
 </script>
