@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,6 +7,7 @@
 <title>More Than, Less Than and Equal To</title>
 
 <style>
+
 *{
   margin:0;
   padding:0;
@@ -131,12 +133,12 @@ body{
   font-size:20px;
 }
 
-/* ROUND BOX */
+/* GAME BOARD */
 
 .game-board{
   width:min(1100px,96vw);
   height:58vh;
-  background:white;
+  background:linear-gradient(to bottom right,#fff8dc,#e8f9ff,#fff0f6);
   margin-top:18px;
   border-radius:25px;
   box-shadow:0 6px 18px rgba(0,0,0,0.15);
@@ -164,6 +166,8 @@ body{
   object-fit:contain;
 }
 
+/* DROP BOX */
+
 .drop-zone{
   width:clamp(85px,12vw,120px);
   height:clamp(85px,12vw,120px);
@@ -174,9 +178,11 @@ body{
   justify-content:center;
   font-size:55px;
   font-weight:bold;
-  background:#fffdf8;
+  background:#ffffff;
   color:#333;
 }
+
+/* SYMBOLS */
 
 .symbols{
   margin-top:18px;
@@ -190,16 +196,35 @@ body{
   width:90px;
   height:90px;
   border-radius:20px;
-  background:white;
   display:flex;
   align-items:center;
   justify-content:center;
   font-size:55px;
   font-weight:bold;
   cursor:grab;
-  box-shadow:0 4px 12px rgba(0,0,0,0.15);
-  border:4px solid #ffd166;
+  box-shadow:0 5px 14px rgba(0,0,0,0.18);
   touch-action:none;
+  color:white;
+  transition:0.2s;
+}
+
+.symbol:nth-child(1){
+  background:linear-gradient(to bottom,#ff6b6b,#ff3d3d);
+  border:4px solid #ffb3b3;
+}
+
+.symbol:nth-child(2){
+  background:linear-gradient(to bottom,#4dabf7,#1c7ed6);
+  border:4px solid #b6dcff;
+}
+
+.symbol:nth-child(3){
+  background:linear-gradient(to bottom,#51cf66,#2f9e44);
+  border:4px solid #b7f5c1;
+}
+
+.symbol:hover{
+  transform:scale(1.06);
 }
 
 .symbol:active{
@@ -249,6 +274,8 @@ body{
   margin-bottom:20px;
 }
 
+/* MOBILE */
+
 @media(max-width:768px){
 
   .game-board{
@@ -285,34 +312,46 @@ body{
 <body>
 
 <!-- AUDIO -->
+
 <audio id="rightSound" src="assets/right.mp3"></audio>
 <audio id="wrongSound" src="assets/wrong.mp3"></audio>
 <audio id="clapSound" src="assets/clapping.mp3"></audio>
 
 <!-- LOGO SCREEN -->
+
 <div id="logoScreen">
   <img src="assets/innovine-logo.png" alt="Innovine Logo">
 </div>
 
 <!-- START SCREEN -->
+
 <div id="startScreen" class="hidden">
   <div class="game-title">More Than, Less Than and Equal To</div>
   <button class="start-btn" onclick="startGame()">Start Game</button>
 </div>
 
 <!-- GAME SCREEN -->
+
 <div id="gameScreen" class="hidden">
 
   <div class="top-bar">
-    <div class="main-title">More Than, Less Than and Equal To</div>
+
+    <div class="main-title">
+      More Than, Less Than and Equal To
+    </div>
 
     <div class="instruction-wrap">
+
       <div class="instruction" id="instructionText">
         Count the objects on both the sides and insert the correct symbol.
       </div>
 
-      <button class="speaker-btn" onclick="speakInstruction()">🔊</button>
+      <button class="speaker-btn" onclick="speakInstruction()">
+        🔊
+      </button>
+
     </div>
+
   </div>
 
   <div class="game-board">
@@ -326,9 +365,19 @@ body{
   </div>
 
   <div class="symbols">
-    <div class="symbol" draggable="true" data-symbol=">">&gt;</div>
-    <div class="symbol" draggable="true" data-symbol="<">&lt;</div>
-    <div class="symbol" draggable="true" data-symbol="=">=</div>
+
+    <div class="symbol" draggable="true" data-symbol=">">
+      &gt;
+    </div>
+
+    <div class="symbol" draggable="true" data-symbol="<">
+      &lt;
+    </div>
+
+    <div class="symbol" draggable="true" data-symbol="=">
+      =
+    </div>
+
   </div>
 
   <div class="feedback" id="feedback"></div>
@@ -338,8 +387,15 @@ body{
 <!-- END SCREEN -->
 
 <div id="endScreen" class="hidden">
-  <div class="end-title">🎉 Great Job! 🎉</div>
-  <button class="play-again-btn" onclick="location.reload()">Play Again</button>
+
+  <div class="end-title">
+    🎉 Great Job! 🎉
+  </div>
+
+  <button class="play-again-btn" onclick="location.reload()">
+    Play Again
+  </button>
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -347,54 +403,63 @@ body{
 <script>
 
 const rounds = [
+
   {
     image:"assets/turtle.png",
     left:9,
     right:4,
     answer:">"
   },
+
   {
     image:"assets/apple.png",
     left:5,
     right:8,
     answer:"<"
   },
+
   {
     image:"assets/ball.png",
     left:10,
     right:10,
     answer:"="
   },
+
   {
     image:"assets/bird.png",
     left:3,
     right:7,
     answer:"<"
   },
+
   {
     image:"assets/book.png",
     left:2,
     right:2,
     answer:"="
   },
+
   {
     image:"assets/car.png",
     left:6,
     right:10,
     answer:"<"
   },
+
   {
     image:"assets/doll.png",
     left:8,
     right:8,
     answer:"="
   },
+
   {
     image:"assets/orange.png",
     left:7,
     right:9,
     answer:"<"
   }
+
 ];
 
 let currentRound = 0;
@@ -412,8 +477,11 @@ const clapSound = document.getElementById("clapSound");
 /* LOGO DELAY */
 
 setTimeout(()=>{
+
   document.getElementById("logoScreen").classList.add("hidden");
+
   document.getElementById("startScreen").classList.remove("hidden");
+
 },5000);
 
 /* START GAME */
@@ -421,6 +489,7 @@ setTimeout(()=>{
 function startGame(){
 
   document.getElementById("startScreen").classList.add("hidden");
+
   document.getElementById("gameScreen").classList.remove("hidden");
 
   loadRound();
@@ -441,14 +510,18 @@ function loadRound(){
   rightSide.innerHTML = "";
 
   for(let i=0;i<round.left;i++){
+
     const img = document.createElement("img");
     img.src = round.image;
+
     leftSide.appendChild(img);
   }
 
   for(let i=0;i<round.right;i++){
+
     const img = document.createElement("img");
     img.src = round.image;
+
     rightSide.appendChild(img);
   }
 
@@ -459,11 +532,13 @@ function loadRound(){
 
 function speakInstruction(){
 
-  const text = "Count the objects on both the sides and insert the correct symbol.";
+  const text =
+  "Count the objects on both the sides and insert the correct symbol.";
 
   speechSynthesis.cancel();
 
   const utterance = new SpeechSynthesisUtterance(text);
+
   utterance.rate = 0.9;
   utterance.pitch = 1;
 
@@ -477,6 +552,7 @@ const symbols = document.querySelectorAll(".symbol");
 symbols.forEach(symbol=>{
 
   symbol.addEventListener("dragstart",(e)=>{
+
     e.dataTransfer.setData("text",symbol.dataset.symbol);
   });
 
@@ -486,13 +562,16 @@ symbols.forEach(symbol=>{
 });
 
 dropZone.addEventListener("dragover",(e)=>{
+
   e.preventDefault();
 });
 
 dropZone.addEventListener("drop",(e)=>{
+
   e.preventDefault();
 
   const symbol = e.dataTransfer.getData("text");
+
   checkAnswer(symbol);
 });
 
@@ -519,13 +598,14 @@ function touchEnd(e){
     touch.clientY > dropRect.top &&
     touch.clientY < dropRect.bottom
   ){
+
     checkAnswer(draggedSymbol);
   }
 
   document.removeEventListener("touchend",touchEnd);
 }
 
-/* CHECK */
+/* CHECK ANSWER */
 
 function checkAnswer(symbol){
 
@@ -568,11 +648,15 @@ function checkAnswer(symbol){
     feedback.innerHTML = "❌ Try Again";
 
     document.querySelectorAll(".symbol").forEach(s=>{
+
       if(s.dataset.symbol === symbol){
+
         s.classList.add("wiggle");
 
         setTimeout(()=>{
+
           s.classList.remove("wiggle");
+
         },300);
       }
     });
@@ -582,6 +666,7 @@ function checkAnswer(symbol){
       document.querySelectorAll(".symbol").forEach(s=>{
 
         if(s.dataset.symbol === correct){
+
           s.classList.add("correct-glow");
         }
       });
@@ -594,6 +679,7 @@ function checkAnswer(symbol){
 function endGame(){
 
   document.getElementById("gameScreen").classList.add("hidden");
+
   document.getElementById("endScreen").classList.remove("hidden");
 
   confetti({
@@ -607,3 +693,4 @@ function endGame(){
 
 </body>
 </html>
+```
