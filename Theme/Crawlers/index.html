@@ -62,11 +62,15 @@
     width:100%;
     padding-top:100%;
     position:relative;
-    background:#fff;
+    background: #fff8b0; /* soft yellow */
     border-radius:10px;
     overflow:hidden;
     cursor:pointer;
     border:2px solid #ccc;
+    transition: transform 0.2s;
+  }
+  .card:hover {
+    transform: scale(1.05);
   }
   .card img {
     position:absolute;
@@ -209,10 +213,15 @@ function renderCards(cardsArray){
 }
 
 function flipCard(card){
-  if(card.classList.contains('flipped') || card.classList.contains('correct') || flippedCards.length>=2) return;
+  // Ignore already matched cards
+  if(card.classList.contains('correct')) return;
+  // Prevent selecting the same card twice in one turn
+  if(flippedCards.includes(card)) return;
+
   card.classList.add('flipped');
   flippedCards.push(card);
-  if(flippedCards.length===2){
+
+  if(flippedCards.length === 2){
     checkMatch();
   }
 }
