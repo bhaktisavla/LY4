@@ -278,24 +278,6 @@ function checkMatch(){
 
       flippedCards = [];
 
-      if(wrongAttempts >= 2){
-
-        const unmatched = document.querySelectorAll('.card:not(.correct)');
-
-        unmatched.forEach(card=>{
-          card.classList.add('flipped');
-        });
-
-        setTimeout(()=>{
-          unmatched.forEach(card=>{
-            if(!card.classList.contains('correct')){
-              card.classList.remove('flipped');
-            }
-          });
-        },1500);
-
-        wrongAttempts = 0;
-      }
 
       lockBoard = false;
 
@@ -360,7 +342,11 @@ function launchConfetti(){
     });
   }
   const interval = setInterval(draw,20);
-  setTimeout(()=>{ clearInterval(interval); canvas.remove(); },5000);
+ setTimeout(()=>{
+  clearInterval(interval);
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+},5000);
 }
 
 showSplash();
