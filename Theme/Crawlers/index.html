@@ -162,6 +162,7 @@ const rounds = [
 let currentRound = 0;
 let flippedCards = [];
 let wrongAttempts = 0;
+let lockBoard = false;
 
 const splash = document.getElementById('splash');
 const headerScreen = document.getElementById('headerScreen');
@@ -213,54 +214,91 @@ function renderCards(cardsArray){
 }
 
 function flipCard(card){
-  // Ignore already matched cards
+
+  if(lockBoard) return;
+
+  // already matched
   if(card.classList.contains('correct')) return;
-  // Prevent selecting the same card twice in one turn
-  if(flippedCards.includes(card)) return;
+
+  // already flipped
+  if(card.classList.contains('flipped')) return;
 
   card.classList.add('flipped');
   flippedCards.push(card);
 
   if(flippedCards.length === 2){
+    lockBoard = true;
     checkMatch();
   }
 }
 
 function checkMatch(){
+
   const [card1, card2] = flippedCards;
+
   if(card1.dataset.imgName === card2.dataset.imgName){
+
     card1.classList.add('correct');
     card2.classList.add('correct');
+
     correctAudio.play();
-    flippedCards=[];
-    if(document.querySelectorAll('.card.correct').length===8){
+
+    flippedCards = [];
+    lockBoard = false;
+
+    if(document.querySelectorAll('.card.correct').length === 8){
+
       clapAudio.play();
-      setTimeout(()=>{ 
+
+      setTimeout(()=>{
+
         currentRound++;
-        if(currentRound<rounds.length){
+
+        if(currentRound < rounds.length){
           startRound();
         }else{
           showEndScreen();
         }
+
       },1000);
     }
-  } else {
+
+  }else{
+
     wrongAttempts++;
     wrongAudio.play();
+
     card1.classList.add('wrong');
     card2.classList.add('wrong');
+
     setTimeout(()=>{
+
       card1.classList.remove('flipped','wrong');
       card2.classList.remove('flipped','wrong');
-      flippedCards=[];
-      if(wrongAttempts>=2){
-        const correctCard1 = document.querySelector(`.card[data-img-name="${card1.dataset.imgName}"]:not(.correct)`);
-        const correctCard2 = document.querySelector(`.card[data-img-name="${card2.dataset.imgName}"]:not(.correct)`);
-        if(correctCard1) correctCard1.classList.add('correct');
-        if(correctCard2) correctCard2.classList.add('correct');
-        flippedCards=[];
-        wrongAttempts=0;
+
+      flippedCards = [];
+
+      if(wrongAttempts >= 2){
+
+        const unmatched = document.querySelectorAll('.card:not(.correct)');
+
+        unmatched.forEach(card=>{
+          card.classList.add('flipped');
+        });
+
+        setTimeout(()=>{
+          unmatched.forEach(card=>{
+            if(!card.classList.contains('correct')){
+              card.classList.remove('flipped');
+            }
+          });
+        },1500);
+
+        wrongAttempts = 0;
       }
+
+      lockBoard = false;
+
     },800);
   }
 }
