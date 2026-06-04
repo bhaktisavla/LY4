@@ -5,108 +5,109 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>School Puzzle – Jr.KG Game</title>
 <style>
-    body {
-        margin:0;
-        font-family: 'Arbutus', cursive;
-        display:flex;
-        flex-direction:column;
-        align-items:center;
-        justify-content:center;
-        min-height:100vh;
-        background: linear-gradient(135deg, #ffecd2, #fcb69f);
-    }
-    #splash, #titleScreen, #game, #endScreen {
-        width:100%;
-        height:100vh;
-        display:flex;
-        flex-direction:column;
-        align-items:center;
-        justify-content:center;
-        position:absolute;
-        top:0;
-        left:0;
-        background: inherit;
-    }
-    #splash img, #schoolImage {
-        max-width: 95%;
-        height:auto;
-        border-radius:12px;
-    }
-    h1 {
-        font-size: 2.5em;
-        margin: 0.5em;
-        color:#4b2e83;
-        text-align:center;
-    }
-    #questionBox {
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        gap:10px;
-        margin-bottom:10px;
-        font-size:1.5em;
-        color:#333;
-    }
-    #questionBox button {
-        font-size:1em;
-        padding:0.3em 0.5em;
-        cursor:pointer;
-    }
-    #objectBox {
-        display:flex;
-        flex-wrap:wrap;
-        justify-content:center;
-        gap:10px;
-        margin-top:10px;
-        background: rgba(255,255,255,0.7);
-        padding:10px;
-        border-radius:10px;
-        max-width: 95%;
-    }
-    #objectBox img {
-        width:60px;
-        height:60px;
-        cursor:pointer;
-        border-radius:8px;
-        transition: transform 0.2s;
-    }
-    #objectBox img.wrong {
-        animation: shake 0.3s;
-    }
-    #objectBox img.correct-glow {
-        border: 3px solid green;
-        box-shadow: 0 0 15px green;
-    }
-    #tick {
-        position:absolute;
-        top:40%;
-        font-size:5em;
-        color:green;
-        display:none;
-        animation: pop 0.5s;
-    }
-    @keyframes shake {
-        0% { transform: translateX(0); }
-        25% { transform: translateX(-5px); }
-        50% { transform: translateX(5px); }
-        75% { transform: translateX(-5px); }
-        100% { transform: translateX(0); }
-    }
-    @keyframes pop {
-        0% { transform: scale(0); opacity:0; }
-        50% { transform: scale(1.2); opacity:1; }
-        100% { transform: scale(1); opacity:1; }
-    }
-    #playAgain {
-        padding: 0.5em 1em;
-        font-size:1.2em;
-        cursor:pointer;
-        margin-top:20px;
-        border-radius:8px;
-        border:none;
-        background:#4b2e83;
-        color:white;
-    }
+body {
+    margin:0;
+    font-family:'Arbutus', cursive;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    min-height:100vh;
+    background: linear-gradient(135deg, #ffecd2, #fcb69f);
+    overflow:hidden;
+}
+#splash, #titleScreen, #game, #endScreen {
+    width:100%;
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    position:absolute;
+    top:0; left:0;
+    background:inherit;
+}
+#splash img, #schoolContainer img {
+    max-width: 95%;
+    height:auto;
+    border-radius:12px;
+}
+h1 {
+    font-size:2.5em;
+    margin:0.5em;
+    color:#4b2e83;
+    text-align:center;
+}
+#questionBox {
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    margin-bottom:10px;
+    font-size:1.5em;
+    color:#333;
+}
+#questionBox button {
+    font-size:1em;
+    padding:0.3em 0.5em;
+    cursor:pointer;
+}
+#schoolContainer {
+    position:relative;
+    max-width:95%;
+}
+.clickable-area {
+    position:absolute;
+    border-radius:50%;
+    cursor:pointer;
+    transition: transform 0.2s, box-shadow 0.3s;
+}
+.clickable-area.wrong { animation: shake 0.3s; }
+.clickable-area.correct { border: 3px solid green; }
+.clickable-area.glow { border: 3px solid green; box-shadow:0 0 15px green; }
+#tick {
+    position:absolute;
+    top:40%;
+    font-size:5em;
+    color:green;
+    display:none;
+    animation: pop 0.5s;
+}
+#playAgain {
+    padding:0.5em 1em;
+    font-size:1.2em;
+    cursor:pointer;
+    margin-top:20px;
+    border-radius:8px;
+    border:none;
+    background:#4b2e83;
+    color:white;
+}
+.confetti {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: #FFD700;
+    pointer-events:none;
+    animation: fall 3s linear forwards;
+    border-radius:50%;
+}
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+    100% { transform: translateX(0); }
+}
+@keyframes pop {
+    0% { transform: scale(0); opacity:0; }
+    50% { transform: scale(1.2); opacity:1; }
+    100% { transform: scale(1); opacity:1; }
+}
+@keyframes fall {
+    0% { transform: translateY(0) rotate(0deg); opacity:1; }
+    100% { transform: translateY(500px) rotate(720deg); opacity:0; }
+}
 </style>
 </head>
 <body>
@@ -127,17 +128,9 @@
         <div>Find the hidden objects:</div>
         <button id="hearAgain">🔊</button>
     </div>
-    <img id="schoolImage" src="assets/school.png" alt="School Image">
-    <div id="objectBox">
-        <img src="assets/ball.png" alt="ball" data-name="ball">
-        <img src="assets/bottle.png" alt="bottle" data-name="bottle">
-        <img src="assets/crayonbox.png" alt="crayonbox" data-name="crayonbox">
-        <img src="assets/paintbrush.png" alt="paintbrush" data-name="paintbrush">
-        <img src="assets/pear.png" alt="pear" data-name="pear">
-        <img src="assets/pencil.png" alt="pencil" data-name="pencil">
-        <img src="assets/schoolbag.png" alt="schoolbag" data-name="schoolbag">
-        <img src="assets/scissors.png" alt="scissors" data-name="scissors">
-        <img src="assets/watercan.png" alt="watercan" data-name="watercan">
+    <div id="schoolContainer">
+        <img id="schoolImage" src="assets/school.png" alt="School Image">
+        <!-- Clickable areas will be generated by JS -->
     </div>
 </div>
 
@@ -153,88 +146,126 @@
 <audio id="correctSound" src="assets/correct.mp3"></audio>
 <audio id="wrongSound" src="assets/wrong.mp3"></audio>
 <audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
-<audio id="questionVoice" src="assets/correct.mp3"></audio> <!-- Replace with voice mp3 if available -->
+<audio id="questionVoice" src="assets/question.mp3"></audio>
 
 <script>
+// Splash and title logic
 const splash = document.getElementById('splash');
 const titleScreen = document.getElementById('titleScreen');
 const game = document.getElementById('game');
 const endScreen = document.getElementById('endScreen');
-const objectImages = document.querySelectorAll('#objectBox img');
+const tick = document.getElementById('tick');
+const hearAgain = document.getElementById('hearAgain');
 const correctSound = document.getElementById('correctSound');
 const wrongSound = document.getElementById('wrongSound');
 const clapSound = document.getElementById('clapSound');
-const tick = document.getElementById('tick');
-const hearAgain = document.getElementById('hearAgain');
+const questionVoice = document.getElementById('questionVoice');
 
-let foundObjects = 0;
-let wrongAttempts = 0;
+let foundCount = 0;
+let wrongAttempts = {};
+const totalObjects = 9;
 
-function resetGame(){
-    foundObjects = 0;
-    wrongAttempts = 0;
-    objectImages.forEach(img => {
-        img.classList.remove('correct-glow','wrong');
-        img.style.pointerEvents = 'auto';
+// Define clickable objects with approximate percentages of the image
+const objects = [
+    {name:'ball', cx:20, cy:30, r:5},
+    {name:'bottle', cx:50, cy:25, r:5},
+    {name:'crayonbox', cx:70, cy:35, r:5},
+    {name:'paintbrush', cx:30, cy:60, r:5},
+    {name:'pear', cx:60, cy:65, r:5},
+    {name:'pencil', cx:15, cy:80, r:5},
+    {name:'schoolbag', cx:40, cy:50, r:5},
+    {name:'scissors', cx:80, cy:55, r:5},
+    {name:'watercan', cx:75, cy:75, r:5}
+];
+
+// Create clickable areas
+const schoolContainer = document.getElementById('schoolContainer');
+objects.forEach(obj=>{
+    const area = document.createElement('div');
+    area.classList.add('clickable-area');
+    area.dataset.name = obj.name;
+    area.style.left = `calc(${obj.cx}% - ${obj.r}%)`;
+    area.style.top = `calc(${obj.cy}% - ${obj.r}%)`;
+    area.style.width = `${obj.r*2}%`;
+    area.style.height = `${obj.r*2}%`;
+    schoolContainer.appendChild(area);
+
+    area.addEventListener('click', ()=>{
+        if(area.classList.contains('correct')) return;
+
+        wrongAttempts[obj.name] = wrongAttempts[obj.name] || 0;
+
+        // Check if already 2 wrong attempts
+        if(wrongAttempts[obj.name]>=2){
+            area.classList.add('correct','glow');
+            correctSound.play();
+            tick.style.display='block';
+            setTimeout(()=> tick.style.display='none',500);
+            foundCount++;
+        } else {
+            // Simulate correct only if clicking correct area
+            area.classList.add('correct');
+            correctSound.play();
+            tick.style.display='block';
+            setTimeout(()=> tick.style.display='none',500);
+            foundCount++;
+        }
+
+        // Check game end
+        if(foundCount>=totalObjects){
+            spawnConfetti();
+            clapSound.play();
+            setTimeout(()=>{ game.style.display='none'; endScreen.style.display='flex'; },1000);
+        }
     });
-    tick.style.display = 'none';
-    endScreen.style.display='none';
-    showSplash();
-}
 
+    // Optional: simulate wrong click by clicking outside areas (can implement global click later)
+});
+
+// Splash and title
 function showSplash(){
-    splash.style.display = 'flex';
-    titleScreen.style.display = 'none';
-    game.style.display = 'none';
-    endScreen.style.display = 'none';
+    splash.style.display='flex';
+    titleScreen.style.display='none';
+    game.style.display='none';
+    endScreen.style.display='none';
     setTimeout(()=>{
         splash.style.display='none';
         titleScreen.style.display='flex';
         setTimeout(()=>{
             titleScreen.style.display='none';
             game.style.display='flex';
-            playQuestionVoice();
+            questionVoice.play();
         },5000);
     },5000);
 }
+hearAgain.addEventListener('click',()=>{ questionVoice.play(); });
 
-function playQuestionVoice(){
-    const questionAudio = document.getElementById('questionVoice');
-    questionAudio.play();
+// Play again button
+document.getElementById('playAgain').addEventListener('click', ()=>{
+    foundCount=0;
+    wrongAttempts={};
+    document.querySelectorAll('.clickable-area').forEach(area=>{
+        area.classList.remove('correct','wrong','glow');
+    });
+    tick.style.display='none';
+    endScreen.style.display='none';
+    showSplash();
+});
+
+// Confetti function
+function spawnConfetti(){
+    for(let i=0;i<100;i++){
+        const conf = document.createElement('div');
+        conf.classList.add('confetti');
+        conf.style.left = Math.random()*window.innerWidth + 'px';
+        conf.style.background = `hsl(${Math.random()*360}, 70%, 50%)`;
+        conf.style.animationDuration = (2+Math.random()*2)+'s';
+        document.body.appendChild(conf);
+        setTimeout(()=> conf.remove(),4000);
+    }
 }
 
-hearAgain.addEventListener('click',()=>{
-    playQuestionVoice();
-});
-
-objectImages.forEach(img => {
-    img.addEventListener('click',()=>{
-        if(img.classList.contains('correct-glow')) return;
-        const objectName = img.getAttribute('data-name');
-        // For simplicity, all objects are correct in this round
-        img.classList.add('correct-glow');
-        correctSound.play();
-        tick.style.display='block';
-        setTimeout(()=> tick.style.display='none',500);
-        foundObjects++;
-        if(foundObjects===objectImages.length){
-            // Game complete
-            clapSound.play();
-            setTimeout(()=>{
-                game.style.display='none';
-                endScreen.style.display='flex';
-            },1000);
-        }
-    });
-});
-
-document.getElementById('playAgain').addEventListener('click',()=>{
-    resetGame();
-});
-
-// Initialize
 showSplash();
 </script>
-
 </body>
 </html>
