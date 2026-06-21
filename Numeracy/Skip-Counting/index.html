@@ -106,13 +106,46 @@ margin-top:35px;
 border:none;
 border-radius:20px;
 padding:18px 40px;
+
 font-size:clamp(22px,3vw,30px);
 font-weight:bold;
-background:#ffb703;
-color:#222;
+
+background:#ff4d6d;
+color:white;
+
 cursor:pointer;
-box-shadow:0 6px 12px rgba(0,0,0,.2);
+
+animation:tapBounce 1s infinite;
+
+box-shadow:
+0 0 10px #ff4d6d,
+0 0 20px #ff4d6d,
+0 0 30px #ff4d6d;
 }
+
+@keyframes tapBounce{
+
+0%{
+transform:translateY(0);
+}
+
+25%{
+transform:translateY(-8px);
+}
+
+50%{
+transform:translateY(0);
+}
+
+75%{
+transform:translateY(-4px);
+}
+
+100%{
+transform:translateY(0);
+}
+
+}   
 
 #tapStartBtn:active{
 transform:scale(.96);
@@ -189,11 +222,12 @@ cursor:pointer;
 /* ---------------- BOARD ---------------- */
 
 #boardArea{
-height:28%;
+height:32%;
 display:flex;
 justify-content:center;
 align-items:flex-start;
 padding-top:10px;
+margin-bottom:25px;
 }
 
 #board{
@@ -257,11 +291,9 @@ align-items:center;
 
 width:min(95%,1200px);
 
-background:rgba(255,255,255,.85);
+background:transparent;
 
-border:6px solid #2eb82e;
-
-border-radius:35px;
+border:none;
 
 padding:15px;
 
@@ -274,12 +306,27 @@ align-items:center;
 
 gap:15px;
 }
+#optionsArea{
+height:32%;
+display:flex;
+justify-content:center;
+align-items:center;
 
+background:none;
+border:none;
+}
+   
 .option{
 position:relative;
 cursor:pointer;
 touch-action:none;
 user-select:none;
+
+width:180px;
+height:180px;
+display:flex;
+justify-content:center;
+align-items:center;
 }
 
 .option img{
@@ -351,20 +398,20 @@ animation:shake .3s;
 
 #goodJobScreen{
 position:fixed;
-top:50%;
+top:85%;
 left:50%;
 transform:translate(-50%,-50%);
 display:none;
 justify-content:center;
 align-items:center;
 
-padding:20px 40px;
+padding:12px 25px;
 
 background:#fff8c5;
 border:6px solid #ffb703;
 border-radius:25px;
 
-font-size:clamp(28px,4vw,50px);
+font-size:clamp(20px,3vw,36px);
 font-weight:900;
 
 z-index:5000;
@@ -455,6 +502,15 @@ gap:10px;
 padding:15px;
 }
 
+#boardArea{
+margin-bottom:35px;
+}
+
+#optionsArea{
+height:28%;
+}
+
+}   
 .slot{
 height:50px;
 }
@@ -826,12 +882,9 @@ option.innerHTML=`
 
 <img src="${round.shape}">
 
-<div
-class="optionNumber"
-style="color:${getColor()}">
+<div class="optionNumber">
 ${number}
 </div>
-
 `;
 
 enableDrag(option);
@@ -1056,7 +1109,7 @@ const colors = [
 
 ];
 
-for(let i=0;i<300;i++){
+for(let i=0;i<500;i++){
 
 const piece =
 document.createElement("div");
@@ -1074,7 +1127,7 @@ Math.random()*colors.length
 ];
 
 piece.style.animationDuration =
-(3+Math.random()*4)+"s";
+(5+Math.random()*4)+"s";
 
 piece.style.opacity=
 0.7+Math.random()*0.3;
