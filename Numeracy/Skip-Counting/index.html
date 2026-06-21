@@ -136,10 +136,25 @@ gap:8px;
 }
 
 #roundTitle{
+
 text-align:center;
-font-size:clamp(22px,4vw,42px);
+
+font-size:clamp(34px,5vw,72px);
+
 font-weight:900;
-color:#d62828;
+
+background:
+linear-gradient(
+90deg,
+#ff2e63,
+#ff9800,
+#2eb82e,
+#2196f3,
+#8e24aa
+);
+
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
 }
 
 .questionRow{
@@ -180,35 +195,52 @@ align-items:center;
 }
 
 #board{
-width:min(95%,1000px);
-height:150px;
+width:min(92%,1100px);
+height:200px;
 
-background:
-linear-gradient(
-180deg,
-#ff70d2,
-#e857bf
-);
+background:white;
 
-border-radius:20px;
+border:8px solid #ff4fa0;
+
+border-radius:35px;
 
 display:grid;
 grid-template-columns:repeat(4,1fr);
-gap:15px;
-padding:20px;
-align-items:center;
+
+gap:18px;
+
+padding:25px;
 }
 
 .slot{
-height:70px;
+
+border:4px dashed #ff5d99;
+
+border-radius:20px;
+
 display:flex;
 justify-content:center;
 align-items:center;
-border-bottom:4px solid #7b1e63;
-font-size:clamp(26px,4vw,48px);
-font-weight:bold;
-color:#222;
+
+font-size:clamp(34px,5vw,70px);
+
+font-weight:900;
+
+color:#ff4fa0;
+
+background:#fff9fc;
+
+transition:.3s;
 }
+
+.slot.filled{
+
+background:#e8ffe8;
+
+border-color:#28a745;
+
+color:#111;
+}   
 
 /* ---------------- OPTIONS ---------------- */
 
@@ -220,14 +252,25 @@ align-items:center;
 }
 
 #optionsContainer{
-width:100%;
-max-width:1200px;
+
+width:min(95%,1200px);
+
+background:rgba(255,255,255,.85);
+
+border:6px solid #2eb82e;
+
+border-radius:35px;
+
+padding:15px;
 
 display:grid;
+
 grid-template-columns:repeat(4,1fr);
-gap:20px;
+
 justify-items:center;
 align-items:center;
+
+gap:15px;
 }
 
 .option{
@@ -247,13 +290,20 @@ pointer-events:none;
 .optionNumber{
 position:absolute;
 inset:0;
+
 display:flex;
 justify-content:center;
 align-items:center;
+
 font-size:clamp(34px,5vw,62px);
+
 font-weight:900;
-color:white;
+
 pointer-events:none;
+
+text-shadow:
+1px 1px 0 white,
+2px 2px 0 white;
 }
 
 .correctGlow{
@@ -659,6 +709,24 @@ let currentRound = 0;
 let nextSlot = 0;
 let wrongAttempts = 0;
 let draggedElement = null;
+function getColor(){
+
+const colors=[
+
+"#ff0000",
+"#0057d9",
+"#008000",
+"#7b2cbf",
+"#ff7b00",
+"#e91e63"
+
+];
+
+return colors[
+Math.floor(Math.random()*colors.length)
+];
+
+}   
 
 /* ==========================================
    SPLASH
@@ -717,8 +785,11 @@ nextSlot=0;
 wrongAttempts=0;
 
 slots.forEach(slot=>{
+
 slot.textContent="";
-slot.style.borderBottomColor="#7b1e63";
+
+slot.classList.remove("filled");
+
 });
 
 const round = rounds[currentRound];
@@ -741,7 +812,12 @@ option.dataset.value=number;
 option.innerHTML=`
 
 <img src="${round.shape}">
-<div class="optionNumber">${number}</div>
+
+<div
+class="optionNumber"
+style="color:${getColor()}">
+${number}
+</div>
 
 `;
 
@@ -835,7 +911,9 @@ if(value===correct){
 
 slots[nextSlot].textContent=value;
 
-slots[nextSlot].style.color="#222";
+slots[nextSlot].classList.add("filled");
+
+slots[nextSlot].style.color="#111";
 slots[nextSlot].style.fontWeight="900";
 
 element.classList.add("correctGlow");
