@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+
+<title>Skip Counting</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+-webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+width:100%;
+height:100%;
+overflow:hidden;
+font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+background:linear-gradient(
+135deg,
+#fff8d6,
+#ffd6ec,
+#d9f7ff,
+#fff2c7
+);
+}
+
+/* ---------------- SPLASH SCREEN ---------------- */
+
+#splashScreen{
+position:fixed;
+inset:0;
+display:flex;
+justify-content:center;
+align-items:center;
+background:white;
+z-index:9999;
+}
+
+#splashScreen img{
+width:min(60vw,320px);
+height:auto;
+}
+
+/* ---------------- START SCREEN ---------------- */
+
+#startScreen{
+position:fixed;
+inset:0;
+display:none;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+padding:20px;
+background:
+linear-gradient(
+135deg,
+#ffe8f2,
+#fff6d6,
+#daf5ff
+);
+}
+
+.gameTitle{
+font-size:clamp(34px,6vw,70px);
+font-weight:900;
+text-align:center;
+line-height:1.1;
+animation:flashTitle 1.2s infinite alternate;
+}
+
+@keyframes flashTitle{
+
+0%{
+color:#ff4d6d;
+}
+
+25%{
+color:#ff7f11;
+}
+
+50%{
+color:#5a189a;
+}
+
+75%{
+color:#0081a7;
+}
+
+100%{
+color:#2b9348;
+}
+
+}
+
+#tapStartBtn{
+margin-top:35px;
+border:none;
+border-radius:20px;
+padding:18px 40px;
+font-size:clamp(22px,3vw,30px);
+font-weight:bold;
+background:#ffb703;
+color:#222;
+cursor:pointer;
+box-shadow:0 6px 12px rgba(0,0,0,.2);
+}
+
+#tapStartBtn:active{
+transform:scale(.96);
+}
+
+/* ---------------- MAIN GAME ---------------- */
+
+#gameContainer{
+display:none;
+width:100%;
+height:100%;
+padding:8px;
+}
+
+.topArea{
+height:25%;
+display:flex;
+flex-direction:column;
+justify-content:center;
+gap:8px;
+}
+
+#roundTitle{
+text-align:center;
+font-size:clamp(22px,4vw,42px);
+font-weight:900;
+color:#d62828;
+}
+
+.questionRow{
+display:flex;
+justify-content:center;
+align-items:center;
+gap:10px;
+}
+
+#questionBox{
+flex:1;
+max-width:900px;
+background:#9c27b0;
+color:white;
+padding:10px;
+border-radius:10px;
+font-weight:bold;
+text-align:center;
+font-size:clamp(14px,2vw,24px);
+}
+
+#speakBtn{
+border:none;
+background:#ffca3a;
+border-radius:12px;
+padding:10px 15px;
+font-size:18px;
+cursor:pointer;
+}
+
+/* ---------------- BOARD ---------------- */
+
+#boardArea{
+height:30%;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+#board{
+width:min(95%,1000px);
+height:150px;
+
+background:
+linear-gradient(
+180deg,
+#ff70d2,
+#e857bf
+);
+
+border-radius:20px;
+
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:15px;
+padding:20px;
+align-items:center;
+}
+
+.slot{
+height:70px;
+display:flex;
+justify-content:center;
+align-items:center;
+border-bottom:4px solid #7b1e63;
+font-size:clamp(26px,4vw,48px);
+font-weight:bold;
+color:#222;
+}
+
+/* ---------------- OPTIONS ---------------- */
+
+#optionsArea{
+height:40%;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+#optionsContainer{
+width:100%;
+max-width:1200px;
+
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:20px;
+justify-items:center;
+align-items:center;
+}
+
+.option{
+position:relative;
+cursor:pointer;
+touch-action:none;
+user-select:none;
+}
+
+.option img{
+width:140px;
+height:140px;
+object-fit:contain;
+pointer-events:none;
+}
+
+.optionNumber{
+position:absolute;
+inset:0;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:clamp(34px,5vw,62px);
+font-weight:900;
+color:white;
+pointer-events:none;
+}
+
+.correctGlow{
+animation:correctGlow 1s infinite;
+}
+
+@keyframes correctGlow{
+
+0%{
+filter:
+drop-shadow(0 0 6px #00ff00);
+}
+
+50%{
+filter:
+drop-shadow(0 0 22px #00ff00);
+}
+
+100%{
+filter:
+drop-shadow(0 0 6px #00ff00);
+}
+
+}
+
+.shake{
+animation:shake .3s;
+}
+
+@keyframes shake{
+
+0%{transform:translateX(0);}
+25%{transform:translateX(-6px);}
+50%{transform:translateX(6px);}
+75%{transform:translateX(-6px);}
+100%{transform:translateX(0);}
+
+}
+
+/* ---------------- GOOD JOB ---------------- */
+
+#goodJobScreen{
+position:fixed;
+inset:0;
+display:none;
+justify-content:center;
+align-items:center;
+font-size:clamp(42px,7vw,90px);
+font-weight:900;
+background:rgba(255,255,255,.95);
+z-index:5000;
+animation:flashTitle 1s infinite alternate;
+}
+
+/* ---------------- FINAL SCREEN ---------------- */
+
+#finalScreen{
+position:fixed;
+inset:0;
+display:none;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+gap:25px;
+background:
+linear-gradient(
+135deg,
+#fff6d6,
+#ffd6ec,
+#d8f3ff
+);
+z-index:6000;
+}
+
+#finalText{
+font-size:clamp(40px,7vw,90px);
+font-weight:900;
+text-align:center;
+animation:flashTitle 1s infinite alternate;
+}
+
+#playAgainBtn{
+border:none;
+padding:18px 35px;
+border-radius:20px;
+font-size:clamp(22px,3vw,30px);
+font-weight:bold;
+background:#ffb703;
+cursor:pointer;
+}
+
+/* ---------------- CONFETTI ---------------- */
+
+#confettiContainer{
+position:fixed;
+inset:0;
+pointer-events:none;
+overflow:hidden;
+z-index:5500;
+}
+
+.confetti{
+position:absolute;
+width:12px;
+height:12px;
+border-radius:2px;
+animation:fall linear forwards;
+}
+
+@keyframes fall{
+
+from{
+transform:
+translateY(-50px)
+rotate(0deg);
+}
+
+to{
+transform:
+translateY(110vh)
+rotate(720deg);
+}
+
+}
+
+/* ---------------- MOBILE ---------------- */
+
+@media (max-width:768px){
+
+.topArea{
+height:28%;
+}
+
+#board{
+height:120px;
+gap:10px;
+padding:15px;
+}
+
+.slot{
+height:50px;
+}
+
+.option img{
+width:95px;
+height:95px;
+}
+
+#optionsContainer{
+gap:10px;
+}
+
+#questionBox{
+font-size:15px;
+}
+
+#speakBtn{
+padding:8px 10px;
+font-size:16px;
+}
+
+}
+
+@media (max-width:480px){
+
+#roundTitle{
+font-size:26px;
+}
+
+.option img{
+width:78px;
+height:78px;
+}
+
+.optionNumber{
+font-size:34px;
+}
+
+#board{
+height:95px;
+}
+
+.slot{
+font-size:24px;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- SPLASH -->
+
+<div id="splashScreen">
+<img src="assets/innovine-logo.png" alt="">
+</div>
+
+<!-- START -->
+
+<div id="startScreen">
+
+<h1 class="gameTitle">
+Skip Counting
+</h1>
+
+<button id="tapStartBtn">
+👆 TAP TO START
+</button>
+
+</div>
+
+<!-- GAME -->
+
+<div id="gameContainer">
+
+<div class="topArea">
+
+<h2 id="roundTitle"></h2>
+
+<div class="questionRow">
+
+<div id="questionBox"></div>
+
+<button id="speakBtn">
+🔊
+</button>
+
+</div>
+
+</div>
+
+<div id="boardArea">
+
+<div id="board">
+
+<div class="slot" data-index="0"></div>
+<div class="slot" data-index="1"></div>
+<div class="slot" data-index="2"></div>
+<div class="slot" data-index="3"></div>
+
+</div>
+
+</div>
+
+<div id="optionsArea">
+
+<div id="optionsContainer">
+
+</div>
+
+</div>
+
+</div>
+
+<!-- GOOD JOB -->
+
+<div id="goodJobScreen">
+🌟 GOOD JOB! 🌟
+</div>
+
+<!-- CONFETTI -->
+
+<div id="confettiContainer"></div>
+
+<!-- FINAL -->
+
+<div id="finalScreen">
+
+<div id="finalText">
+🎉 GREAT JOB! 🎉
+</div>
+
+<button id="playAgainBtn">
+🔄 PLAY AGAIN
+</button>
+
+</div>
+
+<!-- Audio -->
+
+<audio id="clapSound"
+src="assets/clap.mp3"></audio>
+
+<audio id="wrongSound"
+src="assets/wrong.mp3"></audio>
+
+<script src="game.js"></script>
+/* ==========================================
+   SKIP COUNTING GAME
+========================================== */
+
+const rounds = [
+
+{
+title:"Skip Counting by 2",
+question:"Skip count by 2. Drag and drop the given numbers in proper sequence.",
+sequence:[2,4,6,8],
+options:[8,6,2,4],
+shape:"assets/flower.png"
+},
+
+{
+title:"Skip Counting by 5",
+question:"Skip count by 5. Drag and drop the given numbers in proper sequence.",
+sequence:[5,10,15,20],
+options:[10,15,20,5],
+shape:"assets/circle.png"
+},
+
+{
+title:"Skip Counting by 10",
+question:"Skip count by 10. Drag and drop the given numbers in proper sequence.",
+sequence:[10,20,30,40],
+options:[20,30,10,40],
+shape:"assets/star.png"
+},
+
+{
+title:"Skip Counting by 2",
+question:"Skip count by 2. Drag and drop the given numbers in proper sequence.",
+sequence:[12,14,16,18],
+options:[18,14,12,16],
+shape:"assets/purple.png"
+},
+
+{
+title:"Skip Counting by 5",
+question:"Skip count by 5. Drag and drop the given numbers in proper sequence.",
+sequence:[35,40,45,50],
+options:[40,35,50,45],
+shape:"assets/flower.png"
+},
+
+{
+title:"Skip Counting by 10",
+question:"Skip count by 10. Drag and drop the given numbers in proper sequence.",
+sequence:[70,80,90,100],
+options:[90,80,70,100],
+shape:"assets/pink.png"
+}
+
+];
+
+/* ==========================================
+   ELEMENTS
+========================================== */
+
+const splashScreen =
+document.getElementById("splashScreen");
+
+const startScreen =
+document.getElementById("startScreen");
+
+const gameContainer =
+document.getElementById("gameContainer");
+
+const roundTitle =
+document.getElementById("roundTitle");
+
+const questionBox =
+document.getElementById("questionBox");
+
+const optionsContainer =
+document.getElementById("optionsContainer");
+
+const board =
+document.getElementById("board");
+
+const slots =
+document.querySelectorAll(".slot");
+
+const speakBtn =
+document.getElementById("speakBtn");
+
+const tapStartBtn =
+document.getElementById("tapStartBtn");
+
+const goodJobScreen =
+document.getElementById("goodJobScreen");
+
+const finalScreen =
+document.getElementById("finalScreen");
+
+const playAgainBtn =
+document.getElementById("playAgainBtn");
+
+const clapSound =
+document.getElementById("clapSound");
+
+const wrongSound =
+document.getElementById("wrongSound");
+
+const confettiContainer =
+document.getElementById("confettiContainer");
+
+/* ==========================================
+   VARIABLES
+========================================== */
+
+let currentRound = 0;
+let nextSlot = 0;
+let wrongAttempts = 0;
+let draggedElement = null;
+
+/* ==========================================
+   SPLASH
+========================================== */
+
+setTimeout(()=>{
+
+splashScreen.style.display="none";
+startScreen.style.display="flex";
+
+},5000);
+
+/* ==========================================
+   START
+========================================== */
+
+tapStartBtn.addEventListener("click",()=>{
+
+startScreen.style.display="none";
+gameContainer.style.display="block";
+
+loadRound();
+});
+
+/* ==========================================
+   SPEECH
+========================================== */
+
+function speak(text){
+
+speechSynthesis.cancel();
+
+const utterance =
+new SpeechSynthesisUtterance(text);
+
+utterance.rate=0.9;
+utterance.pitch=1;
+utterance.volume=1;
+
+speechSynthesis.speak(utterance);
+}
+
+speakBtn.addEventListener("click",()=>{
+
+speak(questionBox.textContent);
+
+});
+
+/* ==========================================
+   LOAD ROUND
+========================================== */
+
+function loadRound(){
+
+nextSlot=0;
+wrongAttempts=0;
+
+slots.forEach(slot=>{
+slot.textContent="";
+slot.style.borderBottomColor="#7b1e63";
+});
+
+const round = rounds[currentRound];
+
+roundTitle.textContent = round.title;
+
+questionBox.textContent =
+round.question;
+
+optionsContainer.innerHTML="";
+
+round.options.forEach(number=>{
+
+const option =
+document.createElement("div");
+
+option.className="option";
+option.dataset.value=number;
+
+option.innerHTML=`
+
+<img src="${round.shape}">
+<div class="optionNumber">${number}</div>
+
+`;
+
+enableDrag(option);
+
+optionsContainer.appendChild(option);
+
+});
+
+setTimeout(()=>{
+
+speak(round.question);
+
+},400);
+}
+
+/* ==========================================
+   DRAG SYSTEM
+========================================== */
+
+function enableDrag(element){
+
+element.draggable=true;
+
+/* DESKTOP */
+
+element.addEventListener("dragstart",(e)=>{
+
+draggedElement=element;
+
+});
+
+/* MOBILE */
+
+element.addEventListener("touchstart",(e)=>{
+
+draggedElement=element;
+
+},{passive:true});
+
+}
+
+/* ==========================================
+   DROP TARGETS
+========================================== */
+
+slots.forEach(slot=>{
+
+slot.addEventListener("dragover",(e)=>{
+
+e.preventDefault();
+
+});
+
+slot.addEventListener("drop",(e)=>{
+
+e.preventDefault();
+
+if(!draggedElement) return;
+
+handleDrop(draggedElement);
+
+});
+
+/* MOBILE TAP */
+
+slot.addEventListener("click",()=>{
+
+if(!draggedElement) return;
+
+handleDrop(draggedElement);
+
+});
+
+});
+
+/* ==========================================
+   HANDLE DROP
+========================================== */
+
+function handleDrop(element){
+
+const value =
+parseInt(element.dataset.value);
+
+const correct =
+rounds[currentRound]
+.sequence[nextSlot];
+
+if(value===correct){
+
+slots[nextSlot].textContent=value;
+
+slots[nextSlot].style.color="#222";
+slots[nextSlot].style.fontWeight="900";
+
+element.classList.add("correctGlow");
+
+setTimeout(()=>{
+
+element.remove();
+
+},500);
+
+nextSlot++;
+
+wrongAttempts=0;
+
+if(nextSlot===4){
+
+roundComplete();
+
+}
+
+}else{
+
+wrongAttempts++;
+
+wrongSound.currentTime=0;
+wrongSound.play();
+
+element.classList.add("shake");
+
+setTimeout(()=>{
+
+element.classList.remove("shake");
+
+},300);
+
+if(wrongAttempts>=2){
+
+showHint();
+
+}
+
+}
+
+draggedElement=null;
+}
+
+/* ==========================================
+   HINT
+========================================== */
+
+function showHint(){
+
+const needed =
+rounds[currentRound]
+.sequence[nextSlot];
+
+const options =
+document.querySelectorAll(".option");
+
+options.forEach(opt=>{
+
+if(
+parseInt(opt.dataset.value)
+===needed
+){
+
+opt.classList.add("correctGlow");
+
+setTimeout(()=>{
+
+opt.classList.remove("correctGlow");
+
+},3000);
+
+}
+
+});
+
+wrongAttempts=0;
+}
+
+/* ==========================================
+   ROUND COMPLETE
+========================================== */
+
+function roundComplete(){
+
+clapSound.currentTime=0;
+clapSound.play();
+
+goodJobScreen.style.display="flex";
+
+setTimeout(()=>{
+
+goodJobScreen.style.display="none";
+
+currentRound++;
+
+if(currentRound>=rounds.length){
+
+finishGame();
+
+}else{
+
+loadRound();
+
+}
+
+},2500);
+}
+
+/* ==========================================
+   CONFETTI
+========================================== */
+
+function createConfetti(){
+
+const colors = [
+
+"#ff595e",
+"#ffca3a",
+"#8ac926",
+"#1982c4",
+"#6a4c93",
+"#ff85a1"
+
+];
+
+for(let i=0;i<150;i++){
+
+const piece =
+document.createElement("div");
+
+piece.className="confetti";
+
+piece.style.left =
+Math.random()*100+"vw";
+
+piece.style.background =
+colors[
+Math.floor(
+Math.random()*colors.length
+)
+];
+
+piece.style.animationDuration =
+(3+Math.random()*4)+"s";
+
+piece.style.opacity=
+0.7+Math.random()*0.3;
+
+confettiContainer
+.appendChild(piece);
+
+}
+
+}
+
+/* ==========================================
+   FINISH
+========================================== */
+
+function finishGame(){
+
+createConfetti();
+
+clapSound.currentTime=0;
+clapSound.play();
+
+finalScreen.style.display="flex";
+
+speak(
+"Great Job. You completed all the rounds."
+);
+
+}
+
+/* ==========================================
+   PLAY AGAIN
+========================================== */
+
+playAgainBtn.addEventListener("click",()=>{
+
+speechSynthesis.cancel();
+
+confettiContainer.innerHTML="";
+
+finalScreen.style.display="none";
+
+currentRound=0;
+
+loadRound();
+
+});
+  
+</body>
+</html>
