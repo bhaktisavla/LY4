@@ -128,11 +128,12 @@ padding:8px;
 }
 
 .topArea{
-height:25%;
+height:30%;
 display:flex;
 flex-direction:column;
-justify-content:center;
-gap:8px;
+justify-content:flex-start;
+padding-top:10px;
+gap:15px;
 }
 
 #roundTitle{
@@ -188,10 +189,11 @@ cursor:pointer;
 /* ---------------- BOARD ---------------- */
 
 #boardArea{
-height:30%;
+height:28%;
 display:flex;
 justify-content:center;
-align-items:center;
+align-items:flex-start;
+padding-top:10px;
 }
 
 #board{
@@ -299,6 +301,8 @@ font-size:clamp(34px,5vw,62px);
 
 font-weight:900;
 
+color:#7b2cbf;   /* purple */
+   
 pointer-events:none;
 
 text-shadow:
@@ -347,15 +351,23 @@ animation:shake .3s;
 
 #goodJobScreen{
 position:fixed;
-inset:0;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
 display:none;
 justify-content:center;
 align-items:center;
-font-size:clamp(42px,7vw,90px);
+
+padding:20px 40px;
+
+background:#fff8c5;
+border:6px solid #ffb703;
+border-radius:25px;
+
+font-size:clamp(28px,4vw,50px);
 font-weight:900;
-background:rgba(255,255,255,.95);
+
 z-index:5000;
-animation:flashTitle 1s infinite alternate;
 }
 
 /* ---------------- FINAL SCREEN ---------------- */
@@ -402,7 +414,7 @@ position:fixed;
 inset:0;
 pointer-events:none;
 overflow:hidden;
-z-index:5500;
+z-index:99999;
 }
 
 .confetti{
@@ -800,6 +812,7 @@ questionBox.textContent =
 round.question;
 
 optionsContainer.innerHTML="";
+draggedElement=null;   
 
 round.options.forEach(number=>{
 
@@ -854,9 +867,10 @@ draggedElement=element;
 
 element.addEventListener("touchstart",(e)=>{
 
+e.stopPropagation();
 draggedElement=element;
 
-},{passive:true});
+},{passive:false});
 
 }
 
@@ -920,7 +934,7 @@ element.classList.add("correctGlow");
 
 setTimeout(()=>{
 
-element.remove();
+element.style.visibility="hidden";
 
 },500);
 
@@ -1042,7 +1056,7 @@ const colors = [
 
 ];
 
-for(let i=0;i<150;i++){
+for(let i=0;i<300;i++){
 
 const piece =
 document.createElement("div");
@@ -1105,7 +1119,17 @@ finalScreen.style.display="none";
 
 currentRound=0;
 
-loadRound();
+gameContainer.style.display="none";
+
+splashScreen.style.display="flex";
+
+setTimeout(()=>{
+
+splashScreen.style.display="none";
+
+startScreen.style.display="flex";
+
+},5000);
 
 });
 </script>
