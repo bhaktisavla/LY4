@@ -113,6 +113,35 @@ rotate(720deg);
 opacity:0;
 }
 }
+.questionRow{
+display:flex;
+justify-content:center;
+align-items:center;
+gap:10px;
+flex-wrap:wrap;
+margin:8px 0;
+}
+
+.questionRow h2{
+margin:0;
+font-size:clamp(16px,2vw,28px);
+}
+
+.hearBtn{
+padding:8px 14px;
+font-size:16px;
+border:none;
+border-radius:12px;
+cursor:pointer;
+background:#4FC3F7;
+color:white;
+font-weight:bold;
+box-shadow:0 2px 6px rgba(0,0,0,.2);
+}
+
+.hearBtn:hover{
+transform:scale(1.05);
+} 
 </style>
 </head>
 <body>
@@ -121,8 +150,13 @@ opacity:0;
 <div id="title" class="screen"><h1 class="rainbowTitle">School Puzzle</h1></div>
 
 <div id="game">
+<div class="questionRow">
 <h2>Tap an object below and then find and tap the same object in the picture.</h2>
-<button onclick="speak(instr)">🔊 Hear Again</button>
+
+<button class="hearBtn" onclick="speak(instr)">
+🔊 Hear Again
+</button>
+</div>
 <div id="schoolWrap">
 <img id="school" src="assets/school.png">
 <div class="hotspot" data-id="pear" style="left:7%;top:7%;width:12%;height:14%"></div>
