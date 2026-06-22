@@ -5,7 +5,42 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>School Puzzle</title>
 <style>
-body{margin:0;font-family:Arial,sans-serif;background:#dff4ff;text-align:center}
+ .rainbowTitle{
+font-size:clamp(40px,7vw,80px);
+font-weight:bold;
+background:linear-gradient(
+90deg,
+#ff595e,
+#ffca3a,
+#8ac926,
+#1982c4,
+#6a4c93
+);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+animation:titleBounce 1.5s infinite;
+}
+
+@keyframes titleBounce{
+50%{
+transform:scale(1.08);
+}
+}
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:
+linear-gradient(
+135deg,
+#FFE082 0%,
+#FFD1DC 25%,
+#C8E6C9 50%,
+#BBDEFB 75%,
+#FFF9C4 100%
+);
+text-align:center;
+overflow:hidden;
+}
 #logo,#title,#game,#finish{display:none}
 .screen{height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center}
 #logo img{max-width:220px;width:45%}
@@ -36,12 +71,54 @@ height:40px;
 .card{border:2px solid #ccc;border-radius:10px;padding:4px;background:#fff;cursor:pointer}
 .card img{width:40px;height:40px;object-fit:contain}
 .done{opacity:.4}
+.playAgainBtn{
+padding:18px 40px;
+font-size:30px;
+font-weight:bold;
+border:none;
+border-radius:20px;
+cursor:pointer;
+color:white;
+background:
+linear-gradient(
+135deg,
+#ff6b6b,
+#ffb347,
+#4ecdc4
+);
+box-shadow:0 6px 15px rgba(0,0,0,.25);
+animation:pulseBtn 1.5s infinite;
+}
+
+@keyframes pulseBtn{
+50%{
+transform:scale(1.08);
+}
+}
+.confetti{
+position:fixed;
+width:12px;
+height:12px;
+top:-20px;
+animation:fall 4s linear forwards;
+pointer-events:none;
+z-index:999; 
+}
+
+@keyframes fall{
+to{
+transform:
+translateY(110vh)
+rotate(720deg);
+opacity:0;
+}
+}
 </style>
 </head>
 <body>
 
 <div id="logo" class="screen"><img src="assets/innovine-logo.png"></div>
-<div id="title" class="screen"><h1>School Puzzle</h1></div>
+<div id="title" class="screen"><h1 class="rainbowTitle">School Puzzle</h1></div>
 
 <div id="game">
 <h2>Tap an object below and then find and tap the same object in the picture.</h2>
@@ -65,8 +142,11 @@ height:40px;
 </div>
 
 <div id="finish" class="screen">
-<h1>🎉 Great Job! 🎉</h1>
-<button onclick="location.reload()">Play Again</button>
+<h1 class="rainbowTitle">🎉 Great Job! 🎉</h1>
+<button class="playAgainBtn"
+onclick="location.reload()">
+🎮 Play Again
+</button>
 </div>
 
 <script>
@@ -90,7 +170,13 @@ objs.forEach(o=>{
    document.querySelectorAll(".card").forEach(c=>c.classList.remove("selected"));
    d.classList.add("selected");
    selected=o;
-   speak("Find the "+o);
+   speak(
+"Find the " +
+o.replace("crayonbox","crayon box")
+.replace("schoolbag","school bag")
+.replace("paintbrush","paint brush")
+.replace("watercan","water can")
+);
  };
  bar.appendChild(d);
 });
@@ -106,9 +192,17 @@ document.querySelectorAll(".hotspot").forEach(h=>{
       selected=null;
       document.querySelectorAll(".card").forEach(c=>c.classList.remove("selected"));
       if(found===9){
-        game.style.display="none";
-        finish.style.display="flex";
-      }
+
+game.style.display="none";
+
+finish.style.display="flex";
+
+createConfetti();
+
+speak(
+"Fantastic! You found all the hidden objects!"
+);
+}
    }else{
       wrong.play();
    }
@@ -117,7 +211,40 @@ document.querySelectorAll(".hotspot").forEach(h=>{
 
 logo.style.display="flex";
 setTimeout(()=>{logo.style.display="none";title.style.display="flex";},5000);
-setTimeout(()=>{title.style.display="none";game.style.display="block";},10000);
-</script>
+setTimeout(()=>{
+title.style.display="none";
+game.style.display="block";
+
+speak(instr);
+
+setTimeout(()=>{
+speak(
+"Tap an object below and then find and tap the same object in the picture."
+); 
+
+},10000);
+function createConfetti(){
+
+for(let i=0;i<120;i++){
+
+const c=document.createElement("div");
+
+c.className="confetti";
+
+c.style.left=Math.random()*100+"vw";
+
+c.style.background=
+`hsl(${Math.random()*360},90%,60%)`;
+
+c.style.animationDelay=
+(Math.random()*2)+"s";
+
+document.body.appendChild(c);
+
+setTimeout(()=>{
+c.remove();
+},5000);
+}
+}</script>
 </body>
 </html>
