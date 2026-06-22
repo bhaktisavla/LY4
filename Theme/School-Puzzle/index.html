@@ -178,7 +178,7 @@ o.replace("crayonbox","crayon box")
 .replace("watercan","water can")
 );
  };
- bar.appendChild(d);
+ document.getElementById("bar").appendChild(d);
 });
 
 document.querySelectorAll(".hotspot").forEach(h=>{
@@ -193,9 +193,8 @@ document.querySelectorAll(".hotspot").forEach(h=>{
       document.querySelectorAll(".card").forEach(c=>c.classList.remove("selected"));
       if(found===9){
 
-game.style.display="none";
-
-finish.style.display="flex";
+document.getElementById("game").style.display="none";
+document.getElementById("finish").style.display="flex";
 
 createConfetti();
 
@@ -209,16 +208,16 @@ speak(
  };
 });
 
-logo.style.display="flex";
+document.getElementById("logo").style.display="flex";
 
 setTimeout(()=>{
-logo.style.display="none";
-title.style.display="flex";
+document.getElementById("logo").style.display="none";
+document.getElementById("title").style.display="flex";
 },5000);
 
 setTimeout(()=>{
-title.style.display="none";
-game.style.display="block";
+document.getElementById("title").style.display="none";
+document.getElementById("game").style.display="block";
 
 speak(
 "Tap an object below and then find and tap the same object in the picture."
@@ -250,5 +249,6 @@ c.remove();
 }
 
 }
+</script>
 </body>
 </html>
