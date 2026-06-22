@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>School Puzzle</title>
 <style>
- .rainbowTitle{
+.rainbowTitle{
 font-size:clamp(40px,7vw,80px);
 font-weight:bold;
 background:linear-gradient(
@@ -210,19 +210,22 @@ speak(
 });
 
 logo.style.display="flex";
-setTimeout(()=>{logo.style.display="none";title.style.display="flex";},5000);
+
+setTimeout(()=>{
+logo.style.display="none";
+title.style.display="flex";
+},5000);
+
 setTimeout(()=>{
 title.style.display="none";
 game.style.display="block";
 
-speak(instr);
-
-setTimeout(()=>{
 speak(
 "Tap an object below and then find and tap the same object in the picture."
-); 
+);
 
 },10000);
+
 function createConfetti(){
 
 for(let i=0;i<120;i++){
@@ -236,15 +239,16 @@ c.style.left=Math.random()*100+"vw";
 c.style.background=
 `hsl(${Math.random()*360},90%,60%)`;
 
-c.style.animationDelay=
-(Math.random()*2)+"s";
+c.style.animationDelay = Math.random()*2 + "s";
 
 document.body.appendChild(c);
 
 setTimeout(()=>{
 c.remove();
 },5000);
+
 }
-}</script>
+
+}
 </body>
 </html>
