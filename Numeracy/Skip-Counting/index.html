@@ -172,14 +172,13 @@ GAME
 ----------------------------------------------------*/
 
 #gameContainer{
-
 display:none;
-
 width:100%;
 height:100%;
-
 padding:10px;
 
+display:flex;
+flex-direction:column;
 }
 
 /*----------------------------------------------------
@@ -187,15 +186,11 @@ TOP
 ----------------------------------------------------*/
 
 .topArea{
-
-height:24%;
-
+height:auto;
 display:flex;
-
 flex-direction:column;
-
-gap:12px;
-
+gap:10px;
+margin-bottom:10px;
 }
 
 #roundTitle{
@@ -275,14 +270,10 @@ BOARD
 ----------------------------------------------------*/
 
 #boardArea{
-
-height:34%;
-
+flex:1;
 display:flex;
-
 justify-content:center;
 align-items:center;
-
 }
 
 #board{
@@ -345,14 +336,11 @@ OPTIONS
 ----------------------------------------------------*/
 
 #optionsArea{
-
-height:42%;
-
+height:auto;
+padding:10px 0;
 display:flex;
-
 justify-content:center;
 align-items:center;
-
 }
 
 #optionsContainer{
@@ -978,7 +966,7 @@ START BUTTON
 tapStartBtn.onclick=()=>{
 
 startScreen.style.display="none";
-gameContainer.style.display="block";
+gameContainer.style.display="flex";
 
 loadRound();
 
