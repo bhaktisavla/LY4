@@ -231,7 +231,7 @@ padding-top:10px;
 
 #board{
 width:min(92%,1100px);
-height:230px;
+height:180px;
 
 background:white;
 
@@ -249,7 +249,8 @@ padding:25px;
 
 .slot{
 
-height:120px;
+height:95px;
+min-height:95px;
 
 border:4px dashed #ff5d99;
 
@@ -491,6 +492,7 @@ rotate(720deg);
 }
 
 /* ---------------- MOBILE ---------------- */
+/* ---------------- MOBILE ---------------- */
 
 @media (max-width:768px){
 
@@ -499,22 +501,23 @@ height:28%;
 }
 
 #board{
-height:120px;
-gap:10px;
-padding:15px;
+height:180px;
+gap:12px;
+padding:18px;
 }
 
-#boardArea{
-margin-bottom:35px;
+.slot{
+height:85px;
+font-size:40px;
 }
 
 #optionsArea{
-height:28%;
+height:32%;
 }
 
-}   
-.slot{
-height:50px;
+.option{
+width:110px;
+height:110px;
 }
 
 .option img{
@@ -522,12 +525,16 @@ width:95px;
 height:95px;
 }
 
+.optionNumber{
+font-size:42px;
+}
+
 #optionsContainer{
-gap:10px;
+gap:8px;
 }
 
 #questionBox{
-font-size:15px;
+font-size:16px;
 }
 
 #speakBtn{
