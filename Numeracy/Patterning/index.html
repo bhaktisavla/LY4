@@ -325,7 +325,6 @@ align-items:center;
 gap:18px;
 
 }
-}
 
 /*==========================
 PATTERN
@@ -647,6 +646,8 @@ Tap on the object that will come next in the pattern.
 
 <!-- FINISH -->
 
+<div id="finish">
+
 <div id="finishCard">
 
 <h1>🎉 Great Job!</h1>
@@ -655,15 +656,12 @@ Tap on the object that will come next in the pattern.
 
 <p>You completed all the patterns.</p>
 
-<button id="playAgain">
-
-🔄
-
-</button>
+<button id="playAgain">🔄</button>
 
 </div>
 
 </div>
+
 
 <!-- AUDIO -->
 
@@ -889,7 +887,6 @@ loadRound();
 /*************************************************
 LOAD ROUND
 **************************************************/
-
 function loadRound(){
 
 document.getElementById("message").innerHTML="";
@@ -899,30 +896,28 @@ const round=rounds[currentRound];
 buildPattern(round);
 
 buildOptions(round);
-speakQuestion();  
+
+speakQuestion();
+
+}
+
 function speakQuestion(){
 
 speechSynthesis.cancel();
 
-const speech=
-
-new SpeechSynthesisUtterance(
-
+const speech=new SpeechSynthesisUtterance(
 "Tap on the object that will come next in the pattern."
-
 );
 
 speech.rate=0.9;
-
 speech.pitch=1;
 
 speechSynthesis.speak(speech);
 
 }
 
-document
-.getElementById("speakBtn")
-.onclick=speakQuestion;
+document.getElementById("speakBtn").onclick=speakQuestion;  
+  
 }
 
 /*************************************************
@@ -971,9 +966,29 @@ BUILD OPTIONS
 
 function buildOptions(round){
 
-...
+const row=document.getElementById("optionsRow");
 
-round.options.forEach(...);
+row.innerHTML="";
+
+round.options.forEach(src=>{
+
+const option=document.createElement("div");
+
+option.className="option";
+
+option.dataset.image=src;
+
+const img=document.createElement("img");
+
+img.src=src;
+
+img.className="optionImg";
+
+option.appendChild(img);
+
+row.appendChild(option);
+
+});
 
 attachDragEvents();
 
