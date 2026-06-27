@@ -526,6 +526,21 @@ top:-20px;
 z-index:5000;
 
 }
+@keyframes fall{
+
+from{
+
+transform:translateY(-20px) rotate(0deg);
+
+}
+
+to{
+
+transform:translateY(110vh) rotate(720deg);
+
+}
+
+}  
 
 /*==========================
 RESPONSIVE
@@ -916,9 +931,14 @@ speechSynthesis.speak(speech);
 
 }
 
-document.getElementById("speakBtn").onclick=speakQuestion;  
-  
+const speakBtn=document.getElementById("speakBtn");
+
+if(speakBtn){
+
+speakBtn.onclick=speakQuestion;
+
 }
+  
 
 /*************************************************
 BUILD PATTERN
@@ -994,25 +1014,6 @@ attachDragEvents();
 
 }
 
-const option=document.createElement("div");
-
-option.className="option";
-
-option.dataset.image=src;
-
-const img=document.createElement("img");
-
-img.src=src;
-
-img.className="optionImg";
-
-option.appendChild(img);
-
-row.appendChild(option);
-
-});
-
-}
 
 let activeOption=null;
 let startX=0;
