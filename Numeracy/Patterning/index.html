@@ -1,298 +1,1293 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pattern Game</title>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width,
+initial-scale=1.0,
+maximum-scale=1.0,
+user-scalable=no">
+
+<title>Patterning</title>
 
 <style>
-body {
-    margin:0;
-    font-family: Arial;
-    text-align:center;
-    background:#f5f9ff;
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+-webkit-tap-highlight-color:transparent;
 }
 
-/* SPLASH */
-#splash {
-    position:fixed;
-    width:100%;
-    height:100%;
-    background:white;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    z-index:9999;
-}
-#splash img {
-    width:70%;
-    max-width:350px;
+body{
+
+font-family:Arial,Helvetica,sans-serif;
+overflow:hidden;
+touch-action:none;
+
+background:
+linear-gradient(#bfe8ff,#dff6ff 55%,#b8ecb8 55%,#8ed48e);
+
 }
 
-/* GAME */
-#game { display:none; padding:8px; }
+/*==========================
+SPLASH
+==========================*/
 
-.pattern {
-    display:flex;
-    justify-content:center;
-    gap:5px;
-    margin:10px 0;
-}
+#splash{
 
-.options {
-    display:flex;
-    justify-content:center;
-    gap:12px;
-    margin:10px 0;
-}
+position:fixed;
+left:0;
+top:0;
+width:100%;
+height:100%;
 
-.box, .option {
-    flex:1;
-    max-width:70px;
-    height:70px;
-    border-radius:10px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:28px;
+background:white;
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+z-index:9999;
+
 }
 
-.box {
-    background:white;
-    border:2px dashed #aaa;
+#splash img{
+
+width:min(75vw,360px);
+
 }
 
-.dropzone {
-    border:3px solid #333;
+/*==========================
+TITLE SCREEN
+==========================*/
+
+#titleScreen{
+
+position:fixed;
+left:0;
+top:0;
+width:100%;
+height:100%;
+
+display:none;
+
+background:
+
+linear-gradient(#bfe8ff,#dff6ff 55%,#b8ecb8 55%,#8ed48e);
+
+overflow:hidden;
+
 }
 
-.option {
-    background:#6c9cff;
-    color:white;
+/* clouds */
+
+.cloud{
+
+position:absolute;
+background:white;
+border-radius:50px;
+
+opacity:.9;
+
 }
 
-/* DRAG */
-.dragging {
-    position:fixed;
-    pointer-events:none;
-    z-index:999;
-    transform:translate(-50%, -50%);
+.cloud:before,
+.cloud:after{
+
+content:"";
+position:absolute;
+background:white;
+border-radius:50%;
+
 }
 
-/* CONFETTI */
-.confetti {
-    position: fixed;
-    width: 6px;
-    height: 6px;
-    top: -10px;
-    animation: fall 3s linear infinite;
-}
-@keyframes fall {
-    to { transform: translateY(100vh); }
+.cloud1{
+
+width:140px;
+height:45px;
+
+left:8%;
+top:12%;
+
 }
 
-button {
-    padding:8px;
-    margin:5px;
-    border:none;
-    border-radius:6px;
-    background:#4CAF50;
-    color:white;
+.cloud1:before{
+
+width:55px;
+height:55px;
+
+left:20px;
+top:-25px;
+
 }
+
+.cloud1:after{
+
+width:65px;
+height:65px;
+
+right:18px;
+top:-30px;
+
+}
+
+.cloud2{
+
+width:170px;
+height:50px;
+
+right:8%;
+top:18%;
+
+}
+
+.cloud2:before{
+
+width:65px;
+height:65px;
+
+left:30px;
+top:-30px;
+
+}
+
+.cloud2:after{
+
+width:70px;
+height:70px;
+
+right:22px;
+top:-35px;
+
+}
+
+/* title card */
+
+#titleCard{
+
+position:absolute;
+
+left:50%;
+top:50%;
+
+transform:translate(-50%,-50%);
+
+width:min(90vw,520px);
+
+background:white;
+
+border-radius:25px;
+
+padding:35px 20px;
+
+box-shadow:0 12px 25px rgba(0,0,0,.15);
+
+}
+
+#titleCard h1{
+
+font-size:clamp(34px,7vw,56px);
+
+color:#ff6b2d;
+
+margin-bottom:18px;
+
+}
+
+#titleCard p{
+
+font-size:clamp(18px,3vw,24px);
+
+color:#555;
+
+margin-bottom:35px;
+
+line-height:1.5;
+
+}
+
+#playBtn{
+
+border:none;
+
+background:#ff9b3d;
+
+color:white;
+
+font-size:28px;
+
+padding:18px 55px;
+
+border-radius:50px;
+
+cursor:pointer;
+
+box-shadow:0 8px 18px rgba(0,0,0,.18);
+
+transition:.2s;
+
+}
+
+#playBtn:active{
+
+transform:scale(.95);
+
+}
+
+/*==========================
+GAME
+==========================*/
+
+#game{
+
+display:none;
+
+position:fixed;
+left:0;
+top:0;
+width:100%;
+height:100%;
+
+background:
+
+linear-gradient(#bfe8ff,#dff6ff 55%,#b8ecb8 55%,#8ed48e);
+
+overflow:hidden;
+
+}
+
+/* GAME HEADER */
+
+#header{
+
+padding-top:12px;
+
+}
+
+#header h1{
+
+color:#ff6b2d;
+
+font-size:clamp(28px,5vw,42px);
+
+}
+
+#instruction{
+
+margin-top:8px;
+
+font-size:clamp(18px,3vw,24px);
+
+font-weight:bold;
+
+color:#333;
+
+padding:0 10px;
+
+}
+
+/*==========================
+CARD
+==========================*/
+
+#gameCard{
+
+width:min(96vw,950px);
+
+margin:auto;
+
+margin-top:12px;
+
+background:white;
+
+border-radius:22px;
+
+box-shadow:0 8px 18px rgba(0,0,0,.18);
+
+padding:14px;
+
+}
+
+/*==========================
+PATTERN
+==========================*/
+
+#patternRow{
+
+display:flex;
+
+justify-content:center;
+
+gap:6px;
+
+margin-top:15px;
+
+flex-wrap:nowrap;
+
+}
+
+.patternBox{
+
+aspect-ratio:1;
+
+border:3px dashed #bbbbbb;
+
+border-radius:16px;
+
+background:white;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+}
+
+/*==========================
+OPTIONS
+==========================*/
+
+#optionsRow{
+
+display:flex;
+
+justify-content:center;
+
+gap:18px;
+
+margin-top:22px;
+
+}
+
+.option{
+
+aspect-ratio:1;
+
+background:#7ba8ff;
+
+border-radius:20px;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+box-shadow:0 6px 12px rgba(0,0,0,.15);
+
+touch-action:none;
+
+}
+
+/* image */
+
+.patternImg,
+.optionImg{
+
+width:78%;
+height:78%;
+
+object-fit:contain;
+
+pointer-events:none;
+
+}
+
+/*==========================
+MESSAGE
+==========================*/
+
+#message{
+
+height:40px;
+
+font-size:28px;
+
+font-weight:bold;
+
+color:#2e7d32;
+
+margin-top:15px;
+
+}
+
+/*==========================
+FINISH
+==========================*/
+
+#finish{
+
+display:none;
+
+position:fixed;
+
+left:0;
+top:0;
+
+width:100%;
+height:100%;
+
+background:
+
+linear-gradient(#bfe8ff,#dff6ff 55%,#b8ecb8 55%,#8ed48e);
+
+justify-content:center;
+align-items:center;
+
+flex-direction:column;
+
+}
+
+#finishCard{
+
+background:white;
+
+padding:35px;
+
+border-radius:30px;
+
+box-shadow:0 10px 20px rgba(0,0,0,.18);
+
+width:min(90vw,500px);
+
+}
+
+#finish h1{
+
+font-size:54px;
+
+color:#ff6b2d;
+
+margin-bottom:18px;
+
+}
+
+#finish p{
+
+font-size:24px;
+
+margin-bottom:30px;
+
+}
+
+#playAgain{
+
+width:95px;
+height:95px;
+
+border-radius:50%;
+
+border:none;
+
+background:#ff9b3d;
+
+font-size:48px;
+
+cursor:pointer;
+
+color:white;
+
+}
+
+/*==========================
+CONFETTI
+==========================*/
+
+.confetti{
+
+position:fixed;
+
+width:12px;
+height:12px;
+
+top:-20px;
+
+z-index:5000;
+
+}
+
+/*==========================
+RESPONSIVE
+==========================*/
+
+@media (max-width:700px){
+
+.patternBox{
+
+width:12vw;
+height:12vw;
+
+min-width:46px;
+min-height:46px;
+
+max-width:68px;
+max-height:68px;
+
+}
+
+.option{
+
+width:24vw;
+height:24vw;
+
+max-width:88px;
+max-height:88px;
+
+}
+
+}
+
+@media (min-width:701px){
+
+.patternBox{
+
+width:82px;
+height:82px;
+
+}
+
+.option{
+
+width:110px;
+height:110px;
+
+}
+
+}
+
 </style>
+
 </head>
 
 <body>
 
 <!-- SPLASH -->
+
 <div id="splash">
-    <img src="assets/innovine-logo.png">
+
+<img src="assets/innovine-logo.png">
+
+</div>
+
+<!-- TITLE -->
+
+<div id="titleScreen">
+
+<div class="cloud cloud1"></div>
+<div class="cloud cloud2"></div>
+
+<div id="titleCard">
+
+<h1>🌈 Patterning</h1>
+
+<p>
+Tap on the object that will come next in the pattern.
+</p>
+
+<button id="playBtn">
+▶ PLAY
+</button>
+
+</div>
+
 </div>
 
 <!-- GAME -->
+
 <div id="game">
 
-<h3 id="round"></h3>
+<div id="header">
 
-<div class="pattern" id="patternRow"></div>
-<div class="options" id="optionsRow"></div>
+<h1>🌈 Patterning</h1>
 
-<div id="feedback"></div>
+<div id="instruction">
 
-<button id="nextBtn" onclick="nextRound()" disabled>Next</button>
-<button id="restartBtn" onclick="restartGame()" style="display:none;">Play Again</button>
+Tap on the object that will come next in the pattern.
+
+</div>
+
+</div>
+
+<div id="gameCard">
+
+<div id="patternRow"></div>
+
+<div id="optionsRow"></div>
+
+<div id="message"></div>
+
+</div>
+
+</div>
+
+<!-- FINISH -->
+
+<div id="finish">
+
+<div id="finishCard">
+
+<h1>🎉 Great Job!</h1>
+
+<p>You completed all the patterns.</p>
+
+<button id="playAgain">
+
+🔄
+
+</button>
+
+</div>
 
 </div>
 
 <!-- AUDIO -->
+
 <audio id="correctSound" src="assets/correct.mp3"></audio>
+
 <audio id="wrongSound" src="assets/wrong.mp3"></audio>
-<audio id="finishSound" src="assets/freesound_community-claps-44774.mp3"></audio>
+
+<audio id="finishSound"
+src="assets/freesound_community-claps-44774.mp3"></audio>
 
 <script>
 
-// SPLASH
-window.onload = () => {
-    setTimeout(()=>{
-        splash.style.display="none";
-        game.style.display="block";
-    },5000);
-};
+const rounds=[
 
-// DATA
-const rounds = [
-{seq:["🟥","🟥","🟦","🟦","🟥","🟥",""], ans:"🟦"},
-{seq:["🍎","🍌","🍎","🍌",""], ans:"🍎"},
-{seq:["🐶","🐶","🐱","🐶","🐶",""], ans:"🐱"},
-{seq:["🔺","🔵","⭐","🔺","🔵",""], ans:"⭐"},
-{seq:["🍏","🍎","🍎","🍏","🍎",""], ans:"🍎"},
-{seq:["🚗","🚌","🚗","🚌",""], ans:"🚗"},
-{seq:["🌟","🌟","🌙","🌟","🌟",""], ans:"🌙"},
-{seq:["🍓","🍊","🍇","🍓","🍊",""], ans:"🍇"},
-{seq:["🐸","🐸","🐼","🐼","🐸","🐸",""], ans:"🐼"},
-{seq:["🚲","🚗","🚗","🚲","🚗",""], ans:"🚗"}
+{
+pattern:"AABB",
+sequence:[
+"assets/apple.png",
+"assets/apple.png",
+"assets/ball.png",
+"assets/ball.png",
+"assets/apple.png",
+"assets/apple.png",
+null
+],
+correct:"assets/ball.png",
+options:[
+"assets/ball.png",
+"assets/apple.png"
+]
+},
+
+{
+pattern:"AB",
+sequence:[
+"assets/marble.png",
+"assets/banana.png",
+"assets/marble.png",
+"assets/banana.png",
+null
+],
+correct:"assets/marble.png",
+options:[
+"assets/marble.png",
+"assets/banana.png"
+]
+},
+
+{
+pattern:"AAB",
+sequence:[
+"assets/puppy.png",
+"assets/puppy.png",
+"assets/cat.png",
+"assets/puppy.png",
+"assets/puppy.png",
+null
+],
+correct:"assets/cat.png",
+options:[
+"assets/cat.png",
+"assets/puppy.png"
+]
+},
+
+{
+pattern:"ABC",
+sequence:[
+"assets/bird.png",
+"assets/turtle.png",
+"assets/bunny.png",
+"assets/bird.png",
+"assets/turtle.png",
+null
+],
+correct:"assets/bunny.png",
+options:[
+"assets/bunny.png",
+"assets/turtle.png"
+]
+},
+
+{
+pattern:"ABB",
+sequence:[
+"assets/book.png",
+"assets/car.png",
+"assets/car.png",
+"assets/book.png",
+"assets/car.png",
+null
+],
+correct:"assets/car.png",
+options:[
+"assets/car.png",
+"assets/book.png"
+]
+},
+
+{
+pattern:"AB",
+sequence:[
+"assets/turtle.png",
+"assets/bunny.png",
+"assets/turtle.png",
+"assets/bunny.png",
+null
+],
+correct:"assets/turtle.png",
+options:[
+"assets/turtle.png",
+"assets/bunny.png"
+]
+},
+
+{
+pattern:"ABC",
+sequence:[
+"assets/apple.png",
+"assets/banana.png",
+"assets/orange.png",
+"assets/apple.png",
+"assets/banana.png",
+null
+],
+correct:"assets/orange.png",
+options:[
+"assets/orange.png",
+"assets/banana.png"
+]
+},
+
+{
+pattern:"AAB",
+sequence:[
+"assets/ball.png",
+"assets/ball.png",
+"assets/marble.png",
+"assets/ball.png",
+"assets/ball.png",
+null
+],
+correct:"assets/marble.png",
+options:[
+"assets/marble.png",
+"assets/ball.png"
+]
+},
+
+{
+pattern:"AABB",
+sequence:[
+"assets/cat.png",
+"assets/cat.png",
+"assets/turtle.png",
+"assets/turtle.png",
+"assets/cat.png",
+"assets/cat.png",
+null
+],
+correct:"assets/turtle.png",
+options:[
+"assets/turtle.png",
+"assets/cat.png"
+]
+},
+
+{
+pattern:"ABB",
+sequence:[
+"assets/bottle.png",
+"assets/schoolbag.png",
+"assets/schoolbag.png",
+"assets/bottle.png",
+"assets/schoolbag.png",
+null
+],
+correct:"assets/schoolbag.png",
+options:[
+"assets/schoolbag.png",
+"assets/bottle.png"
+]
+}
+
 ];
 
-let current=0;
-let dragEl=null;
-let dragValue=null;
+let currentRound=0;
+let selectedAnswer="";
+let dragClone=null;
 
-function clearDrag(){
-    if(dragEl){
-        dragEl.remove();
-        dragEl=null;
-    }
-    document.removeEventListener("pointermove", moveDrag);
-}
+/*************************************************
+SPLASH
+**************************************************/
 
-// CONFETTI
-function showConfetti(){
-    for(let i=0;i<30;i++){
-        let c=document.createElement("div");
-        c.className="confetti";
-        c.style.left=Math.random()*100+"vw";
-        c.style.background=`hsl(${Math.random()*360},70%,60%)`;
-        document.body.appendChild(c);
-        setTimeout(()=>c.remove(),3000);
-    }
-}
+window.onload=()=>{
 
-// LOAD ROUND
-function loadRound(){
+setTimeout(()=>{
 
-    clearDrag();
-    restartBtn.style.display="none";
+document.getElementById("splash").style.display="none";
 
-    if(current>=rounds.length){
-        patternRow.style.display="none";
-        optionsRow.style.display="none";
+document.getElementById("titleScreen").style.display="block";
 
-        round.innerHTML="🎉 Finished!";
-        nextBtn.style.display="none";
-        restartBtn.style.display="inline";
+},5000);
 
-        finishSound.play();
-        showConfetti();
-        return;
-    }
+};
 
-    let data=rounds[current];
+/*************************************************
+PLAY BUTTON
+**************************************************/
 
-    round.innerHTML="Round "+(current+1)+"/10";
-    nextBtn.disabled=true;
-    feedback.innerHTML="";
+document
+.getElementById("playBtn")
+.addEventListener("click",()=>{
 
-    patternRow.innerHTML="";
-    optionsRow.innerHTML="";
+document.getElementById("titleScreen").style.display="none";
 
-    let dropBox = null;
+document.getElementById("game").style.display="block";
 
-    data.seq.forEach(item=>{
-        let d=document.createElement("div");
-        d.className="box";
-
-        if(item===""){
-            d.classList.add("dropzone");
-            d.dataset.answer=data.ans;
-            dropBox = d;
-        } else {
-            d.innerHTML=item;
-        }
-
-        patternRow.appendChild(d);
-    });
-
-    let options=[...new Set(data.seq.filter(x=>x!=""))];
-    if(!options.includes(data.ans)) options.push(data.ans);
-
-    options.forEach(opt=>{
-        let d=document.createElement("div");
-        d.className="option";
-        d.innerHTML=opt;
-
-        d.onpointerdown=(e)=>startDrag(opt,e);
-
-        optionsRow.appendChild(d);
-    });
-}
-
-// DRAG START
-function startDrag(value,e){
-
-    clearDrag();
-
-    dragValue=value;
-
-    dragEl=document.createElement("div");
-    dragEl.className="option dragging";
-    dragEl.innerHTML=value;
-
-    document.body.appendChild(dragEl);
-
-    moveDrag(e);
-
-    document.addEventListener("pointermove", moveDrag);
-
-    document.addEventListener("pointerup", drop, { once:true });
-}
-
-// MOVE
-function moveDrag(e){
-    if(dragEl){
-        dragEl.style.left=e.clientX+"px";
-        dragEl.style.top=e.clientY+"px";
-    }
-}
-
-// DROP (AUTO SNAP)
-function drop(){
-
-    let dropzone = document.querySelector(".dropzone");
-
-    if(dragValue === dropzone.dataset.answer){
-        dropzone.innerHTML = dragValue;
-        feedback.innerHTML="Correct!";
-        correctSound.play();
-        nextBtn.disabled=false;
-    } else {
-        feedback.innerHTML="Try again!";
-        wrongSound.play();
-    }
-
-    clearDrag();
-}
-
-// NAV
-function nextRound(){ current++; loadRound(); }
-
-function restartGame(){
-    current=0;
-    nextBtn.style.display="inline";
-    loadRound();
-}
-
-// START
 loadRound();
 
+});
+
+/*************************************************
+LOAD ROUND
+**************************************************/
+
+function loadRound(){
+
+document.getElementById("message").innerHTML="";
+
+const round=rounds[currentRound];
+
+buildPattern(round);
+
+buildOptions(round);
+
+}
+
+/*************************************************
+BUILD PATTERN
+**************************************************/
+
+function buildPattern(round){
+
+const row=document.getElementById("patternRow");
+
+row.innerHTML="";
+
+round.sequence.forEach(item=>{
+
+const box=document.createElement("div");
+
+box.className="patternBox";
+
+if(item===null){
+
+box.classList.add("dropZone");
+
+box.dataset.answer=round.correct;
+
+}else{
+
+const img=document.createElement("img");
+
+img.src=item;
+
+img.className="patternImg";
+
+box.appendChild(img);
+
+}
+
+row.appendChild(box);
+
+});
+
+}
+
+/*************************************************
+BUILD OPTIONS
+**************************************************/
+
+function buildOptions(round){
+
+const row=document.getElementById("optionsRow");
+
+row.innerHTML="";
+
+round.options.forEach(src=>{
+
+const option=document.createElement("div");
+
+option.className="option";
+
+option.dataset.image=src;
+
+const img=document.createElement("img");
+
+img.src=src;
+
+img.className="optionImg";
+
+option.appendChild(img);
+
+row.appendChild(option);
+
+});
+
+}
+
+let activeOption=null;
+let startX=0;
+let startY=0;
+
+/*************************************************
+ATTACH DRAG EVENTS
+**************************************************/
+
+function attachDragEvents(){
+
+document
+.querySelectorAll(".option")
+.forEach(option=>{
+
+option.addEventListener(
+"pointerdown",
+startDrag
+);
+
+});
+
+}
+
+/*************************************************
+START DRAG
+**************************************************/
+
+function startDrag(e){
+
+e.preventDefault();
+
+activeOption=e.currentTarget;
+
+const rect=
+activeOption.getBoundingClientRect();
+
+dragClone=
+activeOption.cloneNode(true);
+
+dragClone.style.position="fixed";
+
+dragClone.style.left=
+rect.left+"px";
+
+dragClone.style.top=
+rect.top+"px";
+
+dragClone.style.width=
+rect.width+"px";
+
+dragClone.style.height=
+rect.height+"px";
+
+dragClone.style.zIndex="9999";
+
+dragClone.style.pointerEvents="none";
+
+dragClone.style.transform="scale(1.08)";
+
+document.body.appendChild(
+dragClone
+);
+
+startX=e.clientX;
+startY=e.clientY;
+
+document.addEventListener(
+"pointermove",
+dragMove
+);
+
+document.addEventListener(
+"pointerup",
+endDrag
+);
+
+}
+
+/*************************************************
+MOVE DRAG
+**************************************************/
+
+function dragMove(e){
+
+if(!dragClone) return;
+
+dragClone.style.left=
+(e.clientX-
+dragClone.offsetWidth/2)
++"px";
+
+dragClone.style.top=
+(e.clientY-
+dragClone.offsetHeight/2)
++"px";
+
+}
+
+/*************************************************
+END DRAG
+**************************************************/
+
+function endDrag(e){
+
+document.removeEventListener(
+"pointermove",
+dragMove
+);
+
+document.removeEventListener(
+"pointerup",
+endDrag
+);
+
+if(!dragClone) return;
+
+const dropZone=
+document.querySelector(
+".dropZone"
+);
+
+const zoneRect=
+dropZone.getBoundingClientRect();
+
+const inside=
+
+e.clientX>=zoneRect.left &&
+e.clientX<=zoneRect.right &&
+e.clientY>=zoneRect.top &&
+e.clientY<=zoneRect.bottom;
+
+if(inside){
+
+checkAnswer(
+activeOption.dataset.image,
+dropZone
+);
+
+}
+
+dragClone.remove();
+
+dragClone=null;
+
+activeOption=null;
+
+}
+
+/*************************************************
+CHECK ANSWER
+**************************************************/
+
+function checkAnswer(
+selectedImage,
+dropZone
+){
+
+const correctAnswer=
+dropZone.dataset.answer;
+
+if(
+selectedImage===
+correctAnswer
+){
+
+handleCorrectAnswer(
+selectedImage,
+dropZone
+);
+
+}else{
+
+handleWrongAnswer();
+
+}
+
+}
+
+let gameLocked=false;
+
+/*************************************************
+CORRECT ANSWER
+**************************************************/
+
+function handleCorrectAnswer(selectedImage,dropZone){
+
+if(gameLocked) return;
+
+gameLocked=true;
+
+/* snap image */
+
+dropZone.innerHTML="";
+
+const img=document.createElement("img");
+
+img.src=selectedImage;
+
+img.className="patternImg";
+
+dropZone.appendChild(img);
+
+/* message */
+
+document.getElementById("message").innerHTML="⭐ Good Job!";
+
+/* sound */
+
+const correct=document.getElementById("correctSound");
+
+correct.currentTime=0;
+correct.play();
+
+/* speech */
+
+if("speechSynthesis" in window){
+
+speechSynthesis.cancel();
+
+const speech=
+new SpeechSynthesisUtterance(
+"Good Job!"
+);
+
+speech.rate=.95;
+speech.pitch=1.15;
+speech.volume=1;
+
+speechSynthesis.speak(speech);
+
+}
+
+/* disable options */
+
+document
+.querySelectorAll(".option")
+.forEach(option=>{
+
+option.style.pointerEvents="none";
+
+option.style.opacity=".5";
+
+});
+
+/* next round */
+
+setTimeout(()=>{
+
+currentRound++;
+
+gameLocked=false;
+
+if(currentRound>=rounds.length){
+
+showFinishScreen();
+
+}else{
+
+loadRound();
+
+}
+
+},1000);
+
+}
+
+/*************************************************
+WRONG ANSWER
+**************************************************/
+
+function handleWrongAnswer(){
+
+const wrong=
+document.getElementById("wrongSound");
+
+wrong.currentTime=0;
+
+wrong.play();
+
+const msg=
+document.getElementById("message");
+
+msg.innerHTML="Try Again";
+
+setTimeout(()=>{
+
+msg.innerHTML="";
+
+},700);
+
+}
+
+/*************************************************
+SHOW FINISH
+**************************************************/
+
+function showFinishScreen(){
+
+document.getElementById("game").style.display="none";
+
+document.getElementById("finish").style.display="flex";
+
+document
+.getElementById("finishSound")
+.play();
+
+}
+
+/*************************************************
+PLAY AGAIN
+**************************************************/
+
+document
+.getElementById("playAgain")
+.addEventListener("click",restartGame);
+
+function restartGame(){
+
+currentRound=0;
+
+gameLocked=false;
+
+document.getElementById("finish").style.display="none";
+
+document.getElementById("game").style.display="none";
+
+document.getElementById("titleScreen").style.display="none";
+
+document.getElementById("splash").style.display="flex";
+
+setTimeout(()=>{
+
+document.getElementById("splash").style.display="none";
+
+document.getElementById("titleScreen").style.display="block";
+
+},5000);
+
+}    
 </script>
 
 </body>
