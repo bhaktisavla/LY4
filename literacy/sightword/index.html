@@ -401,7 +401,7 @@ flex-wrap:wrap;
 
 gap:12px;
 
-margin-bottom:18px;
+margin-bottom:35px;
 
 }
 
@@ -451,6 +451,21 @@ transform:scale(1.08);
 /*=========================
 ANSWER BOX
 =========================*/
+#answerArea{
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+gap:18px;
+
+margin-top:28px;
+
+margin-bottom:10px;
+
+}
 
 #answer{
 
@@ -462,11 +477,10 @@ align-items:center;
 
 gap:12px;
 
-flex-wrap:wrap;
-
-margin-bottom:5px;
+flex-wrap:nowrap;
 
 }
+
 #tickBox{
 
 display:flex;
@@ -475,17 +489,14 @@ justify-content:center;
 
 align-items:center;
 
-height:55px;
+width:50px;
 
-font-size:48px;
+height:50px;
 
-font-weight:bold;
+font-size:40px;
 
-color:#28a745;
-
-margin-top:5px;
-
-}    
+}
+   
 
 .box{
 
@@ -655,25 +666,34 @@ font-size:30px;
 
 }
 
+
+#answerArea{
+
+flex-direction:column;
+
+gap:10px;
+
+margin-top:20px;
+
+}
+
 #answer{
 
 flex-wrap:wrap;
+
+justify-content:center;
 
 }
 
 #tickBox{
 
-width:100%;
+width:auto;
 
-justify-content:center;
+height:auto;
 
-margin-left:0;
+font-size:42px;
 
-margin-top:10px;
-
-font-size:44px;
-
-}    
+}   
 
 }
 </style>
@@ -777,11 +797,13 @@ title="Hear Sight Word Again">
 
 <!-- ANSWER -->
 
-<div id="answer">
+<div id="answerArea">
 
-</div>
+    <div id="answer"></div>
 
-<div id="tickBox"></div>    
+    <div id="tickBox"></div>
+
+</div> 
 
 <!-- MESSAGE -->
 
@@ -1291,6 +1313,10 @@ document.getElementById("tickBox").innerHTML="✅";
 /* STOP ANY SPEECH */
 
 speechSynthesis.cancel();
+
+/* DISABLE LETTERS */
+
+disableLetters();
 
 /* PLAY CLAP */
 
