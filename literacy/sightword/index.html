@@ -1,618 +1,1575 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sight Word Builder Game</title>
+
+<meta name="viewport"
+content="width=device-width,
+initial-scale=1.0,
+maximum-scale=1.0,
+user-scalable=no">
+
+<title>Sight Words</title>
 
 <style>
 
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
 body{
-    margin:0;
-    font-family:'Comic Sans MS', sans-serif;
-    overflow-x:hidden;
-    text-align:center;
-    background:linear-gradient(to bottom,#dff6ff,#fff7d6);
-    min-height:100vh;
+
+font-family:
+'Comic Sans MS',
+Arial,
+sans-serif;
+
+overflow-x:hidden;
+
+background:
+linear-gradient(
+180deg,
+#87CEEB 0%,
+#B8E6FF 35%,
+#FFF8C6 100%);
+
+min-height:100vh;
+
 }
 
-/* BACKGROUND CLOUDS */
+/*=========================
+BACKGROUND
+=========================*/
+
 body::before{
-    content:"☁️ ☁️ ☁️";
-    position:fixed;
-    top:20px;
-    left:0;
-    width:100%;
-    font-size:50px;
-    opacity:0.25;
-    pointer-events:none;
+
+content:"";
+
+position:fixed;
+
+left:0;
+top:0;
+
+width:100%;
+height:100%;
+
+pointer-events:none;
+
+background-image:
+
+radial-gradient(circle at 10% 15%,#ffffff 0 35px,transparent 36px),
+
+radial-gradient(circle at 17% 15%,#ffffff 0 30px,transparent 31px),
+
+radial-gradient(circle at 13% 11%,#ffffff 0 32px,transparent 33px),
+
+radial-gradient(circle at 82% 18%,#ffffff 0 34px,transparent 35px),
+
+radial-gradient(circle at 89% 18%,#ffffff 0 28px,transparent 29px),
+
+radial-gradient(circle at 86% 13%,#ffffff 0 30px,transparent 31px),
+
+linear-gradient(#7ED957,#7ED957);
+
+background-repeat:no-repeat;
+
+background-size:
+
+260px 120px,
+
+260px 120px,
+
+260px 120px,
+
+260px 120px,
+
+260px 120px,
+
+260px 120px,
+
+100% 22%;
+
+background-position:
+
+4% 5%,
+
+4% 5%,
+
+4% 5%,
+
+90% 8%,
+
+90% 8%,
+
+90% 8%,
+
+bottom;
+
+opacity:.35;
+
+z-index:-2;
+
 }
 
-/* SPLASH SCREEN */
-#splashScreen{
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background:white;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    z-index:9999;
+/*======================
+LOGO SCREEN
+======================*/
+
+#logoScreen{
+
+position:fixed;
+
+left:0;
+top:0;
+
+width:100%;
+height:100%;
+
+background:white;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+z-index:9999;
+
 }
 
-#splashScreen img{
-    width:240px;
-    max-width:75%;
+#logoScreen img{
+
+width:min(300px,70vw);
+
 }
 
-/* GAME AREA */
-.game-container{
-    max-width:950px;
-    margin:auto;
-    padding:10px;
-    display:none;
+/*======================
+TITLE SCREEN
+======================*/
+
+#titleScreen{
+
+position:fixed;
+
+left:0;
+top:0;
+
+width:100%;
+height:100%;
+
+display:none;
+
+justify-content:center;
+
+align-items:center;
+
+flex-direction:column;
+
+background:
+
+linear-gradient(
+180deg,
+#8fd3ff,
+#fff9cf);
+
+z-index:9998;
+
 }
 
-h1{
-    color:#ff6b6b;
-    margin-top:15px;
-    margin-bottom:10px;
-    font-size:38px;
+#titleScreen h1{
+
+font-size:clamp(54px,8vw,100px);
+
+font-weight:bold;
+
+text-align:center;
+
+background:
+
+linear-gradient(
+90deg,
+
+#ff4d6d,
+
+#ffb703,
+
+#43aa8b,
+
+#4361ee,
+
+#f72585);
+
+-webkit-background-clip:text;
+
+-webkit-text-fill-color:transparent;
+
+animation:bounce 2s infinite;
+
 }
 
-/* INSTRUCTION */
-#instruction{
-    background:#ffffffcc;
-    border-radius:14px;
-    padding:12px;
-    margin:10px auto 20px;
-    width:90%;
-    max-width:700px;
-    font-size:22px;
-    color:#444;
-    font-weight:bold;
-    box-shadow:0 4px 10px rgba(0,0,0,0.08);
+#titleScreen p{
+
+font-size:30px;
+
+margin-top:20px;
+
+color:#444;
+
+font-weight:bold;
+
 }
 
-/* ROUND */
-#round{
-    font-size:22px;
-    color:#555;
-    margin-bottom:10px;
+@keyframes bounce{
+
+0%,100%{
+
+transform:translateY(0);
+
 }
 
-/* WORD DISPLAY */
-#wordDisplay{
-    font-size:52px;
-    font-weight:bold;
-    color:#444;
-    margin-bottom:20px;
+50%{
+
+transform:translateY(-12px);
+
 }
 
-/* LETTER RIBBON */
-.ribbon{
-    display:flex;
-    justify-content:center;
-    flex-wrap:wrap;
-    gap:10px;
-    margin-bottom:25px;
 }
 
-/* LETTER BUTTON */
+/*=========================
+GAME CONTAINER
+=========================*/
+
+#game{
+
+display:none;
+
+padding:18px;
+
+max-width:1000px;
+
+margin:auto;
+
+}
+
+/*=========================
+TITLE
+=========================*/
+
+.gameTitle{
+
+font-size:clamp(34px,6vw,64px);
+
+font-weight:bold;
+
+text-align:center;
+
+margin-top:8px;
+
+margin-bottom:15px;
+
+background:
+
+linear-gradient(
+90deg,
+
+#ff4d6d,
+
+#ffaa00,
+
+#2ec4b6,
+
+#4361ee,
+
+#ff4d6d);
+
+-webkit-background-clip:text;
+
+-webkit-text-fill-color:transparent;
+
+}
+
+/*=========================
+QUESTION BAR
+=========================*/
+
+#questionBar{
+
+background:white;
+
+border-radius:24px;
+
+padding:16px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+gap:18px;
+
+font-size:clamp(18px,2.8vw,28px);
+
+font-weight:bold;
+
+color:#444;
+
+box-shadow:
+
+0 8px 18px
+rgba(0,0,0,.10);
+
+margin-bottom:25px;
+
+}
+
+.speaker{
+
+width:52px;
+
+height:52px;
+
+border-radius:50%;
+
+background:#7ED957;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+font-size:26px;
+
+cursor:pointer;
+
+transition:.2s;
+
+user-select:none;
+
+}
+
+.speaker:hover{
+
+transform:scale(1.08);
+
+}
+
+/*=========================
+SIGHT WORD
+=========================*/
+
+#wordRow{
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+gap:18px;
+
+margin-bottom:30px;
+
+}
+
+#word{
+
+font-size:clamp(50px,8vw,82px);
+
+font-weight:bold;
+
+color:#444;
+
+}
+
+/*=========================
+LETTER RIBBON
+=========================*/
+
+#letters{
+
+display:flex;
+
+justify-content:center;
+
+flex-wrap:wrap;
+
+gap:12px;
+
+margin-bottom:30px;
+
+}
+
 .letter{
-    width:60px;
-    height:60px;
-    border-radius:14px;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    font-size:30px;
-    font-weight:bold;
-    cursor:pointer;
-    user-select:none;
-    border:2px solid rgba(0,0,0,0.1);
-    transition:0.2s;
-    box-shadow:0 3px 6px rgba(0,0,0,0.08);
+
+width:65px;
+
+height:65px;
+
+border-radius:14px;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+font-size:34px;
+
+font-weight:bold;
+
+cursor:pointer;
+
+user-select:none;
+
+transition:.2s;
+
+box-shadow:
+0 4px 8px
+rgba(0,0,0,.15);
+
 }
 
 .letter:hover{
-    transform:scale(1.05);
+
+transform:scale(1.08);
+
 }
 
-/* COLORS */
 .c1{background:#ffd6e0;}
-.c2{background:#d6f5d6;}
-.c3{background:#fff0b3;}
-.c4{background:#d6eaff;}
-.c5{background:#f5d6ff;}
-.c6{background:#ffe4cc;}
+.c2{background:#d8f8d8;}
+.c3{background:#fff2b2;}
+.c4{background:#d9ecff;}
+.c5{background:#f4d9ff;}
+.c6{background:#ffe0c2;}
 
-/* ANSWER BOXES */
-.answer-container{
-    display:flex;
-    justify-content:center;
-    gap:10px;
-    flex-wrap:wrap;
-    margin-bottom:20px;
+/*=========================
+ANSWER BOX
+=========================*/
+
+#answer{
+
+display:flex;
+
+justify-content:center;
+
+gap:12px;
+
+flex-wrap:wrap;
+
+margin-bottom:25px;
+
 }
 
-.answer-box{
-    width:72px;
-    height:72px;
-    border:3px solid #999;
-    border-radius:14px;
-    background:white;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    font-size:36px;
-    font-weight:bold;
-    box-shadow:0 3px 6px rgba(0,0,0,0.08);
+.box{
+
+width:72px;
+
+height:72px;
+
+background:white;
+
+border:3px solid #999;
+
+border-radius:16px;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+font-size:38px;
+
+font-weight:bold;
+
 }
 
-/* MESSAGE */
+/*=========================
+MESSAGE
+=========================*/
+
 #message{
-    font-size:28px;
-    min-height:40px;
+
+height:40px;
+
+font-size:30px;
+
+font-weight:bold;
+
+color:#1b8a3f;
+
+margin-bottom:20px;
+
 }
 
-/* FINISH */
-#finishScreen{
-    display:none;
-    margin-top:30px;
+/*=========================
+FINISH SCREEN
+=========================*/
+
+#finish{
+
+display:none;
+
+text-align:center;
+
+margin-top:70px;
+
+}
+
+#finish h1{
+
+font-size:60px;
+
+color:#ff5d73;
+
+margin-bottom:30px;
+
 }
 
 #playAgain{
-    padding:14px 24px;
-    font-size:22px;
-    border:none;
-    border-radius:14px;
-    background:#ff8fab;
-    color:white;
-    cursor:pointer;
-    box-shadow:0 4px 8px rgba(0,0,0,0.12);
+
+padding:16px 36px;
+
+border:none;
+
+border-radius:18px;
+
+background:#ff7ea5;
+
+color:white;
+
+font-size:28px;
+
+cursor:pointer;
+
+box-shadow:
+
+0 6px 12px
+rgba(0,0,0,.15);
+
 }
 
-/* CONFETTI */
+/*=========================
+CONFETTI
+=========================*/
+
 .confetti{
-    position:fixed;
-    width:12px;
-    height:12px;
-    top:-20px;
-    animation:fall linear forwards;
+
+position:fixed;
+
+width:12px;
+
+height:12px;
+
+top:-20px;
+
+animation:fall linear forwards;
+
+z-index:999;
+
 }
 
 @keyframes fall{
-    to{
-        transform:translateY(110vh) rotate(720deg);
-    }
+
+to{
+
+transform:
+
+translateY(110vh)
+rotate(900deg);
+
 }
 
-/* MOBILE */
+}
+
+/*=========================
+MOBILE
+=========================*/
+
 @media(max-width:600px){
 
-    h1{
-        font-size:30px;
-    }
+#questionBar{
 
-    #instruction{
-        font-size:18px;
-    }
+font-size:18px;
 
-    #wordDisplay{
-        font-size:40px;
-    }
+padding:14px;
 
-    .letter{
-        width:50px;
-        height:50px;
-        font-size:26px;
-    }
-
-    .answer-box{
-        width:58px;
-        height:58px;
-        font-size:30px;
-    }
-
-    #message{
-        font-size:24px;
-    }
 }
 
+.speaker{
+
+width:46px;
+
+height:46px;
+
+font-size:22px;
+
+}
+
+.letter{
+
+width:56px;
+
+height:56px;
+
+font-size:30px;
+
+}
+
+.box{
+
+width:60px;
+
+height:60px;
+
+font-size:30px;
+
+}
+
+}
 </style>
 </head>
 
 <body>
 
-<!-- SPLASH SCREEN -->
-<div id="splashScreen">
-    <img src="./assets/innovine-logo.png" alt="Innovine Logo">
-</div>
+<!-- ===========================
+LOGO SCREEN
+============================ -->
 
-<!-- GAME -->
-<div class="game-container" id="gameContainer">
+<div id="logoScreen">
 
-    <h1>🌟 Sight Word Builder 🌟</h1>
-
-    <div id="instruction">
-        Select the letters to form the sight word.
-    </div>
-
-    <div id="round"></div>
-
-    <div id="wordDisplay"></div>
-
-    <!-- LETTERS -->
-    <div class="ribbon" id="ribbon"></div>
-
-    <!-- ANSWER BOX -->
-    <div class="answer-container" id="answerContainer"></div>
-
-    <div id="message"></div>
-
-    <!-- FINISH -->
-    <div id="finishScreen">
-        <h1>🎉 Great Job! 🎉</h1>
-        <button id="playAgain">Play Again</button>
-    </div>
+    <img
+    src="./assets/innovine-logo.png"
+    alt="Innovine Logo">
 
 </div>
 
-<!-- AUDIO -->
-<audio id="correctSound" src="./assets/correct.mp3"></audio>
-<audio id="wrongSound" src="./assets/wrong.mp3"></audio>
+
+<!-- ===========================
+TITLE SCREEN
+============================ -->
+
+<div id="titleScreen">
+
+    <h1>
+        Sight Words
+    </h1>
+
+    <p>
+        🌈 Let's Learn to Read! 🌈
+    </p>
+
+</div>
+
+
+<!-- ===========================
+GAME
+============================ -->
+
+<div id="game">
+
+
+<div class="gameTitle">
+
+Sight Word Builder
+
+</div>
+
+
+<!-- QUESTION -->
+
+<div id="questionBar">
+
+<div
+class="speaker"
+id="questionSpeaker"
+title="Hear Question Again">
+
+🔊
+
+</div>
+
+<div>
+
+Select the letters to form the sight word.
+
+</div>
+
+</div>
+
+
+<!-- SIGHT WORD -->
+
+<div id="wordRow">
+
+<div
+id="word">
+
+</div>
+
+<div
+class="speaker"
+id="wordSpeaker"
+title="Hear Sight Word Again">
+
+🔊
+
+</div>
+
+</div>
+
+
+<!-- LETTERS -->
+
+<div id="letters">
+
+</div>
+
+
+<!-- ANSWER -->
+
+<div id="answer">
+
+</div>
+
+
+<!-- MESSAGE -->
+
+<div id="message">
+
+</div>
+
+
+<!-- FINISH SCREEN -->
+
+<div id="finish">
+
+<h1>
+
+🎉 Great Job! 🎉
+
+</h1>
+
+<button id="playAgain">
+
+Play Again
+
+</button>
+
+</div>
+
+</div>
+
+
+<!-- ===========================
+AUDIO
+============================ -->
+
+<audio
+id="correctSound"
+src="./assets/correct.mp3">
+</audio>
+
+<audio
+id="wrongSound"
+src="./assets/wrong.mp3">
+</audio>
+
+
+<!-- ===========================
+JAVASCRIPT
+============================ -->
 
 <script>
 
-/* WORDS */
-const words = [
-"I","he","she","you","me","we","the","to",
-"this","that","all","my","are","no","his",
-"your","was","and","they","go","our","here","her"
+/*==========================
+WORDS
+==========================*/
+
+const words=[
+
+"I",
+"he",
+"she",
+"you",
+"me",
+"we",
+"the",
+"to",
+"this",
+"that",
+"all",
+"my",
+"are",
+"no",
+"his",
+"your",
+"was",
+"and",
+"they",
+"go",
+"our",
+"here",
+"her"
+
 ];
 
-let currentRound = 0;
-let currentWord = "";
-let selectedLetters = [];
 
-const ribbon = document.getElementById("ribbon");
-const answerContainer = document.getElementById("answerContainer");
-const wordDisplay = document.getElementById("wordDisplay");
-const roundText = document.getElementById("round");
-const finishScreen = document.getElementById("finishScreen");
+/*==========================
+VARIABLES
+==========================*/
 
-const correctSound =
+let currentRound=0;
+
+let currentWord="";
+
+let answer=[];
+
+const colours=[
+
+"c1",
+"c2",
+"c3",
+"c4",
+"c5",
+"c6"
+
+];
+
+const lettersDiv=
+
+document.getElementById("letters");
+
+const answerDiv=
+
+document.getElementById("answer");
+
+const wordDiv=
+
+document.getElementById("word");
+
+const message=
+
+document.getElementById("message");
+
+const finish=
+
+document.getElementById("finish");
+
+const correctSound=
+
 document.getElementById("correctSound");
 
-const wrongSound =
+const wrongSound=
+
 document.getElementById("wrongSound");
 
-const colors =
-["c1","c2","c3","c4","c5","c6"];
+const game=
 
+document.getElementById("game");
 
-/* SPLASH SCREEN */
+const logo=
+
+document.getElementById("logoScreen");
+
+const title=
+
+document.getElementById("titleScreen");
+
+const questionSpeaker=
+
+document.getElementById("questionSpeaker");
+
+const wordSpeaker=
+
+document.getElementById("wordSpeaker");
+/*==========================
+SPLASH SCREENS
+==========================*/
+
 setTimeout(()=>{
 
-    document.getElementById("splashScreen")
-    .style.display = "none";
+logo.style.display="none";
 
-    document.getElementById("gameContainer")
-    .style.display = "block";
-
-    unlockAudio();
-
-    startRound();
+title.style.display="flex";
 
 },5000);
 
 
-/* AUDIO UNLOCK */
-function unlockAudio(){
+setTimeout(()=>{
 
-    let tempSpeech =
-    new SpeechSynthesisUtterance(" ");
+title.style.display="none";
 
-    tempSpeech.volume = 0;
+game.style.display="block";
 
-    speechSynthesis.speak(tempSpeech);
+unlockSpeech();
+
+startRound();
+
+},8000);
+
+
+/*==========================
+UNLOCK SPEECH
+==========================*/
+
+function unlockSpeech(){
+
+const u=new SpeechSynthesisUtterance(" ");
+
+u.volume=0;
+
+speechSynthesis.speak(u);
+
 }
 
 
-/* START ROUND */
-function startRound(){
+/*==========================
+QUESTION
+==========================*/
 
-    speechSynthesis.cancel();
+const questionText=
+"Select the letters to form the sight word.";
 
-    correctSound.pause();
-    correctSound.currentTime = 0;
 
-    wrongSound.pause();
-    wrongSound.currentTime = 0;
+/*==========================
+QUESTION SPEAKER
+==========================*/
 
-    if(currentRound >= words.length){
+questionSpeaker.onclick=()=>{
 
-        endGame();
-        return;
-    }
+speakQuestion();
 
-    ribbon.innerHTML = "";
-    answerContainer.innerHTML = "";
+};
 
-    document.getElementById("message")
-    .innerHTML = "";
 
-    currentWord = words[currentRound];
+/*==========================
+WORD SPEAKER
+==========================*/
 
-    selectedLetters = [];
+wordSpeaker.onclick=()=>{
 
-    roundText.innerHTML =
-    `Round ${currentRound + 1} of ${words.length}`;
+speakWord(currentWord);
 
-    wordDisplay.innerHTML = currentWord;
+};
 
-    /* SAY WORD ONLY AT START */
-    setTimeout(()=>{
 
-        speakWord(currentWord);
+/*==========================
+SPEAK QUESTION
+==========================*/
 
-    },1200);
+function speakQuestion(){
 
-    /* CREATE EMPTY BOXES */
-    for(let i=0;i<currentWord.length;i++){
+speechSynthesis.cancel();
 
-        let box =
-        document.createElement("div");
+const speech=
+new SpeechSynthesisUtterance(
+questionText
+);
 
-        box.className = "answer-box";
+speech.lang="en-GB";
 
-        answerContainer.appendChild(box);
-    }
+speech.rate=.82;
 
-    /* LETTERS */
-    let letters;
+speech.pitch=1;
 
-    /* SPECIAL LETTERS FOR I */
-    if(currentWord === "I"){
+speech.volume=1;
 
-        letters =
-        ["I","a","m","s","t","p","r","n"];
 
-    }else{
+/* AFTER QUESTION,
+SAY THE WORD */
 
-        letters =
-        currentWord.split("");
+speech.onend=()=>{
 
-        const alphabet =
-        "abcdefghijkmnopqrstuvwxyz";
+setTimeout(()=>{
 
-        while(letters.length < 8){
+speakWord(currentWord);
 
-            let randomLetter =
-            alphabet[Math.floor(
-            Math.random()*alphabet.length)];
+},400);
 
-            if(!letters.includes(randomLetter)){
+};
 
-                letters.push(randomLetter);
-            }
-        }
+speechSynthesis.speak(speech);
 
-        letters.sort(()=>Math.random()-0.5);
-    }
-
-    /* CREATE LETTER BUTTONS */
-    letters.forEach((letter,index)=>{
-
-        let div =
-        document.createElement("div");
-
-        div.className =
-        `letter ${colors[index % colors.length]}`;
-
-        div.innerHTML = letter;
-
-        div.onclick =
-        ()=>selectLetter(letter,div);
-
-        ribbon.appendChild(div);
-    });
 }
 
 
-/* SPEAK WORD */
+/*==========================
+SPEAK WORD
+==========================*/
+
 function speakWord(word){
 
-    speechSynthesis.cancel();
+speechSynthesis.cancel();
 
-    const speech =
-    new SpeechSynthesisUtterance();
+const speech=
+new SpeechSynthesisUtterance();
 
-    /* FIXED PRONUNCIATIONS */
+switch(word){
 
-    if(word === "I"){
+case "I":
 
-        speech.text = "Eye";
+speech.text="Eye";
 
-    }
+break;
 
-    else if(word === "the"){
+case "the":
 
-        speech.text = "thuh";
+speech.text="thee";
 
-    }
+break;
 
-    else if(word === "was"){
+case "was":
 
-        speech.text = "woz";
+speech.text="woz";
 
-    }
+break;
 
-    else{
+default:
 
-        speech.text = word;
-    }
+speech.text=word;
 
-    speech.lang = "en-GB";
+}
 
-    speech.rate = 0.75;
+speech.lang="en-GB";
 
-    speech.pitch = 1;
+speech.rate=.74;
 
-    speech.volume = 1;
+speech.pitch=1;
 
-    speechSynthesis.speak(speech);
+speech.volume=1;
+
+speechSynthesis.speak(speech);
+
 }
 
 
-/* SELECT LETTER */
-function selectLetter(letter,element){
+/*==========================
+START ROUND
+==========================*/
 
-    if(selectedLetters.length >=
-    currentWord.length)
-    return;
+function startRound(){
 
-    const nextIndex =
-    selectedLetters.length;
+speechSynthesis.cancel();
 
-    /* CORRECT LETTER */
-    if(letter.toLowerCase() ===
-    currentWord[nextIndex].toLowerCase()){
+correctSound.pause();
 
-        selectedLetters.push(letter);
+correctSound.currentTime=0;
 
-        answerContainer.children[nextIndex]
-        .innerHTML = letter;
+wrongSound.pause();
 
-        element.style.visibility = "hidden";
+wrongSound.currentTime=0;
 
-        /* COMPLETE WORD */
-        if(selectedLetters.join("").toLowerCase()
-        === currentWord.toLowerCase()){
+message.innerHTML="";
 
-            document.getElementById("message")
-            .innerHTML = "✅ Correct!";
+lettersDiv.innerHTML="";
 
-            /* ONLY CLAP SOUND */
-            correctSound.pause();
-            correctSound.currentTime = 0;
+answerDiv.innerHTML="";
 
-            correctSound.play();
+answer=[];
 
-            /* NEXT ROUND */
-            correctSound.onended = function(){
+if(currentRound>=words.length){
 
-                currentRound++;
+finishGame();
 
-                startRound();
-            };
-        }
+return;
 
-    }else{
+}
 
-        wrongSound.pause();
-        wrongSound.currentTime = 0;
+currentWord=words[currentRound];
 
-        wrongSound.play();
+wordDiv.innerHTML=currentWord;
 
-        document.getElementById("message")
-        .innerHTML = "❌ Wrong Letter";
-    }
+
+/* AUTOMATICALLY
+READ QUESTION */
+
+setTimeout(()=>{
+
+speakQuestion();
+
+},700);
+
+
+/* CREATE BOXES */
+
+for(let i=0;
+i<currentWord.length;
+i++){
+
+const box=
+document.createElement("div");
+
+box.className="box";
+
+answerDiv.appendChild(box);
+
 }
 
 
-/* END GAME */
-function endGame(){
+/* LETTER OPTIONS */
 
-    speechSynthesis.cancel();
+let options=[];
 
-    document.getElementById("round")
-    .style.display = "none";
+if(currentWord==="I"){
 
-    document.getElementById("wordDisplay")
-    .style.display = "none";
+options=[
+"I",
+"a",
+"m",
+"s",
+"t",
+"p",
+"r",
+"n"
+];
 
-    ribbon.style.display = "none";
-
-    answerContainer.style.display = "none";
-
-    document.getElementById("message")
-    .style.display = "none";
-
-    finishScreen.style.display = "block";
-
-    launchConfetti();
 }
 
+else{
 
-/* CONFETTI */
-function launchConfetti(){
+options=currentWord.split("");
 
-    for(let i=0;i<150;i++){
+const alphabet=
+"abcdefghijkmnopqrstuvwxyz";
 
-        const confetti =
-        document.createElement("div");
+while(options.length<8){
 
-        confetti.className = "confetti";
+let random=
+alphabet[
+Math.floor(
+Math.random()*
+alphabet.length
+)
+];
 
-        confetti.style.left =
-        Math.random()*100 + "vw";
+if(!options.includes(random)){
 
-        confetti.style.background =
-        ["#ffadad","#ffd6a5","#fdffb6",
-        "#caffbf","#9bf6ff","#bdb2ff"]
-        [Math.floor(Math.random()*6)];
+options.push(random);
 
-        confetti.style.animationDuration =
-        (Math.random()*3 + 2) + "s";
-
-        document.body.appendChild(confetti);
-
-        setTimeout(()=>{
-
-            confetti.remove();
-
-        },5000);
-    }
 }
 
+}
 
-/* PLAY AGAIN */
-document.getElementById("playAgain")
-.onclick = ()=>{
+options.sort(
+()=>Math.random()-.5
+);
 
-    speechSynthesis.cancel();
+}
 
-    correctSound.pause();
-    correctSound.currentTime = 0;
+options.forEach((letter,index)=>{
 
-    wrongSound.pause();
-    wrongSound.currentTime = 0;
+const div=
+document.createElement("div");
 
-    currentRound = 0;
+div.className=
+"letter "+colours[index%6];
 
-    finishScreen.style.display = "none";
+div.innerHTML=letter;
 
-    document.getElementById("round")
-    .style.display = "block";
+div.onclick=
+()=>chooseLetter(
+letter,
+div
+);
 
-    document.getElementById("wordDisplay")
-    .style.display = "block";
+lettersDiv.appendChild(div);
 
-    ribbon.style.display = "flex";
+});
 
-    answerContainer.style.display = "flex";
+}
+/*==========================
+CHOOSE LETTER
+==========================*/
 
-    document.getElementById("message")
-    .style.display = "block";
+function chooseLetter(letter,button){
 
-    startRound();
+if(answer.length>=currentWord.length)
+return;
+
+/* EXPECTED LETTER */
+
+const expected=
+currentWord[
+answer.length
+];
+
+/* CORRECT LETTER */
+
+if(
+letter.toLowerCase()
+===
+expected.toLowerCase()
+){
+
+answer.push(letter);
+
+/* FILL BOX */
+
+answerDiv.children[
+answer.length-1
+].innerHTML=letter;
+
+/* HIDE LETTER */
+
+button.style.visibility=
+"hidden";
+
+/* WORD COMPLETE */
+
+if(
+answer.join("")
+.toLowerCase()
+===
+currentWord
+.toLowerCase()
+){
+
+message.style.color=
+"#1b8a3f";
+
+message.innerHTML=
+"✅ Correct!";
+
+/* STOP ANY SPEECH */
+
+speechSynthesis.cancel();
+
+/* PLAY CLAP */
+
+correctSound.pause();
+
+correctSound.currentTime=0;
+
+correctSound.play();
+
+/* NEXT ROUND
+AFTER CLAP */
+
+correctSound.onended=()=>{
+
+currentRound++;
+
+startRound();
+
 };
+
+}
+
+}
+
+/* WRONG LETTER */
+
+else{
+
+speechSynthesis.cancel();
+
+wrongSound.pause();
+
+wrongSound.currentTime=0;
+
+wrongSound.play();
+
+message.style.color=
+"#d62828";
+
+message.innerHTML=
+"❌ Try Again";
+
+shakeButton(button);
+
+}
+
+}
+
+
+/*==========================
+SHAKE BUTTON
+==========================*/
+
+function shakeButton(button){
+
+button.animate(
+
+[
+
+{
+transform:"translateX(0px)"
+},
+
+{
+transform:"translateX(-8px)"
+},
+
+{
+transform:"translateX(8px)"
+},
+
+{
+transform:"translateX(-6px)"
+},
+
+{
+transform:"translateX(6px)"
+},
+
+{
+transform:"translateX(0px)"
+}
+
+],
+
+{
+
+duration:350
+
+}
+
+);
+
+}
+
+
+/*==========================
+DISABLE EXTRA TAPS
+==========================*/
+
+function disableLetters(){
+
+const allLetters=
+
+document.querySelectorAll(".letter");
+
+allLetters.forEach(letter=>{
+
+letter.style.pointerEvents=
+"none";
+
+});
+
+}
+
+
+/*==========================
+ENABLE LETTERS
+==========================*/
+
+function enableLetters(){
+
+const allLetters=
+
+document.querySelectorAll(".letter");
+
+allLetters.forEach(letter=>{
+
+letter.style.pointerEvents=
+"auto";
+
+});
+
+}
+/*==========================
+FINISH GAME
+==========================*/
+
+function finishGame(){
+
+speechSynthesis.cancel();
+
+correctSound.pause();
+correctSound.currentTime=0;
+
+wrongSound.pause();
+wrongSound.currentTime=0;
+
+/* HIDE GAME */
+
+document.querySelector(".gameTitle")
+.style.display="none";
+
+document.getElementById("questionBar")
+.style.display="none";
+
+document.getElementById("wordRow")
+.style.display="none";
+
+lettersDiv.style.display="none";
+
+answerDiv.style.display="none";
+
+message.style.display="none";
+
+/* SHOW FINISH */
+
+finish.style.display="block";
+
+/* LOTS OF CONFETTI */
+
+launchConfetti(400);
+
+}
+
+
+/*==========================
+CONFETTI
+==========================*/
+
+function launchConfetti(total){
+
+const colours=[
+
+"#ff595e",
+"#ffca3a",
+"#8ac926",
+"#1982c4",
+"#6a4c93",
+"#ff99c8",
+"#ffd6a5",
+"#caffbf",
+"#9bf6ff",
+"#bdb2ff"
+
+];
+
+for(let i=0;i<total;i++){
+
+const piece=
+
+document.createElement("div");
+
+piece.className="confetti";
+
+piece.style.left=
+Math.random()*100+"vw";
+
+piece.style.background=
+colours[
+Math.floor(
+Math.random()*colours.length
+)
+];
+
+piece.style.width=
+(8+Math.random()*8)+"px";
+
+piece.style.height=
+(8+Math.random()*8)+"px";
+
+piece.style.animationDuration=
+(2+Math.random()*3)+"s";
+
+piece.style.animationDelay=
+(Math.random()*2)+"s";
+
+document.body.appendChild(piece);
+
+setTimeout(()=>{
+
+piece.remove();
+
+},7000);
+
+}
+
+}
+
+
+/*==========================
+PLAY AGAIN
+==========================*/
+
+document
+.getElementById("playAgain")
+.onclick=()=>{
+
+speechSynthesis.cancel();
+
+correctSound.pause();
+correctSound.currentTime=0;
+
+wrongSound.pause();
+wrongSound.currentTime=0;
+
+/* RESET */
+
+currentRound=0;
+
+finish.style.display="none";
+
+/* SHOW GAME AGAIN */
+
+document.querySelector(".gameTitle")
+.style.display="block";
+
+document.getElementById("questionBar")
+.style.display="flex";
+
+document.getElementById("wordRow")
+.style.display="flex";
+
+lettersDiv.style.display="flex";
+
+answerDiv.style.display="flex";
+
+message.style.display="block";
+
+startRound();
+
+};
+/*====================================
+END OF GAME INITIALIZATION
+====================================*/
+
+/* Prevent speech from continuing
+when the page is closed or refreshed */
+
+window.addEventListener("beforeunload",()=>{
+
+speechSynthesis.cancel();
+
+correctSound.pause();
+correctSound.currentTime=0;
+
+wrongSound.pause();
+wrongSound.currentTime=0;
+
+});
+
+
+/* Stop speech when page becomes hidden */
+
+document.addEventListener("visibilitychange",()=>{
+
+if(document.hidden){
+
+speechSynthesis.cancel();
+
+}
+
+});
+
+
+/* Extra safety: stop speech before leaving */
+
+window.addEventListener("pagehide",()=>{
+
+speechSynthesis.cancel();
+
+});
+
+
+/* Initial cleanup */
+
+speechSynthesis.cancel();
 
 </script>
 
 </body>
-</html>
+
+</html>    
