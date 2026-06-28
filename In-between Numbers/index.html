@@ -723,6 +723,8 @@ loadRound();
 
 function loadRound(){
 
+speechSynthesis.cancel()
+            
 solved=0;
 
 roundTitle.innerHTML=rounds[currentRound].title;
