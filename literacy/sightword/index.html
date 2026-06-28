@@ -323,7 +323,7 @@ box-shadow:
 0 8px 18px
 rgba(0,0,0,.10);
 
-margin-bottom:25px;
+margin-bottom:10px;
 
 }
 
@@ -373,7 +373,7 @@ align-items:center;
 
 gap:18px;
 
-margin-bottom:30px;
+margin-bottom:18px;
 
 }
 
@@ -401,7 +401,7 @@ flex-wrap:wrap;
 
 gap:12px;
 
-margin-bottom:30px;
+margin-bottom:18px;
 
 }
 
@@ -458,13 +458,34 @@ display:flex;
 
 justify-content:center;
 
+align-items:center;
+
 gap:12px;
 
 flex-wrap:wrap;
 
-margin-bottom:25px;
+margin-bottom:5px;
 
 }
+#tickBox{
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+height:55px;
+
+font-size:48px;
+
+font-weight:bold;
+
+color:#28a745;
+
+margin-top:5px;
+
+}    
 
 .box{
 
@@ -507,6 +528,8 @@ color:#1b8a3f;
 margin-bottom:20px;
 
 }
+
+   
 
 /*=========================
 FINISH SCREEN
@@ -632,6 +655,26 @@ font-size:30px;
 
 }
 
+#answer{
+
+flex-wrap:wrap;
+
+}
+
+#tickBox{
+
+width:100%;
+
+justify-content:center;
+
+margin-left:0;
+
+margin-top:10px;
+
+font-size:44px;
+
+}    
+
 }
 </style>
 </head>
@@ -738,6 +781,7 @@ title="Hear Sight Word Again">
 
 </div>
 
+<div id="tickBox"></div>    
 
 <!-- MESSAGE -->
 
@@ -910,7 +954,11 @@ game.style.display="block";
 
 unlockSpeech();
 
+setTimeout(()=>{
+
 startRound();
+
+},300);
 
 },8000);
 
@@ -920,6 +968,8 @@ UNLOCK SPEECH
 ==========================*/
 
 function unlockSpeech(){
+
+speechSynthesis.cancel();
 
 const u=new SpeechSynthesisUtterance(" ");
 
@@ -1067,6 +1117,8 @@ wrongSound.pause();
 wrongSound.currentTime=0;
 
 message.innerHTML="";
+
+document.getElementById("tickBox").innerHTML="";
 
 lettersDiv.innerHTML="";
 
@@ -1234,8 +1286,7 @@ currentWord
 message.style.color=
 "#1b8a3f";
 
-message.innerHTML=
-"✅ Correct!";
+document.getElementById("tickBox").innerHTML="✅";
 
 /* STOP ANY SPEECH */
 
@@ -1502,16 +1553,17 @@ currentRound=0;
 
 finish.style.display="none";
 
-/* SHOW GAME AGAIN */
+/* Hide game */
 
-document.querySelector(".gameTitle")
-.style.display="block";
+game.style.display="none";
 
-document.getElementById("questionBar")
-.style.display="flex";
+/* Restore game elements */
 
-document.getElementById("wordRow")
-.style.display="flex";
+document.querySelector(".gameTitle").style.display="block";
+
+document.getElementById("questionBar").style.display="flex";
+
+document.getElementById("wordRow").style.display="flex";
 
 lettersDiv.style.display="flex";
 
@@ -1519,7 +1571,39 @@ answerDiv.style.display="flex";
 
 message.style.display="block";
 
+/* Show logo */
+
+logo.style.display="flex";
+
+title.style.display="none";
+
+/* Logo for 5 seconds */
+
+setTimeout(()=>{
+
+logo.style.display="none";
+
+title.style.display="flex";
+
+},5000);
+
+/* Title for 3 seconds */
+
+setTimeout(()=>{
+
+title.style.display="none";
+
+game.style.display="block";
+
+unlockSpeech();
+
+setTimeout(()=>{
+
 startRound();
+
+},300);
+
+},8000);
 
 };
 /*====================================
