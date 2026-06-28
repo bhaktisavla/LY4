@@ -129,13 +129,7 @@ margin-bottom:10px;
 
 #roundTitle{
 
-font-size:clamp(24px,2.5vw,38px);
-
-font-weight:bold;
-
-color:#ff5722;
-
-margin-bottom:10px;
+display:none;
 
 }
 
@@ -679,7 +673,19 @@ document.removeEventListener("pointerdown",unlock);
 
 });
 
+function speakCorrect(){
 
+if(!speechUnlocked)return;
+
+const speech=new SpeechSynthesisUtterance("That's correct!");
+
+speech.rate=0.95;
+speech.pitch=1.2;
+speech.volume=1;
+
+speechSynthesis.speak(speech);
+
+}
 
 /*=========================================
           START FLOW
@@ -897,6 +903,8 @@ this.innerHTML=value;
 
 this.classList.add("correct");
 
+speakCorrect();
+
 dragged.classList.add("used");
 
 dragged.draggable=false;
@@ -1026,6 +1034,8 @@ if(value===answer){
 target.innerHTML=value;
 
 target.classList.add("correct");
+
+speakCorrect();
 
 dragged.classList.add("used");
 
