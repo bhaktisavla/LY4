@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
 <meta charset="UTF-8">
+
 <meta name="viewport"
 content="width=device-width,
 initial-scale=1.0,
@@ -20,97 +22,124 @@ box-sizing:border-box;
 -webkit-tap-highlight-color:transparent;
 }
 
-body{
-font-family:Comic Sans MS,sans-serif;
+html,body{
+width:100%;
+height:100%;
 overflow:hidden;
-background:
-linear-gradient(135deg,#ffe082,#ffcc80,#b2ebf2,#c8e6c9);
-height:100vh;
+font-family:"Comic Sans MS",cursive,sans-serif;
+background:#fff8ef;
 }
 
-body::before{
-content:"";
-position:fixed;
-inset:0;
+/*----------------BACKGROUND----------------*/
+
+body{
+
 background:
-radial-gradient(circle at 10% 20%,rgba(255,255,255,.35) 0 35px,transparent 36px),
-radial-gradient(circle at 80% 15%,rgba(255,255,255,.25) 0 45px,transparent 46px),
-radial-gradient(circle at 25% 80%,rgba(255,255,255,.25) 0 50px,transparent 51px),
-radial-gradient(circle at 90% 70%,rgba(255,255,255,.35) 0 30px,transparent 31px),
-radial-gradient(circle at 60% 55%,rgba(255,255,255,.25) 0 55px,transparent 56px);
-pointer-events:none;
+radial-gradient(circle at 12% 18%,#ffd54f88 0 140px,transparent 141px),
+
+radial-gradient(circle at 88% 14%,#81d4fa66 0 140px,transparent 141px),
+
+radial-gradient(circle at 20% 82%,#aed58166 0 170px,transparent 171px),
+
+radial-gradient(circle at 92% 82%,#f8bbd066 0 140px,transparent 141px),
+
+linear-gradient(#fffdf7,#fff8ef);
+
 }
+
+/*----------------SCREENS----------------*/
 
 .screen{
+
 position:absolute;
+
 inset:0;
+
 display:none;
+
 justify-content:center;
+
 align-items:center;
+
 flex-direction:column;
-padding:20px;
+
 }
 
 .show{
+
 display:flex;
+
 }
+
+/*----------------LOGO----------------*/
 
 #logoScreen img{
+
 width:min(320px,70vw);
+
 }
+
+/*----------------TITLE----------------*/
 
 #titleScreen h1{
-font-size:clamp(42px,6vw,70px);
+
+font-size:clamp(42px,6vw,72px);
+
 color:#ff4081;
+
 text-shadow:3px 3px white;
-animation:pop .8s infinite alternate;
-}
 
-@keyframes pop{
-
-from{
-transform:scale(1);
-}
-
-to{
-transform:scale(1.08);
-}
+animation:bounce .9s infinite alternate;
 
 }
+
+@keyframes bounce{
+
+from{transform:scale(1);}
+
+to{transform:scale(1.08);}
+
+}
+
+/*----------------GAME----------------*/
 
 #gameScreen{
-padding:20px;
+
+padding:12px;
+
 }
 
-.topPanel{
+/*----------------TOP PANEL----------------*/
 
-width:min(1100px,96vw);
+#topPanel{
+
+width:min(1800px,98vw);
 
 background:white;
 
-border:6px solid #ff9800;
+border:5px solid orange;
 
-border-radius:25px;
+border-radius:24px;
 
-padding:15px;
+padding:14px;
 
-box-shadow:0 8px 20px rgba(0,0,0,.2);
+margin-bottom:14px;
 
 }
 
-.roundTitle{
+#roundTitle{
 
-font-size:clamp(28px,4vw,42px);
-
-color:#ff5722;
+font-size:clamp(24px,2.5vw,38px);
 
 font-weight:bold;
 
-margin-bottom:12px;
+color:#ff5722;
+
+margin-bottom:10px;
 
 }
 
-.questionRow{
+#questionRow{
 
 display:flex;
 
@@ -118,31 +147,33 @@ justify-content:center;
 
 align-items:center;
 
-gap:15px;
-
-flex-wrap:wrap;
+gap:12px;
 
 }
 
-.question{
+#question{
 
-font-size:clamp(18px,2.5vw,28px);
+font-size:clamp(20px,2vw,34px);
 
 font-weight:bold;
 
 color:#5d4037;
 
+text-align:center;
+
 }
+
+/* SVG speaker */
 
 #speaker{
 
-width:55px;
+width:54px;
 
-height:55px;
+height:54px;
 
 cursor:pointer;
 
-transition:.3s;
+transition:.25s;
 
 }
 
@@ -152,41 +183,31 @@ transform:scale(1.1);
 
 }
 
-.gameArea{
+/*----------------QUESTION GRID----------------*/
 
-margin-top:20px;
+#questionGrid{
 
-width:min(1100px,96vw);
-
-background:white;
-
-border:6px solid #ff9800;
-
-border-radius:25px;
-
-padding:25px;
+width:min(1800px,98vw);
 
 display:grid;
 
 grid-template-columns:1fr 1fr;
 
-gap:20px;
+gap:16px;
 
-box-shadow:0 8px 20px rgba(0,0,0,.2);
-
-}
-
-.column{
-
-display:flex;
-
-flex-direction:column;
-
-gap:18px;
+margin-bottom:16px;
 
 }
 
-.row{
+.questionCard{
+
+background:white;
+
+border:5px solid orange;
+
+border-radius:24px;
+
+height:150px;
 
 display:flex;
 
@@ -194,9 +215,19 @@ justify-content:center;
 
 align-items:center;
 
-gap:15px;
+box-shadow:0 6px 10px rgba(0,0,0,.12);
 
-font-size:clamp(28px,4vw,46px);
+}
+
+.numberRow{
+
+display:flex;
+
+align-items:center;
+
+gap:18px;
+
+font-size:clamp(42px,4vw,70px);
 
 font-weight:bold;
 
@@ -204,21 +235,71 @@ color:#3f51b5;
 
 }
 
-.number{
+.dropBox{
 
-width:70px;
+width:86px;
 
-text-align:center;
+height:72px;
+
+border:5px dashed deeppink;
+
+border-radius:18px;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+font-size:40px;
+
+background:#fff8fd;
+
+transition:.25s;
 
 }
 
-.dropBox{
+.dropBox.correct{
 
-width:80px;
+background:#c8e6c9;
 
-height:70px;
+border-color:#43a047;
 
-border:4px dashed deeppink;
+}
+
+/*----------------ANSWERS----------------*/
+
+#answerPanel{
+
+width:min(1800px,98vw);
+
+background:white;
+
+border:5px solid orange;
+
+border-radius:24px;
+
+padding:18px;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+gap:16px;
+
+flex-wrap:wrap;
+
+}
+
+.answer{
+
+width:90px;
+
+height:68px;
+
+background:#39a8ec;
 
 border-radius:18px;
 
@@ -229,66 +310,6 @@ justify-content:center;
 align-items:center;
 
 font-size:34px;
-
-background:#fff8fc;
-
-transition:.3s;
-
-}
-
-.dropBox.correct{
-
-background:#c8e6c9;
-
-border-color:#4caf50;
-
-}
-
-.answerArea{
-
-margin-top:25px;
-
-width:min(1100px,96vw);
-
-background:white;
-
-border:6px solid #ff9800;
-
-border-radius:25px;
-
-padding:18px;
-
-display:flex;
-
-justify-content:center;
-
-align-items:center;
-
-flex-wrap:wrap;
-
-gap:18px;
-
-box-shadow:0 8px 20px rgba(0,0,0,.2);
-
-}
-
-.answer{
-
-width:85px;
-
-height:65px;
-
-background:#42a5f5;
-
-border-radius:18px;
-
-display:flex;
-
-justify-content:center;
-
-align-items:center;
-
-font-size:32px;
 
 font-weight:bold;
 
@@ -306,39 +327,41 @@ transition:.2s;
 
 .answer:hover{
 
-transform:scale(1.08);
+transform:scale(1.06);
 
 }
 
 .answer.used{
 
-opacity:.35;
-
-pointer-events:none;
+visibility:hidden;
 
 }
 
+/*----------------FINAL----------------*/
+
 #finalScreen h1{
 
-font-size:clamp(46px,7vw,80px);
+font-size:clamp(48px,7vw,90px);
 
 color:#ff4081;
 
-text-shadow:3px 3px white;
-
 margin-bottom:30px;
+
+text-shadow:3px 3px white;
 
 }
 
 #playAgain{
 
-padding:18px 40px;
+padding:18px 45px;
 
 font-size:28px;
 
+font-weight:bold;
+
 border:none;
 
-border-radius:20px;
+border-radius:18px;
 
 background:#4caf50;
 
@@ -346,9 +369,9 @@ color:white;
 
 cursor:pointer;
 
-font-weight:bold;
-
 }
+
+/*----------------CONFETTI----------------*/
 
 canvas{
 
@@ -360,33 +383,41 @@ pointer-events:none;
 
 }
 
+/*----------------MOBILE----------------*/
+
 @media(max-width:900px){
 
-.gameArea{
+#questionGrid{
 
 grid-template-columns:1fr;
 
 }
 
-.number{
+.questionCard{
 
-width:55px;
+height:115px;
+
+}
+
+.numberRow{
+
+font-size:54px;
 
 }
 
 .dropBox{
 
-width:65px;
+width:68px;
 
-height:60px;
+height:58px;
 
-font-size:28px;
+font-size:32px;
 
 }
 
 .answer{
 
-width:72px;
+width:74px;
 
 height:58px;
 
@@ -402,11 +433,15 @@ font-size:28px;
 
 <body>
 
+<!-- Logo -->
+
 <div id="logoScreen" class="screen show">
 
 <img src="assets/innovine-logo.png">
 
 </div>
+
+<!-- Title -->
 
 <div id="titleScreen" class="screen">
 
@@ -414,53 +449,78 @@ font-size:28px;
 
 </div>
 
+<!-- Game -->
+
 <div id="gameScreen" class="screen">
 
-<div class="topPanel">
+<div id="topPanel">
 
-<div class="roundTitle" id="roundTitle">
-Round 1
-</div>
+<div id="roundTitle">Round 1</div>
 
-<div class="questionRow">
+<div id="questionRow">
 
-<div class="question">
+<div id="question">
+
 Identify the in-between number from the given options and drag it into the correct box.
-</div>
-
-<img
-id="speaker"
-src="assets/speaker.png">
 
 </div>
 
+<div id="speaker">
+
+<svg viewBox="0 0 64 64" width="54" height="54">
+
+<path fill="#ff9800"
+
+d="M8 24h12l16-14v44L20 40H8z"/>
+
+<path fill="none"
+
+stroke="#ff9800"
+
+stroke-width="5"
+
+stroke-linecap="round"
+
+d="M44 22c4 3 6 6 6 10s-2 7-6 10"/>
+
+<path fill="none"
+
+stroke="#ff9800"
+
+stroke-width="5"
+
+stroke-linecap="round"
+
+d="M50 16c6 5 10 10 10 16s-4 11-10 16"/>
+
+</svg>
+
 </div>
 
-<div class="gameArea">
-
-<div class="column" id="leftColumn">
-
-</div>
-
-<div class="column" id="rightColumn">
-
 </div>
 
 </div>
 
-<div class="answerArea"
-id="answerArea">
+<div id="questionGrid">
+
+</div>
+
+<div id="answerPanel">
 
 </div>
 
 </div>
+
+<!-- Final -->
 
 <div id="finalScreen" class="screen">
 
 <h1>Well Done!</h1>
 
 <button id="playAgain">
+
 Play Again
+
 </button>
 
 </div>
@@ -468,38 +528,20 @@ Play Again
 <canvas id="confetti"></canvas>
 
 <script>
-/*=============================
-        AUDIO
-==============================*/
+/*=========================================
+            AUDIO
+=========================================*/
 
-const clapSound = new Audio("assets/clap.mp3");
-const wrongSound = new Audio("assets/wrong.mp3");
+const clapSound=new Audio("assets/clap.mp3");
+const wrongSound=new Audio("assets/wrong.mp3");
 
 clapSound.preload="auto";
 wrongSound.preload="auto";
 
 
-/*=============================
-        SCREENS
-==============================*/
-
-const logoScreen=document.getElementById("logoScreen");
-const titleScreen=document.getElementById("titleScreen");
-const gameScreen=document.getElementById("gameScreen");
-const finalScreen=document.getElementById("finalScreen");
-
-const roundTitle=document.getElementById("roundTitle");
-
-const leftColumn=document.getElementById("leftColumn");
-const rightColumn=document.getElementById("rightColumn");
-const answerArea=document.getElementById("answerArea");
-
-const speaker=document.getElementById("speaker");
-
-
-/*=============================
-          GAME DATA
-==============================*/
+/*=========================================
+          GAME OBJECTS
+=========================================*/
 
 const rounds=[
 
@@ -507,14 +549,14 @@ const rounds=[
 
 title:"Round 1",
 
-rows:[
+questions:[
 
-{left:25,right:27,answer:26},
-{left:14,right:16,answer:15},
-{left:38,right:40,answer:39},
-{left:1,right:3,answer:2},
-{left:42,right:44,answer:43},
-{left:29,right:31,answer:30}
+{a:25,b:27,ans:26},
+{a:14,b:16,ans:15},
+{a:38,b:40,ans:39},
+{a:1,b:3,ans:2},
+{a:42,b:44,ans:43},
+{a:29,b:31,ans:30}
 
 ]
 
@@ -524,14 +566,14 @@ rows:[
 
 title:"Round 2",
 
-rows:[
+questions:[
 
-{left:6,right:8,answer:7},
-{left:22,right:24,answer:23},
-{left:39,right:41,answer:40},
-{left:10,right:12,answer:11},
-{left:34,right:36,answer:35},
-{left:47,right:49,answer:48}
+{a:6,b:8,ans:7},
+{a:22,b:24,ans:23},
+{a:39,b:41,ans:40},
+{a:10,b:12,ans:11},
+{a:34,b:36,ans:35},
+{a:47,b:49,ans:48}
 
 ]
 
@@ -542,25 +584,55 @@ rows:[
 
 
 let currentRound=0;
-let completedBoxes=0;
+
+let solved=0;
+
+let speechUnlocked=false;
 
 
-/*=============================
-      QUESTION SPEECH
-==============================*/
 
-const questionText=
+const logoScreen=document.getElementById("logoScreen");
+
+const titleScreen=document.getElementById("titleScreen");
+
+const gameScreen=document.getElementById("gameScreen");
+
+const finalScreen=document.getElementById("finalScreen");
+
+const roundTitle=document.getElementById("roundTitle");
+
+const questionGrid=document.getElementById("questionGrid");
+
+const answerPanel=document.getElementById("answerPanel");
+
+const speaker=document.getElementById("speaker");
+
+
+
+const questionSentence=
+
 "Identify the in-between number from the given options and drag it into the correct box.";
 
 
+
+/*=========================================
+      SPEECH
+=========================================*/
+
 function speakQuestion(){
+
+if(!speechUnlocked)return;
 
 speechSynthesis.cancel();
 
-const speech=new SpeechSynthesisUtterance(questionText);
+const speech=
 
-speech.rate=0.9;
+new SpeechSynthesisUtterance(questionSentence);
+
+speech.rate=.9;
+
 speech.pitch=1;
+
 speech.volume=1;
 
 speechSynthesis.speak(speech);
@@ -568,18 +640,32 @@ speechSynthesis.speak(speech);
 }
 
 
+
 speaker.onclick=()=>{
+
+speechUnlocked=true;
 
 speakQuestion();
 
 };
 
 
-/*=============================
-      START GAME
-==============================*/
 
-window.onload=()=>{
+document.addEventListener("pointerdown",function unlock(){
+
+speechUnlocked=true;
+
+document.removeEventListener("pointerdown",unlock);
+
+});
+
+
+
+/*=========================================
+          START FLOW
+=========================================*/
+
+window.addEventListener("load",()=>{
 
 logoScreen.classList.add("show");
 
@@ -605,21 +691,23 @@ loadRound();
 
 
 
-/*=============================
-      LOAD ROUND
-==============================*/
+/*=========================================
+          LOAD ROUND
+=========================================*/
 
 function loadRound(){
 
-completedBoxes=0;
+solved=0;
 
 roundTitle.innerHTML=rounds[currentRound].title;
 
-leftColumn.innerHTML="";
-rightColumn.innerHTML="";
-answerArea.innerHTML="";
+questionGrid.innerHTML="";
 
-createBoard();
+answerPanel.innerHTML="";
+
+buildQuestionCards();
+
+buildAnswers();
 
 setTimeout(()=>{
 
@@ -631,119 +719,123 @@ speakQuestion();
 
 
 
-/*=============================
-      CREATE BOARD
-==============================*/
+/*=========================================
+      BUILD QUESTION CARDS
+=========================================*/
 
-function createBoard(){
+function buildQuestionCards(){
 
-const rows=rounds[currentRound].rows;
+const data=rounds[currentRound].questions;
 
-rows.forEach((item,index)=>{
+data.forEach((item,index)=>{
 
-const row=document.createElement("div");
+const card=document.createElement("div");
 
-row.className="row";
+card.className="questionCard";
 
-row.innerHTML=
+card.innerHTML=`
 
-`
-<div class="number">${item.left}</div>
+<div class="numberRow">
+
+<div>${item.a}</div>
 
 <div
 class="dropBox"
-data-answer="${item.answer}">
+data-answer="${item.ans}">
 </div>
 
-<div class="number">${item.right}</div>
+<div>${item.b}</div>
+
+</div>
 
 `;
 
-if(index<3){
-
-leftColumn.appendChild(row);
-
-}else{
-
-rightColumn.appendChild(row);
-
-}
+questionGrid.appendChild(card);
 
 });
 
+}
 
-const shuffled=[...rows]
+
+
+/*=========================================
+        BUILD ANSWERS
+=========================================*/
+
+function buildAnswers(){
+
+const numbers=
+
+[...rounds[currentRound].questions]
+
 .sort(()=>Math.random()-0.5);
 
-shuffled.forEach(item=>{
+numbers.forEach(item=>{
 
-const box=document.createElement("div");
+const answer=document.createElement("div");
 
-box.className="answer";
+answer.className="answer";
 
-box.draggable=true;
+answer.draggable=true;
 
-box.dataset.number=item.answer;
+answer.dataset.value=item.ans;
 
-box.innerHTML=item.answer;
+answer.innerHTML=item.ans;
 
-answerArea.appendChild(box);
+answerPanel.appendChild(answer);
 
 });
 
+enableDragDrop();
+
 }
-/*====================================
-      DRAG & DROP VARIABLES
-=====================================*/
+/*=========================================
+        DRAG & DROP ENGINE
+=========================================*/
 
-let draggedElement=null;
-let touchClone=null;
+let dragged=null;
+let touchItem=null;
+let startParent=null;
 
-const gameArea=document.querySelector(".gameArea");
 
-
-/*====================================
-      INITIALISE DRAG EVENTS
-=====================================*/
+/*---------- Enable Events ----------*/
 
 function enableDragDrop(){
 
-const answers=document.querySelectorAll(".answer");
-const dropBoxes=document.querySelectorAll(".dropBox");
+document.querySelectorAll(".answer").forEach(item=>{
 
-answers.forEach(answer=>{
+item.addEventListener("dragstart",dragStart);
+item.addEventListener("dragend",dragEnd);
 
-answer.addEventListener("dragstart",dragStart);
-answer.addEventListener("dragend",dragEnd);
-
-answer.addEventListener("touchstart",touchStart,{passive:false});
-answer.addEventListener("touchmove",touchMove,{passive:false});
-answer.addEventListener("touchend",touchEnd);
+item.addEventListener("touchstart",touchStart,{passive:false});
+item.addEventListener("touchmove",touchMove,{passive:false});
+item.addEventListener("touchend",touchEnd);
 
 });
 
-
-dropBoxes.forEach(box=>{
+document.querySelectorAll(".dropBox").forEach(box=>{
 
 box.addEventListener("dragover",dragOver);
-box.addEventListener("drop",dropNumber);
+box.addEventListener("drop",dropItem);
 
 });
 
 }
 
 
-/*====================================
-      DESKTOP DRAG
-=====================================*/
+/*=========================================
+          DESKTOP DRAG
+=========================================*/
 
-function dragStart(){
+function dragStart(e){
 
-draggedElement=this;
+dragged=this;
+
+e.dataTransfer.setData("text/plain",this.dataset.value);
 
 setTimeout(()=>{
 
-this.style.visibility="hidden";
+this.style.opacity=".2";
 
 },0);
 
@@ -752,9 +844,9 @@ this.style.visibility="hidden";
 
 function dragEnd(){
 
-this.style.visibility="visible";
+this.style.opacity="1";
 
-draggedElement=null;
+dragged=null;
 
 }
 
@@ -766,176 +858,214 @@ e.preventDefault();
 }
 
 
-/*====================================
-      DESKTOP DROP
-=====================================*/
+/*=========================================
+            DESKTOP DROP
+=========================================*/
 
-function dropNumber(e){
+function dropItem(e){
 
 e.preventDefault();
 
-if(!draggedElement) return;
+if(!dragged)return;
 
-const answer=parseInt(draggedElement.dataset.number);
-const correct=parseInt(this.dataset.answer);
+const value=dragged.dataset.value;
+const answer=this.dataset.answer;
 
-if(answer===correct){
+if(value===answer){
 
-this.innerHTML=answer;
+this.innerHTML=value;
 
 this.classList.add("correct");
 
-draggedElement.classList.add("used");
+dragged.classList.add("used");
 
-draggedElement.draggable=false;
+dragged.draggable=false;
 
-completedBoxes++;
+dragged.style.pointerEvents="none";
 
-checkRoundComplete();
+dragged.style.visibility="hidden";
+
+solved++;
+
+checkRoundFinished();
 
 }else{
 
 wrongSound.currentTime=0;
+
 wrongSound.play();
 
 }
 
 }
-/*====================================
-        MOBILE TOUCH DRAG
-=====================================*/
+
+
+
+/*=========================================
+            TOUCH START
+=========================================*/
 
 function touchStart(e){
 
-if(this.classList.contains("used")) return;
+if(this.classList.contains("used"))return;
 
 e.preventDefault();
 
-draggedElement=this;
+dragged=this;
 
-const rect=this.getBoundingClientRect();
+startParent=this.parentNode;
 
-touchClone=this.cloneNode(true);
+const touch=e.touches[0];
 
-touchClone.style.position="fixed";
-touchClone.style.left=rect.left+"px";
-touchClone.style.top=rect.top+"px";
-touchClone.style.width=rect.width+"px";
-touchClone.style.height=rect.height+"px";
-touchClone.style.zIndex="9999";
-touchClone.style.pointerEvents="none";
-touchClone.style.opacity=".9";
-touchClone.style.transform="scale(1.08)";
+touchItem=this.cloneNode(true);
 
-document.body.appendChild(touchClone);
+touchItem.style.position="fixed";
 
-this.style.visibility="hidden";
+touchItem.style.left=(touch.clientX-45)+"px";
+
+touchItem.style.top=(touch.clientY-34)+"px";
+
+touchItem.style.width=this.offsetWidth+"px";
+
+touchItem.style.height=this.offsetHeight+"px";
+
+touchItem.style.display="flex";
+
+touchItem.style.justifyContent="center";
+
+touchItem.style.alignItems="center";
+
+touchItem.style.zIndex="99999";
+
+touchItem.style.pointerEvents="none";
+
+touchItem.style.opacity=".9";
+
+touchItem.style.transform="scale(1.08)";
+
+document.body.appendChild(touchItem);
+
+this.style.opacity=".25";
 
 }
 
 
 
+/*=========================================
+            TOUCH MOVE
+=========================================*/
+
 function touchMove(e){
 
-if(!touchClone) return;
+if(!touchItem)return;
 
 e.preventDefault();
 
 const touch=e.touches[0];
 
-touchClone.style.left=(touch.clientX-touchClone.offsetWidth/2)+"px";
-touchClone.style.top=(touch.clientY-touchClone.offsetHeight/2)+"px";
+touchItem.style.left=(touch.clientX-touchItem.offsetWidth/2)+"px";
+
+touchItem.style.top=(touch.clientY-touchItem.offsetHeight/2)+"px";
 
 }
 
 
 
-/*====================================
-        TOUCH DROP
-=====================================*/
+/*=========================================
+            TOUCH END
+=========================================*/
 
 function touchEnd(e){
 
-if(!touchClone) return;
+if(!touchItem)return;
 
 const touch=e.changedTouches[0];
 
-let target=document.elementFromPoint(
+const target=document.elementFromPoint(
+
 touch.clientX,
+
 touch.clientY
+
 );
 
-if(target && target.classList.contains("dropBox")){
+if(
 
-const answer=parseInt(draggedElement.dataset.number);
-const correct=parseInt(target.dataset.answer);
+target &&
 
-if(answer===correct){
+target.classList.contains("dropBox")
 
-target.innerHTML=answer;
+){
+
+const value=dragged.dataset.value;
+
+const answer=target.dataset.answer;
+
+if(value===answer){
+
+target.innerHTML=value;
+
 target.classList.add("correct");
 
-draggedElement.classList.add("used");
-draggedElement.draggable=false;
+dragged.classList.add("used");
 
-completedBoxes++;
+dragged.style.visibility="hidden";
 
-checkRoundComplete();
+dragged.style.pointerEvents="none";
+
+solved++;
+
+checkRoundFinished();
 
 }else{
 
 wrongSound.currentTime=0;
+
 wrongSound.play();
 
-draggedElement.style.visibility="visible";
+dragged.style.opacity="1";
 
 }
 
 }else{
 
-draggedElement.style.visibility="visible";
+dragged.style.opacity="1";
 
 }
 
-touchClone.remove();
+touchItem.remove();
 
-touchClone=null;
-draggedElement=null;
+touchItem=null;
+
+dragged=null;
 
 }
-/*====================================
-      ROUND COMPLETE CHECK
-=====================================*/
+/*=========================================
+        ROUND COMPLETION
+=========================================*/
 
-function checkRoundComplete(){
+function checkRoundFinished(){
 
-const totalBoxes=
-rounds[currentRound].rows.length;
+const total=rounds[currentRound].questions.length;
 
-if(completedBoxes!==totalBoxes) return;
+if(solved<total)return;
 
-setTimeout(()=>{
-
-roundFinished();
-
-},600);
+setTimeout(finishRound,700);
 
 }
 
 
-
-/*====================================
-       GOOD JOB VOICE
-=====================================*/
+/*=========================================
+        SPEAK GOOD JOB
+=========================================*/
 
 function speakGoodJob(){
 
+if(!speechUnlocked)return;
+
 speechSynthesis.cancel();
 
-const speech=
-new SpeechSynthesisUtterance(
-"Good Job"
-);
+const speech=new SpeechSynthesisUtterance("Good Job!");
 
 speech.rate=0.9;
 speech.pitch=1;
@@ -946,12 +1076,11 @@ speechSynthesis.speak(speech);
 }
 
 
+/*=========================================
+          FINISH ROUND
+=========================================*/
 
-/*====================================
-      ROUND FINISHED
-=====================================*/
-
-function roundFinished(){
+function finishRound(){
 
 clapSound.currentTime=0;
 clapSound.play();
@@ -962,13 +1091,14 @@ if(currentRound===0){
 
 setTimeout(()=>{
 
-currentRound=1;
+currentRound++;
 
 loadRound();
 
 },2500);
 
-}else{
+}
+else{
 
 setTimeout(()=>{
 
@@ -979,9 +1109,11 @@ showFinalScreen();
 }
 
 }
-/*====================================
+
+
+/*=========================================
         FINAL SCREEN
-=====================================*/
+=========================================*/
 
 function showFinalScreen(){
 
@@ -994,37 +1126,15 @@ startConfetti();
 }
 
 
-
-/*====================================
-          PLAY AGAIN
-=====================================*/
-
-document
-.getElementById("playAgain")
-.addEventListener("click",()=>{
-
-stopConfetti();
-
-currentRound=0;
-
-completedBoxes=0;
-
-finalScreen.classList.remove("show");
-
-gameScreen.classList.add("show");
-
-loadRound();
-
-});
-/*====================================
-            CONFETTI
-====================================*/
+/*=========================================
+              CONFETTI
+=========================================*/
 
 const canvas=document.getElementById("confetti");
 const ctx=canvas.getContext("2d");
 
 let confettiPieces=[];
-let animationId=null;
+let confettiAnimation=null;
 
 function resizeCanvas(){
 
@@ -1038,6 +1148,9 @@ resizeCanvas();
 window.addEventListener("resize",resizeCanvas);
 
 
+/*=========================================
+          CREATE CONFETTI
+=========================================*/
 
 function createConfetti(){
 
@@ -1054,7 +1167,7 @@ const colors=[
 "#e91e63"
 ];
 
-for(let i=0;i<250;i++){
+for(let i=0;i<300;i++){
 
 confettiPieces.push({
 
@@ -1062,15 +1175,15 @@ x:Math.random()*canvas.width,
 
 y:Math.random()*canvas.height-canvas.height,
 
-r:Math.random()*8+5,
+size:Math.random()*10+6,
 
 speed:Math.random()*4+3,
 
-drift:(Math.random()-0.5)*3,
+drift:(Math.random()-0.5)*4,
 
-angle:Math.random()*360,
+rotation:Math.random()*360,
 
-spin:(Math.random()-0.5)*12,
+rotationSpeed:(Math.random()-0.5)*12,
 
 color:colors[
 Math.floor(Math.random()*colors.length)
@@ -1083,26 +1196,44 @@ Math.floor(Math.random()*colors.length)
 }
 
 
+/*=========================================
+            DRAW
+=========================================*/
 
 function drawConfetti(){
 
-ctx.clearRect(0,0,canvas.width,canvas.height);
+ctx.clearRect(
+0,
+0,
+canvas.width,
+canvas.height
+);
 
-confettiPieces.forEach(p=>{
+confettiPieces.forEach(piece=>{
 
 ctx.save();
 
-ctx.translate(p.x,p.y);
+ctx.translate(
+piece.x,
+piece.y
+);
 
-ctx.rotate(p.angle*Math.PI/180);
+ctx.rotate(
+piece.rotation*Math.PI/180
+);
 
-ctx.fillStyle=p.color;
+ctx.fillStyle=piece.color;
 
 ctx.fillRect(
--p.r/2,
--p.r/2,
-p.r,
-p.r*1.4
+
+-piece.size/2,
+
+-piece.size/2,
+
+piece.size,
+
+piece.size*1.3
+
 );
 
 ctx.restore();
@@ -1112,22 +1243,25 @@ ctx.restore();
 }
 
 
+/*=========================================
+            UPDATE
+=========================================*/
 
 function updateConfetti(){
 
-confettiPieces.forEach(p=>{
+confettiPieces.forEach(piece=>{
 
-p.y+=p.speed;
+piece.y+=piece.speed;
 
-p.x+=p.drift;
+piece.x+=piece.drift;
 
-p.angle+=p.spin;
+piece.rotation+=piece.rotationSpeed;
 
-if(p.y>canvas.height+30){
+if(piece.y>canvas.height+30){
 
-p.y=-20;
+piece.y=-20;
 
-p.x=Math.random()*canvas.width;
+piece.x=Math.random()*canvas.width;
 
 }
 
@@ -1136,6 +1270,9 @@ p.x=Math.random()*canvas.width;
 }
 
 
+/*=========================================
+          ANIMATION
+=========================================*/
 
 function animateConfetti(){
 
@@ -1143,13 +1280,17 @@ drawConfetti();
 
 updateConfetti();
 
-animationId=requestAnimationFrame(
+confettiAnimation=
+requestAnimationFrame(
 animateConfetti
 );
 
 }
 
 
+/*=========================================
+          START
+=========================================*/
 
 function startConfetti(){
 
@@ -1157,9 +1298,11 @@ resizeCanvas();
 
 createConfetti();
 
-if(animationId){
+if(confettiAnimation){
 
-cancelAnimationFrame(animationId);
+cancelAnimationFrame(
+confettiAnimation
+);
 
 }
 
@@ -1168,14 +1311,19 @@ animateConfetti();
 }
 
 
+/*=========================================
+            STOP
+=========================================*/
 
 function stopConfetti(){
 
-if(animationId){
+if(confettiAnimation){
 
-cancelAnimationFrame(animationId);
+cancelAnimationFrame(
+confettiAnimation
+);
 
-animationId=null;
+confettiAnimation=null;
 
 }
 
@@ -1187,64 +1335,86 @@ canvas.height
 );
 
 }
-/*====================================
-        SAFETY RESET
-=====================================*/
+/*=========================================
+        RESET FUNCTIONS
+=========================================*/
 
-window.addEventListener("resize",resizeCanvas);
+function resetGame(){
 
-window.addEventListener("orientationchange",()=>{
+speechSynthesis.cancel();
 
-setTimeout(resizeCanvas,300);
+currentRound=0;
+solved=0;
 
-});
+questionGrid.innerHTML="";
+answerPanel.innerHTML="";
 
+stopConfetti();
 
-/*====================================
-      PREVENT PAGE SCROLL
-=====================================*/
+finalScreen.classList.remove("show");
 
-document.addEventListener("touchmove",function(e){
+gameScreen.classList.add("show");
 
-if(e.target.classList.contains("answer")){
-
-e.preventDefault();
+loadRound();
 
 }
 
-},{passive:false});
+
+/*=========================================
+        PLAY AGAIN BUTTON
+=========================================*/
+
+document
+.getElementById("playAgain")
+.addEventListener("click",resetGame);
 
 
-/*====================================
-      PRELOAD IMAGES
-=====================================*/
+/*=========================================
+      KEEP CANVAS RESPONSIVE
+=========================================*/
 
-const preloadImages=[
-"assets/innovine-logo.png",
-"assets/speaker.png"
-];
+window.addEventListener(
 
-preloadImages.forEach(src=>{
+"orientationchange",
 
-const img=new Image();
-img.src=src;
+()=>{
 
-});
+setTimeout(
+
+resizeCanvas,
+
+300
+
+);
+
+}
+
+);
 
 
-/*====================================
-      PRELOAD SOUNDS
-=====================================*/
+/*=========================================
+        PRELOAD AUDIO
+=========================================*/
 
 clapSound.load();
 wrongSound.load();
 
 
-/*====================================
-      END OF GAME
-=====================================*/
+/*=========================================
+      PRELOAD LOGO
+=========================================*/
+
+const preloadLogo=new Image();
+
+preloadLogo.src="assets/innovine-logo.png";
+
+
+/*=========================================
+          END
+=========================================*/
 
 </script>
 
 </body>
-</html>    
+
+</html>        
