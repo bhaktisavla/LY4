@@ -259,11 +259,31 @@ transition:.25s;
 
 }
 
+@keyframes pop{
+
+0%{
+transform:scale(1);
+}
+
+50%{
+transform:scale(1.18);
+}
+
+100%{
+transform:scale(1);
+}
+
+}
+            
 .dropBox.correct{
 
 background:#c8e6c9;
 
 border-color:#43a047;
+
+box-shadow:0 0 18px #81c784;
+
+animation:pop .25s ease;
 
 }
 
@@ -1343,19 +1363,41 @@ function resetGame(){
 
 speechSynthesis.cancel();
 
+stopConfetti();
+
 currentRound=0;
+
 solved=0;
 
 questionGrid.innerHTML="";
+
 answerPanel.innerHTML="";
 
-stopConfetti();
-
 finalScreen.classList.remove("show");
+
+gameScreen.classList.remove("show");
+
+titleScreen.classList.remove("show");
+
+logoScreen.classList.add("show");
+
+setTimeout(()=>{
+
+logoScreen.classList.remove("show");
+
+titleScreen.classList.add("show");
+
+setTimeout(()=>{
+
+titleScreen.classList.remove("show");
 
 gameScreen.classList.add("show");
 
 loadRound();
+
+},2500);
+
+},5000);
 
 }
 
