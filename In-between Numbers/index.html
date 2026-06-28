@@ -1,195 +1,1250 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>In-Between Numbers Game</title>
+<meta name="viewport"
+content="width=device-width,
+initial-scale=1.0,
+maximum-scale=1.0,
+user-scalable=no">
+
+<title>In-between Numbers</title>
+
 <style>
-body {
-    font-family: 'Comic Sans MS', cursive;
-    text-align: center;
-    background: linear-gradient(to right, #f6d365, #fda085);
-    margin: 0;
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+-webkit-tap-highlight-color:transparent;
 }
-.container { padding: 20px; }
-h1 { color: #9c27b0; }
-.question { font-size: 24px; margin: 20px; }
-.options button {
-    display: block;
-    margin: 10px auto;
-    padding: 15px;
-    width: 80%;
-    max-width: 300px;
-    font-size: 20px;
-    border-radius: 15px;
-    border: none;
-    background-color: #8bc34a;
-    color: white;
-    cursor: pointer;
+
+body{
+font-family:Comic Sans MS,sans-serif;
+overflow:hidden;
+background:
+linear-gradient(135deg,#ffe082,#ffcc80,#b2ebf2,#c8e6c9);
+height:100vh;
 }
-.options button:hover { background-color: #7cb342; }
-#restart {
-    margin-top: 30px;
-    padding: 12px 20px;
-    font-size: 18px;
-    background-color: #03a9f4;
-    color: white;
-    border: none;
-    border-radius: 10px;
+
+body::before{
+content:"";
+position:fixed;
+inset:0;
+background:
+radial-gradient(circle at 10% 20%,rgba(255,255,255,.35) 0 35px,transparent 36px),
+radial-gradient(circle at 80% 15%,rgba(255,255,255,.25) 0 45px,transparent 46px),
+radial-gradient(circle at 25% 80%,rgba(255,255,255,.25) 0 50px,transparent 51px),
+radial-gradient(circle at 90% 70%,rgba(255,255,255,.35) 0 30px,transparent 31px),
+radial-gradient(circle at 60% 55%,rgba(255,255,255,.25) 0 55px,transparent 56px);
+pointer-events:none;
 }
-#soundControl { margin: 10px; }
-canvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    pointer-events: none;
+
+.screen{
+position:absolute;
+inset:0;
+display:none;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+padding:20px;
 }
+
+.show{
+display:flex;
+}
+
+#logoScreen img{
+width:min(320px,70vw);
+}
+
+#titleScreen h1{
+font-size:clamp(42px,6vw,70px);
+color:#ff4081;
+text-shadow:3px 3px white;
+animation:pop .8s infinite alternate;
+}
+
+@keyframes pop{
+
+from{
+transform:scale(1);
+}
+
+to{
+transform:scale(1.08);
+}
+
+}
+
+#gameScreen{
+padding:20px;
+}
+
+.topPanel{
+
+width:min(1100px,96vw);
+
+background:white;
+
+border:6px solid #ff9800;
+
+border-radius:25px;
+
+padding:15px;
+
+box-shadow:0 8px 20px rgba(0,0,0,.2);
+
+}
+
+.roundTitle{
+
+font-size:clamp(28px,4vw,42px);
+
+color:#ff5722;
+
+font-weight:bold;
+
+margin-bottom:12px;
+
+}
+
+.questionRow{
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+gap:15px;
+
+flex-wrap:wrap;
+
+}
+
+.question{
+
+font-size:clamp(18px,2.5vw,28px);
+
+font-weight:bold;
+
+color:#5d4037;
+
+}
+
+#speaker{
+
+width:55px;
+
+height:55px;
+
+cursor:pointer;
+
+transition:.3s;
+
+}
+
+#speaker:hover{
+
+transform:scale(1.1);
+
+}
+
+.gameArea{
+
+margin-top:20px;
+
+width:min(1100px,96vw);
+
+background:white;
+
+border:6px solid #ff9800;
+
+border-radius:25px;
+
+padding:25px;
+
+display:grid;
+
+grid-template-columns:1fr 1fr;
+
+gap:20px;
+
+box-shadow:0 8px 20px rgba(0,0,0,.2);
+
+}
+
+.column{
+
+display:flex;
+
+flex-direction:column;
+
+gap:18px;
+
+}
+
+.row{
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+gap:15px;
+
+font-size:clamp(28px,4vw,46px);
+
+font-weight:bold;
+
+color:#3f51b5;
+
+}
+
+.number{
+
+width:70px;
+
+text-align:center;
+
+}
+
+.dropBox{
+
+width:80px;
+
+height:70px;
+
+border:4px dashed deeppink;
+
+border-radius:18px;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+font-size:34px;
+
+background:#fff8fc;
+
+transition:.3s;
+
+}
+
+.dropBox.correct{
+
+background:#c8e6c9;
+
+border-color:#4caf50;
+
+}
+
+.answerArea{
+
+margin-top:25px;
+
+width:min(1100px,96vw);
+
+background:white;
+
+border:6px solid #ff9800;
+
+border-radius:25px;
+
+padding:18px;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+flex-wrap:wrap;
+
+gap:18px;
+
+box-shadow:0 8px 20px rgba(0,0,0,.2);
+
+}
+
+.answer{
+
+width:85px;
+
+height:65px;
+
+background:#42a5f5;
+
+border-radius:18px;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+font-size:32px;
+
+font-weight:bold;
+
+color:white;
+
+cursor:grab;
+
+user-select:none;
+
+touch-action:none;
+
+transition:.2s;
+
+}
+
+.answer:hover{
+
+transform:scale(1.08);
+
+}
+
+.answer.used{
+
+opacity:.35;
+
+pointer-events:none;
+
+}
+
+#finalScreen h1{
+
+font-size:clamp(46px,7vw,80px);
+
+color:#ff4081;
+
+text-shadow:3px 3px white;
+
+margin-bottom:30px;
+
+}
+
+#playAgain{
+
+padding:18px 40px;
+
+font-size:28px;
+
+border:none;
+
+border-radius:20px;
+
+background:#4caf50;
+
+color:white;
+
+cursor:pointer;
+
+font-weight:bold;
+
+}
+
+canvas{
+
+position:fixed;
+
+inset:0;
+
+pointer-events:none;
+
+}
+
+@media(max-width:900px){
+
+.gameArea{
+
+grid-template-columns:1fr;
+
+}
+
+.number{
+
+width:55px;
+
+}
+
+.dropBox{
+
+width:65px;
+
+height:60px;
+
+font-size:28px;
+
+}
+
+.answer{
+
+width:72px;
+
+height:58px;
+
+font-size:28px;
+
+}
+
+}
+
 </style>
+
 </head>
+
 <body>
 
-<div class="container">
-    <h1>Find the Number In-Between!</h1>
-    <div class="question" id="question"></div>
-    <div class="options" id="options"></div>
+<div id="logoScreen" class="screen show">
 
-    <label>🔊 Sound: </label>
-    <input type="range" id="soundControl" min="0" max="1" step="0.1" value="0.7">
+<img src="assets/innovine-logo.png">
 
-    <br>
-    <button id="restart">Restart Game</button>
+</div>
+
+<div id="titleScreen" class="screen">
+
+<h1>In-between Numbers</h1>
+
+</div>
+
+<div id="gameScreen" class="screen">
+
+<div class="topPanel">
+
+<div class="roundTitle" id="roundTitle">
+Round 1
+</div>
+
+<div class="questionRow">
+
+<div class="question">
+Identify the in-between number from the given options and drag it into the correct box.
+</div>
+
+<img
+id="speaker"
+src="assets/speaker.png">
+
+</div>
+
+</div>
+
+<div class="gameArea">
+
+<div class="column" id="leftColumn">
+
+</div>
+
+<div class="column" id="rightColumn">
+
+</div>
+
+</div>
+
+<div class="answerArea"
+id="answerArea">
+
+</div>
+
+</div>
+
+<div id="finalScreen" class="screen">
+
+<h1>Well Done!</h1>
+
+<button id="playAgain">
+Play Again
+</button>
+
 </div>
 
 <canvas id="confetti"></canvas>
 
 <script>
-let questions = [];
-let current = 0;
-let soundVolume = 0.7;
+/*=============================
+        AUDIO
+==============================*/
 
-const correctSound = new Audio('https://www.soundjay.com/buttons/sounds/button-3.mp3');
-const wrongSound = new Audio('https://www.soundjay.com/buttons/sounds/button-10.mp3');
+const clapSound = new Audio("assets/clap.mp3");
+const wrongSound = new Audio("assets/wrong.mp3");
 
-function generateQuestions() {
-    questions = [];
-    let nums = Array.from({length: 18}, (_, i) => i + 2); // 2 to 19
-    nums.sort(() => Math.random() - 0.5);
+clapSound.preload="auto";
+wrongSound.preload="auto";
 
-    for (let i = 0; i < 10; i++) {
-        let middle = nums[i];
-        let prev = middle - 1;
-        let next = middle + 1;
 
-        let options = new Set([middle]);
-        while (options.size < 3) {
-            options.add(Math.floor(Math.random() * 20) + 1);
-        }
+/*=============================
+        SCREENS
+==============================*/
 
-        questions.push({
-            prev,
-            next,
-            correct: middle,
-            options: Array.from(options).sort(() => Math.random() - 0.5)
-        });
-    }
+const logoScreen=document.getElementById("logoScreen");
+const titleScreen=document.getElementById("titleScreen");
+const gameScreen=document.getElementById("gameScreen");
+const finalScreen=document.getElementById("finalScreen");
+
+const roundTitle=document.getElementById("roundTitle");
+
+const leftColumn=document.getElementById("leftColumn");
+const rightColumn=document.getElementById("rightColumn");
+const answerArea=document.getElementById("answerArea");
+
+const speaker=document.getElementById("speaker");
+
+
+/*=============================
+          GAME DATA
+==============================*/
+
+const rounds=[
+
+{
+
+title:"Round 1",
+
+rows:[
+
+{left:25,right:27,answer:26},
+{left:14,right:16,answer:15},
+{left:38,right:40,answer:39},
+{left:1,right:3,answer:2},
+{left:42,right:44,answer:43},
+{left:29,right:31,answer:30}
+
+]
+
+},
+
+{
+
+title:"Round 2",
+
+rows:[
+
+{left:6,right:8,answer:7},
+{left:22,right:24,answer:23},
+{left:39,right:41,answer:40},
+{left:10,right:12,answer:11},
+{left:34,right:36,answer:35},
+{left:47,right:49,answer:48}
+
+]
+
 }
 
-function loadQuestion() {
-    if (current >= questions.length) {
-        document.getElementById('question').innerText = "🎉 Well Done!";
-        document.getElementById('options').innerHTML = '';
-        launchConfetti();
-        return;
-    }
+];
 
-    let q = questions[current];
-    document.getElementById('question').innerText = `What number comes between ${q.prev} and ${q.next}?`;
 
-    let optionsHTML = '';
-    q.options.forEach(opt => {
-        optionsHTML += `<button onclick="checkAnswer(${opt})">${opt}</button>`;
-    });
 
-    document.getElementById('options').innerHTML = optionsHTML;
+let currentRound=0;
+let completedBoxes=0;
+
+
+/*=============================
+      QUESTION SPEECH
+==============================*/
+
+const questionText=
+"Identify the in-between number from the given options and drag it into the correct box.";
+
+
+function speakQuestion(){
+
+speechSynthesis.cancel();
+
+const speech=new SpeechSynthesisUtterance(questionText);
+
+speech.rate=0.9;
+speech.pitch=1;
+speech.volume=1;
+
+speechSynthesis.speak(speech);
+
 }
 
-function checkAnswer(selected) {
-    let q = questions[current];
-    correctSound.volume = soundVolume;
-    wrongSound.volume = soundVolume;
 
-    if (selected === q.correct) {
-        correctSound.play();
-        launchConfetti();
-    } else {
-        wrongSound.play();
-    }
+speaker.onclick=()=>{
 
-    current++;
-    setTimeout(loadQuestion, 800);
-}
+speakQuestion();
 
-document.getElementById('restart').onclick = () => {
-    current = 0;
-    generateQuestions();
-    loadQuestion();
 };
 
-document.getElementById('soundControl').oninput = (e) => {
-    soundVolume = e.target.value;
+
+/*=============================
+      START GAME
+==============================*/
+
+window.onload=()=>{
+
+logoScreen.classList.add("show");
+
+setTimeout(()=>{
+
+logoScreen.classList.remove("show");
+
+titleScreen.classList.add("show");
+
+setTimeout(()=>{
+
+titleScreen.classList.remove("show");
+
+gameScreen.classList.add("show");
+
+loadRound();
+
+},2500);
+
+},5000);
+
 };
 
-function launchConfetti() {
-    const canvas = document.getElementById('confetti');
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
 
-    let pieces = [];
-    for (let i = 0; i < 100; i++) {
-        pieces.push({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            r: Math.random() * 6 + 4,
-            d: Math.random() * 100
-        });
-    }
 
-    function draw() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        pieces.forEach(p => {
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-            ctx.fillStyle = `hsl(${Math.random()*360},100%,50%)`;
-            ctx.fill();
-        });
-        update();
-    }
+/*=============================
+      LOAD ROUND
+==============================*/
 
-    function update() {
-        pieces.forEach(p => {
-            p.y += Math.cos(p.d) + 1;
-            p.x += Math.sin(p.d);
-            if (p.y > canvas.height) {
-                p.y = 0;
-                p.x = Math.random() * canvas.width;
-            }
-        });
-    }
+function loadRound(){
 
-    let count = 0;
-    let interval = setInterval(() => {
-        draw();
-        count++;
-        if (count > 30) clearInterval(interval);
-    }, 30);
+completedBoxes=0;
+
+roundTitle.innerHTML=rounds[currentRound].title;
+
+leftColumn.innerHTML="";
+rightColumn.innerHTML="";
+answerArea.innerHTML="";
+
+createBoard();
+
+setTimeout(()=>{
+
+speakQuestion();
+
+},500);
+
 }
 
-window.onload = () => {
-    generateQuestions();
-    loadQuestion();
-};
+
+
+/*=============================
+      CREATE BOARD
+==============================*/
+
+function createBoard(){
+
+const rows=rounds[currentRound].rows;
+
+rows.forEach((item,index)=>{
+
+const row=document.createElement("div");
+
+row.className="row";
+
+row.innerHTML=
+
+`
+<div class="number">${item.left}</div>
+
+<div
+class="dropBox"
+data-answer="${item.answer}">
+</div>
+
+<div class="number">${item.right}</div>
+
+`;
+
+if(index<3){
+
+leftColumn.appendChild(row);
+
+}else{
+
+rightColumn.appendChild(row);
+
+}
+
+});
+
+
+const shuffled=[...rows]
+.sort(()=>Math.random()-0.5);
+
+shuffled.forEach(item=>{
+
+const box=document.createElement("div");
+
+box.className="answer";
+
+box.draggable=true;
+
+box.dataset.number=item.answer;
+
+box.innerHTML=item.answer;
+
+answerArea.appendChild(box);
+
+});
+
+}
+/*====================================
+      DRAG & DROP VARIABLES
+=====================================*/
+
+let draggedElement=null;
+let touchClone=null;
+
+const gameArea=document.querySelector(".gameArea");
+
+
+/*====================================
+      INITIALISE DRAG EVENTS
+=====================================*/
+
+function enableDragDrop(){
+
+const answers=document.querySelectorAll(".answer");
+const dropBoxes=document.querySelectorAll(".dropBox");
+
+answers.forEach(answer=>{
+
+answer.addEventListener("dragstart",dragStart);
+answer.addEventListener("dragend",dragEnd);
+
+answer.addEventListener("touchstart",touchStart,{passive:false});
+answer.addEventListener("touchmove",touchMove,{passive:false});
+answer.addEventListener("touchend",touchEnd);
+
+});
+
+
+dropBoxes.forEach(box=>{
+
+box.addEventListener("dragover",dragOver);
+box.addEventListener("drop",dropNumber);
+
+});
+
+}
+
+
+/*====================================
+      DESKTOP DRAG
+=====================================*/
+
+function dragStart(){
+
+draggedElement=this;
+
+setTimeout(()=>{
+
+this.style.visibility="hidden";
+
+},0);
+
+}
+
+
+function dragEnd(){
+
+this.style.visibility="visible";
+
+draggedElement=null;
+
+}
+
+
+function dragOver(e){
+
+e.preventDefault();
+
+}
+
+
+/*====================================
+      DESKTOP DROP
+=====================================*/
+
+function dropNumber(e){
+
+e.preventDefault();
+
+if(!draggedElement) return;
+
+const answer=parseInt(draggedElement.dataset.number);
+const correct=parseInt(this.dataset.answer);
+
+if(answer===correct){
+
+this.innerHTML=answer;
+
+this.classList.add("correct");
+
+draggedElement.classList.add("used");
+
+draggedElement.draggable=false;
+
+completedBoxes++;
+
+checkRoundComplete();
+
+}else{
+
+wrongSound.currentTime=0;
+wrongSound.play();
+
+}
+
+}
+/*====================================
+        MOBILE TOUCH DRAG
+=====================================*/
+
+function touchStart(e){
+
+if(this.classList.contains("used")) return;
+
+e.preventDefault();
+
+draggedElement=this;
+
+const rect=this.getBoundingClientRect();
+
+touchClone=this.cloneNode(true);
+
+touchClone.style.position="fixed";
+touchClone.style.left=rect.left+"px";
+touchClone.style.top=rect.top+"px";
+touchClone.style.width=rect.width+"px";
+touchClone.style.height=rect.height+"px";
+touchClone.style.zIndex="9999";
+touchClone.style.pointerEvents="none";
+touchClone.style.opacity=".9";
+touchClone.style.transform="scale(1.08)";
+
+document.body.appendChild(touchClone);
+
+this.style.visibility="hidden";
+
+}
+
+
+
+function touchMove(e){
+
+if(!touchClone) return;
+
+e.preventDefault();
+
+const touch=e.touches[0];
+
+touchClone.style.left=(touch.clientX-touchClone.offsetWidth/2)+"px";
+touchClone.style.top=(touch.clientY-touchClone.offsetHeight/2)+"px";
+
+}
+
+
+
+/*====================================
+        TOUCH DROP
+=====================================*/
+
+function touchEnd(e){
+
+if(!touchClone) return;
+
+const touch=e.changedTouches[0];
+
+let target=document.elementFromPoint(
+touch.clientX,
+touch.clientY
+);
+
+if(target && target.classList.contains("dropBox")){
+
+const answer=parseInt(draggedElement.dataset.number);
+const correct=parseInt(target.dataset.answer);
+
+if(answer===correct){
+
+target.innerHTML=answer;
+target.classList.add("correct");
+
+draggedElement.classList.add("used");
+draggedElement.draggable=false;
+
+completedBoxes++;
+
+checkRoundComplete();
+
+}else{
+
+wrongSound.currentTime=0;
+wrongSound.play();
+
+draggedElement.style.visibility="visible";
+
+}
+
+}else{
+
+draggedElement.style.visibility="visible";
+
+}
+
+touchClone.remove();
+
+touchClone=null;
+draggedElement=null;
+
+}
+/*====================================
+      ROUND COMPLETE CHECK
+=====================================*/
+
+function checkRoundComplete(){
+
+const totalBoxes=
+rounds[currentRound].rows.length;
+
+if(completedBoxes!==totalBoxes) return;
+
+setTimeout(()=>{
+
+roundFinished();
+
+},600);
+
+}
+
+
+
+/*====================================
+       GOOD JOB VOICE
+=====================================*/
+
+function speakGoodJob(){
+
+speechSynthesis.cancel();
+
+const speech=
+new SpeechSynthesisUtterance(
+"Good Job"
+);
+
+speech.rate=0.9;
+speech.pitch=1;
+speech.volume=1;
+
+speechSynthesis.speak(speech);
+
+}
+
+
+
+/*====================================
+      ROUND FINISHED
+=====================================*/
+
+function roundFinished(){
+
+clapSound.currentTime=0;
+clapSound.play();
+
+speakGoodJob();
+
+if(currentRound===0){
+
+setTimeout(()=>{
+
+currentRound=1;
+
+loadRound();
+
+},2500);
+
+}else{
+
+setTimeout(()=>{
+
+showFinalScreen();
+
+},2500);
+
+}
+
+}
+/*====================================
+        FINAL SCREEN
+=====================================*/
+
+function showFinalScreen(){
+
+gameScreen.classList.remove("show");
+
+finalScreen.classList.add("show");
+
+startConfetti();
+
+}
+
+
+
+/*====================================
+          PLAY AGAIN
+=====================================*/
+
+document
+.getElementById("playAgain")
+.addEventListener("click",()=>{
+
+stopConfetti();
+
+currentRound=0;
+
+completedBoxes=0;
+
+finalScreen.classList.remove("show");
+
+gameScreen.classList.add("show");
+
+loadRound();
+
+});
+/*====================================
+            CONFETTI
+====================================*/
+
+const canvas=document.getElementById("confetti");
+const ctx=canvas.getContext("2d");
+
+let confettiPieces=[];
+let animationId=null;
+
+function resizeCanvas(){
+
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+
+}
+
+resizeCanvas();
+
+window.addEventListener("resize",resizeCanvas);
+
+
+
+function createConfetti(){
+
+confettiPieces=[];
+
+const colors=[
+"#ff1744",
+"#ff9800",
+"#ffeb3b",
+"#4caf50",
+"#00bcd4",
+"#3f51b5",
+"#9c27b0",
+"#e91e63"
+];
+
+for(let i=0;i<250;i++){
+
+confettiPieces.push({
+
+x:Math.random()*canvas.width,
+
+y:Math.random()*canvas.height-canvas.height,
+
+r:Math.random()*8+5,
+
+speed:Math.random()*4+3,
+
+drift:(Math.random()-0.5)*3,
+
+angle:Math.random()*360,
+
+spin:(Math.random()-0.5)*12,
+
+color:colors[
+Math.floor(Math.random()*colors.length)
+]
+
+});
+
+}
+
+}
+
+
+
+function drawConfetti(){
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+confettiPieces.forEach(p=>{
+
+ctx.save();
+
+ctx.translate(p.x,p.y);
+
+ctx.rotate(p.angle*Math.PI/180);
+
+ctx.fillStyle=p.color;
+
+ctx.fillRect(
+-p.r/2,
+-p.r/2,
+p.r,
+p.r*1.4
+);
+
+ctx.restore();
+
+});
+
+}
+
+
+
+function updateConfetti(){
+
+confettiPieces.forEach(p=>{
+
+p.y+=p.speed;
+
+p.x+=p.drift;
+
+p.angle+=p.spin;
+
+if(p.y>canvas.height+30){
+
+p.y=-20;
+
+p.x=Math.random()*canvas.width;
+
+}
+
+});
+
+}
+
+
+
+function animateConfetti(){
+
+drawConfetti();
+
+updateConfetti();
+
+animationId=requestAnimationFrame(
+animateConfetti
+);
+
+}
+
+
+
+function startConfetti(){
+
+resizeCanvas();
+
+createConfetti();
+
+if(animationId){
+
+cancelAnimationFrame(animationId);
+
+}
+
+animateConfetti();
+
+}
+
+
+
+function stopConfetti(){
+
+if(animationId){
+
+cancelAnimationFrame(animationId);
+
+animationId=null;
+
+}
+
+ctx.clearRect(
+0,
+0,
+canvas.width,
+canvas.height
+);
+
+}
+/*====================================
+        SAFETY RESET
+=====================================*/
+
+window.addEventListener("resize",resizeCanvas);
+
+window.addEventListener("orientationchange",()=>{
+
+setTimeout(resizeCanvas,300);
+
+});
+
+
+/*====================================
+      PREVENT PAGE SCROLL
+=====================================*/
+
+document.addEventListener("touchmove",function(e){
+
+if(e.target.classList.contains("answer")){
+
+e.preventDefault();
+
+}
+
+},{passive:false});
+
+
+/*====================================
+      PRELOAD IMAGES
+=====================================*/
+
+const preloadImages=[
+"assets/innovine-logo.png",
+"assets/speaker.png"
+];
+
+preloadImages.forEach(src=>{
+
+const img=new Image();
+img.src=src;
+
+});
+
+
+/*====================================
+      PRELOAD SOUNDS
+=====================================*/
+
+clapSound.load();
+wrongSound.load();
+
+
+/*====================================
+      END OF GAME
+=====================================*/
+
 </script>
 
 </body>
-</html>
+</html>    
