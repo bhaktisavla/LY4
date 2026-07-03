@@ -173,22 +173,13 @@ justify-content:space-evenly;
 
 font-size:clamp(36px,5vw,60px);
 font-weight:bold;
+letter-spacing:2px;
 
 text-shadow:
-2px 2px white,
-4px 4px rgba(0,0,0,.15);
+2px 2px 0 white,
+4px 4px 8px rgba(0,0,0,.18);
 
-background:linear-gradient(
-90deg,
-#FF595E,
-#FFCA3A,
-#8AC926,
-#1982C4,
-#6A4C93
-);
-
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
+text-align:center;
 
 }
 
@@ -438,9 +429,17 @@ Tap to Start
 <div id="gameContainer">
 
 <div class="header">
-
-Measurement
-
+<span style="color:#FF595E;">M</span>
+<span style="color:#FF924C;">e</span>
+<span style="color:#FFCA3A;">a</span>
+<span style="color:#8AC926;">s</span>
+<span style="color:#00C2A8;">u</span>
+<span style="color:#1982C4;">r</span>
+<span style="color:#6A4C93;">e</span>
+<span style="color:#F15BB5;">m</span>
+<span style="color:#FF595E;">e</span>
+<span style="color:#FFCA3A;">n</span>
+<span style="color:#8AC926;">t</span>
 </div>
 
 <div class="questionRow">
@@ -671,6 +670,8 @@ goodJob.style.display="block";
 
 setTimeout(()=>{
 
+goodJob.style.display="none";
+
 currentRound++;
 
 if(currentRound<rounds.length){
@@ -684,7 +685,7 @@ finishGame();
 
 }
 
-},5000);
+},1500);
 
 }
 else{
