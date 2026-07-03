@@ -27,6 +27,18 @@ body{
 display:flex;
 justify-content:center;
 align-items:center;
+overflow:hidden;
+font-family:Arial,Helvetica,sans-serif;
+
+background:linear-gradient(
+180deg,
+#8fd3ff 0%,
+#b9ecff 35%,
+#fff5c8 70%,
+#d9f7be 100%
+);
+
+position:relative;
 }
 
 #app{
@@ -135,10 +147,21 @@ justify-content:space-evenly;
 
 .header{
 
-font-size:clamp(34px,5vw,56px);
+font-size:clamp(36px,5vw,60px);
 font-weight:bold;
 
-background:linear-gradient(90deg,#ff595e,#ffca3a,#8ac926,#1982c4,#6a4c93);
+text-shadow:
+2px 2px white,
+4px 4px rgba(0,0,0,.15);
+
+background:linear-gradient(
+90deg,
+#FF595E,
+#FFCA3A,
+#8AC926,
+#1982C4,
+#6A4C93
+);
 
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
@@ -164,14 +187,19 @@ font-weight:bold;
 
 #speakBtn{
 
-width:60px;
-height:60px;
+width:62px;
+height:62px;
+
 border:none;
 border-radius:50%;
-background:#4cc9f0;
-font-size:28px;
-cursor:pointer;
+
+background:#4D96FF;
+
 color:white;
+
+font-size:30px;
+
+box-shadow:0 6px 12px rgba(0,0,0,.25);
 
 }
 
@@ -180,15 +208,19 @@ color:white;
 width:min(88vw,500px);
 height:min(48vh,360px);
 
-background:white;
-border-radius:25px;
-box-shadow:0 8px 18px rgba(0,0,0,.15);
+background:#FFFDF5;
+
+border:6px dashed #FFB703;
+
+border-radius:30px;
+
+box-shadow:0 10px 18px rgba(0,0,0,.18);
+
+padding:15px;
 
 display:flex;
 justify-content:center;
 align-items:center;
-
-padding:10px;
 
 }
 
@@ -216,16 +248,17 @@ display:flex;
 justify-content:center;
 align-items:center;
 
-background:white;
-border-radius:18px;
-
-border:5px solid #cccccc;
+border-radius:25px;
 
 font-size:58px;
 font-weight:bold;
+color:white;
 
 cursor:pointer;
-transition:.25s;
+
+transition:.3s;
+
+box-shadow:0 8px 15px rgba(0,0,0,.18);
 
 }
 
@@ -237,8 +270,13 @@ transform:scale(1.05);
 
 .correct{
 
-border-color:#32CD32!important;
-box-shadow:0 0 25px #32CD32;
+border:6px solid #2ECC71!important;
+
+box-shadow:
+0 0 15px #2ECC71,
+0 0 35px #7DFF7D;
+
+transform:scale(1.08);
 
 }
 
@@ -261,22 +299,22 @@ animation:shake .35s;
 
 #goodJob{
 
-position:absolute;
-top:50%;
-left:50%;
-transform:translate(-50%,-50%);
-
-font-size:64px;
+font-size:65px;
 font-weight:bold;
 
-display:none;
-
-background:linear-gradient(90deg,#ff595e,#ffca3a,#8ac926,#1982c4);
+background:linear-gradient(
+90deg,
+#ff595e,
+#ffca3a,
+#8ac926,
+#1982c4,
+#6a4c93
+);
 
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
 
-animation:zoom .6s infinite alternate;
+text-shadow:3px 3px white;
 
 }
 
@@ -505,7 +543,21 @@ gameScreen.classList.remove("hidden");
 currentRound=0;
 
 loadRound();
+const colors=[
+"#FF6B6B",
+"#4D96FF",
+"#6BCB77",
+"#F7B801",
+"#9B5DE5",
+"#00B4D8"
+];
 
+op1.style.background=colors[Math.floor(Math.random()*colors.length)];
+
+do{
+op2.style.background=colors[Math.floor(Math.random()*colors.length)];
+}
+while(op1.style.background===op2.style.background);
 }
 
 // ------------------ SPEECH ------------------
