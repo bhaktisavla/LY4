@@ -352,11 +352,7 @@ height:52px;
 
 <div id="title">Measurement</div>
 
-</div>
-
-<div id="startScreen" class="hidden">
-
-<button class="bigButton" id="startBtn">
+<button class="bigButton" id="startBtn" style="margin-top:50px;">
 
 Tap to Start
 
@@ -492,17 +488,10 @@ const speakBtn=document.getElementById("speakBtn");
 const synth=window.speechSynthesis;
 // ------------------ INTRO FLOW ------------------
 
-setTimeout(() => {
+setTimeout(()=>{
 
 logoScreen.classList.add("hidden");
 titleScreen.classList.remove("hidden");
-
-setTimeout(() => {
-
-titleScreen.classList.add("hidden");
-startScreen.classList.remove("hidden");
-
-},5000);
 
 },5000);
 
@@ -510,7 +499,7 @@ startScreen.classList.remove("hidden");
 
 document.getElementById("startBtn").onclick=function(){
 
-startScreen.classList.add("hidden");
+titleScreen.classList.add("hidden");
 gameScreen.classList.remove("hidden");
 
 currentRound=0;
@@ -644,10 +633,21 @@ document.getElementById("playAgain").onclick=function(){
 
 stopConfetti();
 
-endScreen.classList.add("hidden");
-startScreen.classList.remove("hidden");
+currentRound=0;
 
-}// ------------------ INTRO FLOW ------------------
+endScreen.classList.add("hidden");
+
+logoScreen.classList.remove("hidden");
+
+setTimeout(()=>{
+
+logoScreen.classList.add("hidden");
+titleScreen.classList.remove("hidden");
+
+},5000);
+
+}
+  // ------------------ INTRO FLOW ------------------
 
 setTimeout(() => {
 
@@ -801,8 +801,20 @@ document.getElementById("playAgain").onclick=function(){
 
 stopConfetti();
 
+currentRound=0;
+
 endScreen.classList.add("hidden");
-startScreen.classList.remove("hidden");
+
+// Show logo first
+logoScreen.classList.remove("hidden");
+
+// After 5 seconds show title + start button
+setTimeout(()=>{
+
+logoScreen.classList.add("hidden");
+titleScreen.classList.remove("hidden");
+
+},5000);
 
 }
 //====================== CONFETTI ======================
