@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>Measurement</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+-webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+width:100%;
+height:100%;
+overflow:hidden;
+font-family:Arial,Helvetica,sans-serif;
+background:linear-gradient(135deg,#FFF6D6,#DFF6FF,#FFE5EC,#E7FFD9);
+}
+
+body{
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+#app{
+width:100%;
+height:100%;
+position:relative;
+overflow:hidden;
+}
+
+.hidden{
+display:none!important;
+}
+
+/* ---------------- Splash ---------------- */
+
+#logoScreen,
+#titleScreen,
+#startScreen,
+#gameScreen,
+#endScreen{
+position:absolute;
+left:0;
+top:0;
+width:100%;
+height:100%;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+}
+
+#logo{
+width:min(60vw,320px);
+animation:fadeIn 1s;
+}
+
+#title{
+font-size:clamp(42px,6vw,70px);
+font-weight:bold;
+background:linear-gradient(90deg,#ff595e,#ffca3a,#8ac926,#1982c4,#6a4c93);
+background-size:400%;
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+animation:flashTitle 1s infinite;
+text-align:center;
+}
+
+@keyframes flashTitle{
+
+0%{opacity:1;}
+50%{opacity:.4;}
+100%{opacity:1;}
+
+}
+
+@keyframes fadeIn{
+
+from{opacity:0;}
+to{opacity:1;}
+
+}
+
+/* ---------------- Buttons ---------------- */
+
+.bigButton{
+
+padding:18px 45px;
+border:none;
+border-radius:18px;
+font-size:clamp(26px,3vw,38px);
+background:#ffb703;
+color:#fff;
+font-weight:bold;
+box-shadow:0 8px 15px rgba(0,0,0,.2);
+cursor:pointer;
+animation:pulse 1.2s infinite;
+}
+
+.bigButton:active{
+
+transform:scale(.95);
+
+}
+
+@keyframes pulse{
+
+0%{transform:scale(1);}
+50%{transform:scale(1.08);}
+100%{transform:scale(1);}
+
+}
+
+/* ---------------- Game ---------------- */
+
+#gameContainer{
+
+width:min(98vw,900px);
+height:min(97vh,700px);
+
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:space-evenly;
+
+}
+
+.header{
+
+font-size:clamp(34px,5vw,56px);
+font-weight:bold;
+
+background:linear-gradient(90deg,#ff595e,#ffca3a,#8ac926,#1982c4,#6a4c93);
+
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+
+}
+
+.questionRow{
+
+display:flex;
+align-items:center;
+gap:15px;
+padding:0 10px;
+
+}
+
+#question{
+
+font-size:clamp(22px,2.8vw,34px);
+text-align:center;
+font-weight:bold;
+
+}
+
+#speakBtn{
+
+width:60px;
+height:60px;
+border:none;
+border-radius:50%;
+background:#4cc9f0;
+font-size:28px;
+cursor:pointer;
+color:white;
+
+}
+
+.board{
+
+width:min(88vw,500px);
+height:min(48vh,360px);
+
+background:white;
+border-radius:25px;
+box-shadow:0 8px 18px rgba(0,0,0,.15);
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+padding:10px;
+
+}
+
+.board img{
+
+max-width:100%;
+max-height:100%;
+object-fit:contain;
+
+}
+
+.options{
+
+display:flex;
+gap:40px;
+
+}
+
+.option{
+
+width:min(110px,26vw);
+height:min(110px,26vw);
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+background:white;
+border-radius:18px;
+
+border:5px solid #cccccc;
+
+font-size:58px;
+font-weight:bold;
+
+cursor:pointer;
+transition:.25s;
+
+}
+
+.option:hover{
+
+transform:scale(1.05);
+
+}
+
+.correct{
+
+border-color:#32CD32!important;
+box-shadow:0 0 25px #32CD32;
+
+}
+
+.wrong{
+
+animation:shake .35s;
+
+}
+
+@keyframes shake{
+
+0%{transform:translateX(0);}
+20%{transform:translateX(-8px);}
+40%{transform:translateX(8px);}
+60%{transform:translateX(-8px);}
+80%{transform:translateX(8px);}
+100%{transform:translateX(0);}
+
+}
+
+#goodJob{
+
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+
+font-size:64px;
+font-weight:bold;
+
+display:none;
+
+background:linear-gradient(90deg,#ff595e,#ffca3a,#8ac926,#1982c4);
+
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+
+animation:zoom .6s infinite alternate;
+
+}
+
+@keyframes zoom{
+
+from{transform:translate(-50%,-50%) scale(1);}
+to{transform:translate(-50%,-50%) scale(1.15);}
+
+}
+
+#endTitle{
+
+font-size:60px;
+font-weight:bold;
+background:linear-gradient(90deg,#ff595e,#ffca3a,#8ac926,#1982c4);
+
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+
+margin-bottom:35px;
+
+}
+
+canvas{
+
+position:absolute;
+left:0;
+top:0;
+pointer-events:none;
+
+}
+
+@media(max-width:600px){
+
+.options{
+
+gap:18px;
+
+}
+
+.option{
+
+font-size:48px;
+
+}
+
+#speakBtn{
+
+width:52px;
+height:52px;
+
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="app">
+
+<canvas id="confetti"></canvas>
+
+<div id="logoScreen">
+
+<img id="logo" src="assets/innovine-logo.png">
+
+</div>
+
+<div id="titleScreen" class="hidden">
+
+<div id="title">Measurement</div>
+
+</div>
+
+<div id="startScreen" class="hidden">
+
+<button class="bigButton" id="startBtn">
+
+Tap to Start
+
+</button>
+
+</div>
+
+<div id="gameScreen" class="hidden">
+
+<div id="gameContainer">
+
+<div class="header">
+
+Measurement
+
+</div>
+
+<div class="questionRow">
+
+<div id="question"></div>
+
+<button id="speakBtn">🔊</button>
+
+</div>
+
+<div class="board">
+
+<img id="objectImage">
+
+</div>
+
+<div class="options">
+
+<div class="option" id="op1"></div>
+
+<div class="option" id="op2"></div>
+
+</div>
+
+</div>
+
+<div id="goodJob">
+
+Good Job!
+
+</div>
+
+</div>
+
+<div id="endScreen" class="hidden">
+
+<div id="endTitle">
+
+🎉 Excellent! 🎉
+
+</div>
+
+<button class="bigButton" id="playAgain">
+
+Play Again
+
+</button>
+
+</div>
+
+<audio id="clap" src="assets/clap.mp3"></audio>
+<audio id="wrong" src="assets/wrong.mp3"></audio>
+
+</div>
+
+<script>
+
+const rounds=[
+
+{
+question:"Look at the number scale. How tall is the bottle? Tap the correct number.",
+image:"assets/bottle.png",
+options:[5,7],
+answer:5
+},
+
+{
+question:"Look at the number scale. How tall is the chair? Tap the correct number.",
+image:"assets/chair.png",
+options:[4,6],
+answer:6
+},
+
+{
+question:"Look at the number scale. How tall is the glass? Tap the correct number.",
+image:"assets/glass.png",
+options:[4,6],
+answer:4
+},
+
+{
+question:"Look at the number scale. How long is the glue? Tap the correct number.",
+image:"assets/glue.png",
+options:[8,6],
+answer:6
+},
+
+{
+question:"Look at the number scale. How long is the stapler? Tap the correct number.",
+image:"assets/stapler.png",
+options:[2,5],
+answer:5
+}
+
+];
+
+let currentRound=0;
+
+const logoScreen=document.getElementById("logoScreen");
+const titleScreen=document.getElementById("titleScreen");
+const startScreen=document.getElementById("startScreen");
+const gameScreen=document.getElementById("gameScreen");
+const endScreen=document.getElementById("endScreen");
+
+const question=document.getElementById("question");
+const image=document.getElementById("objectImage");
+
+const op1=document.getElementById("op1");
+const op2=document.getElementById("op2");
+
+const clap=document.getElementById("clap");
+const wrong=document.getElementById("wrong");
+
+const goodJob=document.getElementById("goodJob");
+
+const speakBtn=document.getElementById("speakBtn");
+
+const synth=window.speechSynthesis;
+// ------------------ INTRO FLOW ------------------
+
+setTimeout(() => {
+
+logoScreen.classList.add("hidden");
+titleScreen.classList.remove("hidden");
+
+setTimeout(() => {
+
+titleScreen.classList.add("hidden");
+startScreen.classList.remove("hidden");
+
+},5000);
+
+},5000);
+
+// ------------------ START ------------------
+
+document.getElementById("startBtn").onclick=function(){
+
+startScreen.classList.add("hidden");
+gameScreen.classList.remove("hidden");
+
+currentRound=0;
+
+loadRound();
+
+}
+
+// ------------------ SPEECH ------------------
+
+function speak(text){
+
+if(synth.speaking){
+
+synth.cancel();
+
+}
+
+const utter=new SpeechSynthesisUtterance(text);
+
+utter.rate=.88;
+utter.pitch=1;
+utter.volume=1;
+
+synth.speak(utter);
+
+}
+
+speakBtn.onclick=function(){
+
+speak(rounds[currentRound].question);
+
+}
+
+// ------------------ LOAD ROUND ------------------
+
+function loadRound(){
+
+goodJob.style.display="none";
+
+const r=rounds[currentRound];
+
+question.innerHTML=r.question;
+
+image.src=r.image;
+
+op1.innerHTML=r.options[0];
+op2.innerHTML=r.options[1];
+
+op1.className="option";
+op2.className="option";
+
+op1.onclick=()=>checkAnswer(op1,r.options[0]);
+op2.onclick=()=>checkAnswer(op2,r.options[1]);
+
+setTimeout(()=>{
+
+speak(r.question);
+
+},500);
+
+}
+
+// ------------------ CHECK ANSWER ------------------
+
+function checkAnswer(button,value){
+
+const answer=rounds[currentRound].answer;
+
+if(value===answer){
+
+op1.onclick=null;
+op2.onclick=null;
+
+button.classList.add("correct");
+
+clap.pause();
+clap.currentTime=0;
+clap.play();
+
+goodJob.style.display="block";
+
+setTimeout(()=>{
+
+currentRound++;
+
+if(currentRound<rounds.length){
+
+loadRound();
+
+}
+else{
+
+finishGame();
+
+}
+
+},5000);
+
+}
+else{
+
+wrong.pause();
+wrong.currentTime=0;
+wrong.play();
+
+button.classList.add("wrong");
+
+setTimeout(()=>{
+
+button.classList.remove("wrong");
+
+},400);
+
+}
+
+}
+
+// ------------------ FINISH GAME ------------------
+
+function finishGame(){
+
+gameScreen.classList.add("hidden");
+endScreen.classList.remove("hidden");
+
+startConfetti();
+
+}
+
+document.getElementById("playAgain").onclick=function(){
+
+stopConfetti();
+
+endScreen.classList.add("hidden");
+startScreen.classList.remove("hidden");
+
+}// ------------------ INTRO FLOW ------------------
+
+setTimeout(() => {
+
+logoScreen.classList.add("hidden");
+titleScreen.classList.remove("hidden");
+
+setTimeout(() => {
+
+titleScreen.classList.add("hidden");
+startScreen.classList.remove("hidden");
+
+},5000);
+
+},5000);
+
+// ------------------ START ------------------
+
+document.getElementById("startBtn").onclick=function(){
+
+startScreen.classList.add("hidden");
+gameScreen.classList.remove("hidden");
+
+currentRound=0;
+
+loadRound();
+
+}
+
+// ------------------ SPEECH ------------------
+
+function speak(text){
+
+if(synth.speaking){
+
+synth.cancel();
+
+}
+
+const utter=new SpeechSynthesisUtterance(text);
+
+utter.rate=.88;
+utter.pitch=1;
+utter.volume=1;
+
+synth.speak(utter);
+
+}
+
+speakBtn.onclick=function(){
+
+speak(rounds[currentRound].question);
+
+}
+
+// ------------------ LOAD ROUND ------------------
+
+function loadRound(){
+
+goodJob.style.display="none";
+
+const r=rounds[currentRound];
+
+question.innerHTML=r.question;
+
+image.src=r.image;
+
+op1.innerHTML=r.options[0];
+op2.innerHTML=r.options[1];
+
+op1.className="option";
+op2.className="option";
+
+op1.onclick=()=>checkAnswer(op1,r.options[0]);
+op2.onclick=()=>checkAnswer(op2,r.options[1]);
+
+setTimeout(()=>{
+
+speak(r.question);
+
+},500);
+
+}
+
+// ------------------ CHECK ANSWER ------------------
+
+function checkAnswer(button,value){
+
+const answer=rounds[currentRound].answer;
+
+if(value===answer){
+
+op1.onclick=null;
+op2.onclick=null;
+
+button.classList.add("correct");
+
+clap.pause();
+clap.currentTime=0;
+clap.play();
+
+goodJob.style.display="block";
+
+setTimeout(()=>{
+
+currentRound++;
+
+if(currentRound<rounds.length){
+
+loadRound();
+
+}
+else{
+
+finishGame();
+
+}
+
+},2500);
+
+}
+else{
+
+wrong.pause();
+wrong.currentTime=0;
+wrong.play();
+
+button.classList.add("wrong");
+
+setTimeout(()=>{
+
+button.classList.remove("wrong");
+
+},400);
+
+}
+
+}
+
+// ------------------ FINISH GAME ------------------
+
+function finishGame(){
+
+gameScreen.classList.add("hidden");
+endScreen.classList.remove("hidden");
+
+startConfetti();
+
+}
+
+document.getElementById("playAgain").onclick=function(){
+
+stopConfetti();
+
+endScreen.classList.add("hidden");
+startScreen.classList.remove("hidden");
+
+}
+//====================== CONFETTI ======================
+
+const canvas=document.getElementById("confetti");
+const ctx=canvas.getContext("2d");
+
+let pieces=[];
+let animationId=null;
+
+function resizeCanvas(){
+
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+
+}
+
+window.addEventListener("resize",resizeCanvas);
+
+resizeCanvas();
+
+function randomColor(){
+
+const colors=[
+"#ff595e",
+"#ffca3a",
+"#8ac926",
+"#1982c4",
+"#6a4c93",
+"#ff99c8",
+"#90dbf4",
+"#f9c74f"
+];
+
+return colors[Math.floor(Math.random()*colors.length)];
+
+}
+
+function startConfetti(){
+
+pieces=[];
+
+for(let i=0;i<180;i++){
+
+pieces.push({
+
+x:Math.random()*canvas.width,
+
+y:Math.random()*canvas.height-canvas.height,
+
+r:4+Math.random()*6,
+
+d:2+Math.random()*4,
+
+color:randomColor(),
+
+tilt:Math.random()*10,
+
+angle:Math.random()*360
+
+});
+
+}
+
+animateConfetti();
+
+}
+
+function animateConfetti(){
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+pieces.forEach(p=>{
+
+ctx.beginPath();
+
+ctx.fillStyle=p.color;
+
+ctx.fillRect(p.x,p.y,p.r,p.r*2);
+
+p.y+=p.d;
+
+p.x+=Math.sin(p.angle)*0.6;
+
+p.angle+=0.02;
+
+if(p.y>canvas.height){
+
+p.y=-20;
+
+p.x=Math.random()*canvas.width;
+
+}
+
+});
+
+animationId=requestAnimationFrame(animateConfetti);
+
+}
+
+function stopConfetti(){
+
+cancelAnimationFrame(animationId);
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+}
+
+//====================== RESET GAME ======================
+
+document.getElementById("playAgain").addEventListener("click",()=>{
+
+currentRound=0;
+
+goodJob.style.display="none";
+
+op1.className="option";
+op2.className="option";
+
+});
+
+//====================== PREVENT DOUBLE TAP ZOOM ======================
+
+document.addEventListener("gesturestart",function(e){
+
+e.preventDefault();
+
+});
+
+let lastTouchEnd=0;
+
+document.addEventListener("touchend",function(event){
+
+const now=(new Date()).getTime();
+
+if(now-lastTouchEnd<=300){
+
+event.preventDefault();
+
+}
+
+lastTouchEnd=now;
+
+},false);
+
+//====================== PRELOAD IMAGES ======================
+
+rounds.forEach(r=>{
+
+const img=new Image();
+
+img.src=r.image;
+
+});
+
+//====================== END ======================
+
+</script>
+
+</body>
+
+</html>
