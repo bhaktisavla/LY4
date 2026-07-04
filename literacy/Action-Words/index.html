@@ -11,7 +11,7 @@ initial-scale=1.0,
 maximum-scale=1.0,
 user-scalable=no">
 
-<title>Action Words</title>
+<title>Action Word</title>
 
 <style>
 
@@ -58,8 +58,9 @@ MAIN GAME
 
 position:relative;
 
-width:min(100vw,900px);
-height:min(100vh,700px);
+width:100vw;
+
+height:100vh;
 
 overflow:hidden;
 
@@ -67,15 +68,9 @@ background:
 
 linear-gradient(
 180deg,
-#FFF9D8 0%,
-#EAF9FF 40%,
-#FDE8FF 100%);
-
-border-radius:30px;
-
-box-shadow:
-
-0 12px 30px rgba(0,0,0,.18);
+#FFF7C8 0%,
+#CFF6FF 45%,
+#FFE1F3 100%);
 
 }
 
@@ -301,10 +296,15 @@ background:
 
 linear-gradient(
 180deg,
-#FFF9D8 0%,
-#E8F8FF 50%,
-#FFE9F7 100%);
 
+#FFF6B3 0%,
+
+#BDEFFF 30%,
+
+#E5FFD8 60%,
+
+#FFD6EC 100%);
+    
 }
 
 /**********************
@@ -493,15 +493,21 @@ max-width:260px;
 
 max-height:260px;
 
-background:white;
+background:#ffffff;
+background-image:
 
-border-radius:26px;
+linear-gradient(
+180deg,
+#ffffff,
+#FFF7F0);
 
-border:5px solid white;
+border-radius:35px;
+
+border:8px solid white;
 
 box-shadow:
 
-0 10px 18px rgba(0,0,0,.15);
+0 16px 30px rgba(0,0,0,.20);
 
 display:flex;
 
@@ -757,9 +763,9 @@ z-index:50;
 
 position:absolute;
 
-width:12px;
+width:14px;
 
-height:20px;
+height:26px;
 
 border-radius:3px;
 
@@ -785,7 +791,7 @@ opacity:1;
 
 transform:
 translateY(900px)
-rotate(720deg);
+rotate(1440deg);
 
 opacity:0;
 
@@ -967,7 +973,7 @@ display:flex !important;
 
             <span class="word1">Action</span>
 
-            <span class="word2">Words</span>
+            <span class="word2">Word</span>
 
         </h1>
 
@@ -991,7 +997,7 @@ display:flex !important;
 
                 <span>Action</span>
 
-                <span>Words</span>
+                <span>Word</span>
 
             </h1>
 
@@ -1435,7 +1441,7 @@ message.style.display="none";
 
 nextRound();
 
-},5000);
+},2200);
 
 }
 
@@ -1517,17 +1523,28 @@ speechSynthesis.speak(speech);
 PLAY AGAIN
 *************************************************/
 
-playAgain.onclick=function(){
+
+ playAgain.onclick=function(){
 
 currentRound=0;
 
 endScreen.style.display="none";
 
-gameScreen.classList.remove("hidden");
+gameScreen.classList.add("hidden");
 
-loadRound();
+titleScreen.classList.add("hidden");
 
-};
+splash.classList.remove("hidden");
+
+setTimeout(function(){
+
+splash.classList.add("hidden");
+
+titleScreen.classList.remove("hidden");
+
+},5000);
+
+};   
 
 
 /*************************************************
@@ -1551,7 +1568,7 @@ const colours=[
 
 ];
 
-for(let i=0;i<120;i++){
+for(let i=0;i<280;i++){
 
 const piece=document.createElement("div");
 
