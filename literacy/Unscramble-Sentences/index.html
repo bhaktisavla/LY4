@@ -552,29 +552,38 @@ position:absolute;
 
 left:50%;
 
-top:50%;
+top:45%;
 
-transform:translate(-50%,-50%) scale(.5);
+transform:translate(-50%,-50%) scale(.6);
 
-padding:18px 36px;
-
-border-radius:24px;
-
-background:white;
-
-font-size:clamp(34px,6vw,60px);
+font-size:clamp(42px,7vw,72px);
 
 font-weight:800;
 
-color:#FF5C8A;
+letter-spacing:2px;
 
-box-shadow:0 10px 22px rgba(0,0,0,.22);
+background:linear-gradient(
+90deg,
+#FF6B35,
+#FFD93D,
+#52C41A,
+#4D96FF,
+#FF5DA2
+);
+
+-webkit-background-clip:text;
+background-clip:text;
+
+color:transparent;
+
+text-shadow:
+3px 3px 0 rgba(255,255,255,.9);
 
 opacity:0;
 
 pointer-events:none;
 
-z-index:50;
+z-index:999;
 
 }
 
@@ -590,21 +599,29 @@ animation:goodjob .9s forwards;
 
 opacity:0;
 
-transform:translate(-50%,-50%) scale(.5);
+transform:translate(-50%,-50%) scale(.4);
 
 }
 
-60%{
+40%{
 
 opacity:1;
 
-transform:translate(-50%,-50%) scale(1.15);
+transform:translate(-50%,-50%) scale(1.2);
+
+}
+
+70%{
+
+opacity:1;
+
+transform:translate(-50%,-50%) scale(1);
 
 }
 
 100%{
 
-opacity:1;
+opacity:0;
 
 transform:translate(-50%,-50%) scale(1);
 
@@ -1395,7 +1412,7 @@ goodJob.classList.remove("show");
 
 nextRound();
 
-},1700);
+},1000);
 
 }
 
