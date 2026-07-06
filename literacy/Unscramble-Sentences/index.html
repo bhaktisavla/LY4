@@ -1,0 +1,2000 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Unscramble Sentences</title>
+
+<style>
+
+/*==========================================
+        UNSCRAMBLE SENTENCES
+        STYLE SHEET
+==========================================*/
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+html,
+body{
+
+width:100%;
+height:100%;
+
+font-family:
+"Trebuchet MS",
+Verdana,
+sans-serif;
+
+overflow:hidden;
+
+background:#87CEEB;
+
+}
+
+body{
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+}
+
+/*==========================================
+            COMMON SCREENS
+==========================================*/
+
+#logoScreen,
+#startScreen,
+#gameScreen,
+#successPopup,
+#finishScreen{
+
+position:absolute;
+
+top:0;
+left:0;
+
+width:100%;
+height:100%;
+
+}
+
+/*==========================================
+            LOGO SCREEN
+==========================================*/
+
+#logoScreen{
+
+background:white;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+z-index:1000;
+
+}
+
+#logo{
+
+width:min(70vw,420px);
+
+animation:
+logoZoom 1.2s ease;
+
+}
+
+@keyframes logoZoom{
+
+0%{
+
+transform:scale(.5);
+
+opacity:0;
+
+}
+
+100%{
+
+transform:scale(1);
+
+opacity:1;
+
+}
+
+}
+
+/*==========================================
+            START SCREEN
+==========================================*/
+
+#startScreen{
+
+display:none;
+
+background:
+linear-gradient(
+to bottom,
+#76D6FF 0%,
+#CFF6FF 45%,
+#B7F0A1 100%
+);
+
+overflow:hidden;
+
+}
+
+/*==========================================
+        BACKGROUND DECORATION
+==========================================*/
+
+#startScreen::before{
+
+content:"";
+
+position:absolute;
+
+bottom:-150px;
+
+left:-100px;
+
+width:450px;
+
+height:300px;
+
+background:#6DCB63;
+
+border-radius:50%;
+
+}
+
+#startScreen::after{
+
+content:"";
+
+position:absolute;
+
+bottom:-170px;
+
+right:-120px;
+
+width:500px;
+
+height:330px;
+
+background:#60B85A;
+
+border-radius:50%;
+
+}
+
+/*==========================================
+                TITLE
+==========================================*/
+
+.titleBox{
+
+position:absolute;
+
+top:12%;
+
+left:50%;
+
+transform:translateX(-50%);
+
+background:white;
+
+padding:22px 45px;
+
+border-radius:30px;
+
+border:6px solid #FFD54F;
+
+box-shadow:0 8px 18px rgba(0,0,0,.18);
+
+}
+
+.titleBox h1{
+
+font-size:54px;
+
+color:#5A2D82;
+
+text-align:center;
+
+}
+
+/*==========================================
+            PLAY BUTTON
+==========================================*/
+
+#playBtn{
+
+position:absolute;
+
+left:50%;
+
+bottom:18%;
+
+transform:translateX(-50%);
+
+padding:18px 70px;
+
+font-size:34px;
+
+font-weight:bold;
+
+color:white;
+
+background:#FF7043;
+
+border:none;
+
+border-radius:60px;
+
+cursor:pointer;
+
+box-shadow:0 8px 16px rgba(0,0,0,.25);
+
+transition:.3s;
+
+}
+
+#playBtn:hover{
+
+transform:
+translateX(-50%)
+scale(1.08);
+
+background:#FF5722;
+
+}
+
+#playBtn:active{
+
+transform:
+translateX(-50%)
+scale(.95);
+
+}
+
+/*==========================================
+        FLOATING CLOUDS
+==========================================*/
+
+.cloud{
+
+position:absolute;
+
+background:white;
+
+border-radius:60px;
+
+opacity:.9;
+
+animation:cloudMove linear infinite;
+
+}
+
+.cloud::before{
+
+content:"";
+
+position:absolute;
+
+background:white;
+
+border-radius:50%;
+
+}
+
+.cloud::after{
+
+content:"";
+
+position:absolute;
+
+background:white;
+
+border-radius:50%;
+
+}
+
+.cloud1{
+
+width:150px;
+
+height:50px;
+
+top:8%;
+
+left:-200px;
+
+animation-duration:40s;
+
+}
+
+.cloud1::before{
+
+width:60px;
+
+height:60px;
+
+left:20px;
+
+top:-22px;
+
+}
+
+.cloud1::after{
+
+width:70px;
+
+height:70px;
+
+right:18px;
+
+top:-28px;
+
+}
+
+.cloud2{
+
+width:120px;
+
+height:40px;
+
+top:22%;
+
+left:-160px;
+
+animation-duration:32s;
+
+animation-delay:6s;
+
+}
+
+.cloud2::before{
+
+width:45px;
+
+height:45px;
+
+left:18px;
+
+top:-18px;
+
+}
+
+.cloud2::after{
+
+width:55px;
+
+height:55px;
+
+right:15px;
+
+top:-22px;
+
+}
+
+@keyframes cloudMove{
+
+from{
+
+transform:translateX(0);
+
+}
+
+to{
+
+transform:translateX(calc(100vw + 350px));
+
+}
+
+}
+/*==========================================
+            GAME SCREEN
+==========================================*/
+
+#gameScreen{
+
+display:none;
+
+overflow:hidden;
+
+background:
+linear-gradient(
+to bottom,
+#8ED8FF 0%,
+#CFF6FF 45%,
+#B7F0A1 100%
+);
+
+}
+
+/*==========================================
+            HILLS
+==========================================*/
+
+.hill{
+
+position:absolute;
+
+bottom:-120px;
+
+border-radius:50%;
+
+}
+
+.hill1{
+
+width:500px;
+
+height:280px;
+
+left:-120px;
+
+background:#74C86A;
+
+}
+
+.hill2{
+
+width:600px;
+
+height:320px;
+
+right:-150px;
+
+background:#62B85B;
+
+}
+
+/*==========================================
+            TOP BAR
+==========================================*/
+
+.topBar{
+
+position:absolute;
+
+top:15px;
+
+left:0;
+
+width:100%;
+
+padding:0 20px;
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+z-index:50;
+
+}
+
+/*==========================================
+            LEVEL BADGE
+==========================================*/
+
+.levelBadge{
+
+background:white;
+
+padding:12px 25px;
+
+border-radius:20px;
+
+font-size:26px;
+
+font-weight:bold;
+
+color:#6A1B9A;
+
+box-shadow:0 5px 10px rgba(0,0,0,.18);
+
+}
+
+/*==========================================
+            SCORE BOARD
+==========================================*/
+
+.scoreBoard{
+
+display:flex;
+
+gap:15px;
+
+}
+
+.scoreCard{
+
+background:white;
+
+padding:12px 22px;
+
+border-radius:20px;
+
+font-size:24px;
+
+font-weight:bold;
+
+color:#FF6F00;
+
+box-shadow:0 5px 10px rgba(0,0,0,.18);
+
+}
+
+/*==========================================
+        QUESTION PICTURE AREA
+==========================================*/
+
+.pictureArea{
+
+position:absolute;
+
+top:90px;
+
+left:50%;
+
+transform:translateX(-50%);
+
+width:min(80vw,340px);
+
+height:min(30vh,230px);
+
+background:white;
+
+border:6px solid #FFD54F;
+
+border-radius:30px;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+overflow:hidden;
+
+box-shadow:0 8px 18px rgba(0,0,0,.18);
+
+}
+
+.pictureArea img{
+
+width:100%;
+
+height:100%;
+
+object-fit:contain;
+
+}
+
+/*==========================================
+        SENTENCE SLOT AREA
+==========================================*/
+
+.slotArea{
+
+position:absolute;
+
+top:360px;
+
+left:50%;
+
+transform:translateX(-50%);
+
+width:min(94vw,950px);
+
+display:flex;
+
+justify-content:center;
+
+flex-wrap:wrap;
+
+gap:15px;
+
+padding:10px;
+
+}
+
+/*==========================================
+        INDIVIDUAL SLOT
+==========================================*/
+
+.wordSlot{
+
+width:150px;
+
+height:65px;
+
+background:white;
+
+border:4px dashed #9575CD;
+
+border-radius:18px;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+font-size:26px;
+
+font-weight:bold;
+
+color:#444;
+
+transition:.25s;
+
+}
+
+.wordSlot.correct{
+
+background:#E8F9E7;
+
+border-color:#4CAF50;
+
+}
+
+
+.wordSlot.wrong{
+
+background:#FFE7E7;
+
+border-color:#F44336;
+
+animation:shake .35s;
+
+}
+
+/*==========================================
+        WORD OPTIONS AREA
+==========================================*/
+
+.optionsArea{
+
+position:absolute;
+
+bottom:45px;
+
+left:50%;
+
+transform:translateX(-50%);
+
+width:min(95vw,980px);
+
+display:flex;
+
+justify-content:center;
+
+flex-wrap:wrap;
+
+gap:18px;
+
+padding:10px;
+
+}
+/*==========================================
+            WORD CARDS
+==========================================*/
+
+.wordCard{
+
+min-width:130px;
+
+padding:14px 24px;
+
+background:#FFFFFF;
+
+border:4px solid #6C63FF;
+
+border-radius:18px;
+
+font-size:28px;
+
+font-weight:bold;
+
+text-align:center;
+
+color:#333;
+
+cursor:pointer;
+
+user-select:none;
+
+box-shadow:0 6px 12px rgba(0,0,0,.18);
+
+transition:
+transform .25s,
+background .25s,
+border-color .25s;
+
+}
+
+.wordCard:hover{
+
+transform:scale(1.08);
+
+background:#FFF9E8;
+
+}
+
+.wordCard:active{
+
+transform:scale(.95);
+
+}
+
+.wordCard.used{
+
+visibility:hidden;
+
+pointer-events:none;
+
+}
+
+/*==========================================
+        SUCCESS POPUP
+==========================================*/
+
+#successPopup{
+
+display:none;
+
+background:rgba(0,0,0,.45);
+
+justify-content:center;
+
+align-items:center;
+
+z-index:200;
+
+}
+
+.popupCard{
+
+background:white;
+
+padding:40px 60px;
+
+border-radius:30px;
+
+text-align:center;
+
+border:8px solid #FFD54F;
+
+box-shadow:0 12px 30px rgba(0,0,0,.25);
+
+animation:popupScale .4s ease;
+
+}
+
+.popupCard h2{
+
+font-size:50px;
+
+color:#4CAF50;
+
+margin-bottom:15px;
+
+}
+
+.popupCard p{
+
+font-size:30px;
+
+font-weight:bold;
+
+color:#5A2D82;
+
+}
+
+@keyframes popupScale{
+
+0%{
+
+transform:scale(.5);
+
+opacity:0;
+
+}
+
+100%{
+
+transform:scale(1);
+
+opacity:1;
+
+}
+
+}
+
+/*==========================================
+        FINISH SCREEN
+==========================================*/
+
+#finishScreen{
+
+display:none;
+
+background:linear-gradient(
+to bottom,
+#7ED8FF,
+#DDF9FF,
+#BDF5B2
+);
+
+justify-content:center;
+
+align-items:center;
+
+z-index:300;
+
+}
+
+.finishCard{
+
+background:white;
+
+padding:45px;
+
+border-radius:35px;
+
+text-align:center;
+
+border:8px solid #FFD54F;
+
+box-shadow:0 12px 30px rgba(0,0,0,.22);
+
+width:min(90vw,550px);
+
+}
+
+.finishCard h1{
+
+font-size:80px;
+
+margin-bottom:10px;
+
+}
+
+.finishCard h2{
+
+font-size:42px;
+
+color:#6A1B9A;
+
+margin-bottom:15px;
+
+}
+
+.finishCard p{
+
+font-size:26px;
+
+color:#555;
+
+margin-bottom:30px;
+
+line-height:1.4;
+
+}
+
+/*==========================================
+        PLAY AGAIN BUTTON
+==========================================*/
+
+#playAgain{
+
+padding:18px 55px;
+
+font-size:30px;
+
+font-weight:bold;
+
+border:none;
+
+border-radius:50px;
+
+background:#FF7043;
+
+color:white;
+
+cursor:pointer;
+
+transition:.25s;
+
+box-shadow:0 6px 12px rgba(0,0,0,.2);
+
+}
+
+#playAgain:hover{
+
+background:#FF5722;
+
+transform:scale(1.08);
+
+}
+
+#playAgain:active{
+
+transform:scale(.95);
+
+}
+/*==========================================
+        RESPONSIVE DESIGN
+==========================================*/
+
+/* Tablets */
+
+@media (max-width:1024px){
+
+.titleBox h1{
+
+font-size:42px;
+
+}
+
+#playBtn{
+
+font-size:28px;
+
+padding:16px 55px;
+
+}
+
+.pictureArea{
+
+width:min(85vw,300px);
+
+height:210px;
+
+top:85px;
+
+}
+
+.slotArea{
+
+top:330px;
+
+gap:12px;
+
+}
+
+.wordSlot{
+
+width:130px;
+
+height:58px;
+
+font-size:22px;
+
+}
+
+.wordCard{
+
+font-size:24px;
+
+min-width:120px;
+
+padding:12px 18px;
+
+}
+
+.popupCard h2{
+
+font-size:42px;
+
+}
+
+.popupCard p{
+
+font-size:26px;
+
+}
+
+.finishCard h2{
+
+font-size:36px;
+
+}
+
+.finishCard p{
+
+font-size:22px;
+
+}
+
+}
+
+/* Phones */
+
+@media (max-width:768px){
+
+.topBar{
+
+padding:10px;
+
+}
+
+.levelBadge{
+
+font-size:18px;
+
+padding:8px 16px;
+
+}
+
+.scoreCard{
+
+font-size:18px;
+
+padding:8px 16px;
+
+}
+
+.titleBox{
+
+width:90%;
+
+padding:18px;
+
+}
+
+.titleBox h1{
+
+font-size:32px;
+
+}
+
+#playBtn{
+
+font-size:24px;
+
+padding:16px 45px;
+
+bottom:14%;
+
+}
+
+.pictureArea{
+
+width:260px;
+
+height:180px;
+
+top:70px;
+
+}
+
+.slotArea{
+
+top:275px;
+
+gap:10px;
+
+padding:6px;
+
+}
+
+.wordSlot{
+
+width:110px;
+
+height:52px;
+
+font-size:18px;
+
+}
+
+.optionsArea{
+
+bottom:25px;
+
+gap:10px;
+
+}
+
+.wordCard{
+
+font-size:20px;
+
+min-width:95px;
+
+padding:10px 14px;
+
+}
+
+.popupCard{
+
+width:90%;
+
+padding:30px 20px;
+
+}
+
+.popupCard h2{
+
+font-size:34px;
+
+}
+
+.popupCard p{
+
+font-size:22px;
+
+}
+
+.finishCard{
+
+width:90%;
+
+padding:30px 20px;
+
+}
+
+.finishCard h1{
+
+font-size:60px;
+
+}
+
+.finishCard h2{
+
+font-size:30px;
+
+}
+
+.finishCard p{
+
+font-size:20px;
+
+}
+
+#playAgain{
+
+font-size:24px;
+
+padding:14px 40px;
+
+}
+
+}
+
+/* Small Phones */
+
+@media (max-width:480px){
+
+.titleBox h1{
+
+font-size:26px;
+
+}
+
+.pictureArea{
+
+width:220px;
+
+height:155px;
+
+}
+
+.slotArea{
+
+top:245px;
+
+}
+
+.wordSlot{
+
+width:95px;
+
+height:46px;
+
+font-size:16px;
+
+}
+
+.wordCard{
+
+font-size:18px;
+
+min-width:85px;
+
+padding:8px 12px;
+
+}
+
+.levelBadge{
+
+font-size:16px;
+
+}
+
+.scoreCard{
+
+font-size:16px;
+
+}
+
+#playBtn{
+
+font-size:22px;
+
+padding:14px 35px;
+
+}
+
+}
+
+/*==========================================
+        WRONG ANSWER SHAKE
+==========================================*/
+
+@keyframes shake{
+
+0%,100%{
+transform:translateX(0);
+}
+
+25%{
+transform:translateX(-6px);
+}
+
+50%{
+transform:translateX(6px);
+}
+
+75%{
+transform:translateX(-6px);
+}
+
+}
+
+/*==========================================
+        SMOOTH ANIMATIONS
+==========================================*/
+
+button,
+.wordCard,
+.wordSlot{
+
+transition:all .25s ease;
+
+}
+
+img{
+
+user-select:none;
+
+-webkit-user-drag:none;
+
+}
+
+button:focus{
+
+outline:none;
+
+}
+
+body{
+
+-webkit-tap-highlight-color:transparent;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- ===================================
+        INNOVINE LOGO SCREEN
+=================================== -->
+
+<div id="logoScreen">
+
+    <img
+    id="logo"
+    src="images/innovine-logo.png"
+    alt="Innovine Logo">
+
+</div>
+
+<!-- ===================================
+            START SCREEN
+=================================== -->
+
+<div id="startScreen">
+
+    <div class="titleBox">
+
+        <h1>
+            Unscramble Sentences
+        </h1>
+
+    </div>
+
+    <button id="playBtn">
+
+        ▶ PLAY
+
+    </button>
+
+</div>
+
+<!-- ===================================
+            GAME SCREEN
+=================================== -->
+
+<div id="gameScreen">
+
+    <!-- Background Decoration -->
+
+    <div class="cloud cloud1"></div>
+    <div class="cloud cloud2"></div>
+
+    <div class="hill hill1"></div>
+    <div class="hill hill2"></div>
+
+    <!-- Header -->
+
+    <div class="topBar">
+
+        <div class="levelBadge">
+
+            Level 1
+
+        </div>
+
+        <div class="scoreBoard">
+
+            <div class="scoreCard">
+
+                ⭐ <span id="score">
+                    0
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Question Picture -->
+
+    <div class="pictureArea">
+
+        <img
+        id="questionImage"
+        src=""
+        alt="Sentence Picture">
+
+    </div>
+
+    <!-- Sentence Slots -->
+
+    <div
+    id="slotArea"
+    class="slotArea">
+
+    </div>
+
+    <!-- Word Cards -->
+
+    <div
+    id="optionsArea"
+    class="optionsArea">
+
+    </div>
+
+</div>
+
+<!-- ===================================
+        CORRECT POPUP
+=================================== -->
+
+<div id="successPopup">
+
+    <div class="popupCard">
+
+        <h2>
+
+            🎉 Excellent!
+
+        </h2>
+
+        <p>
+
+            Great Job!
+
+        </p>
+
+    </div>
+
+</div>
+
+<!-- ===================================
+        GAME COMPLETE
+=================================== -->
+
+<div id="finishScreen">
+
+    <div class="finishCard">
+
+        <h1>
+
+            🏆
+
+        </h1>
+
+        <h2>
+
+            Congratulations!
+
+        </h2>
+
+        <p>
+
+            You completed all the sentences.
+
+        </p>
+
+        <button id="playAgain">
+
+            Play Again
+
+        </button>
+
+    </div>
+
+</div>
+
+<!-- ===================================
+            AUDIO
+=================================== -->
+
+<audio
+id="correctSound"
+src="audio/correct.mp3">
+</audio>
+
+<audio
+id="wrongSound"
+src="audio/wrong.mp3">
+</audio>
+
+<audio
+id="clapSound"
+src="audio/clap.mp3">
+</audio>
+
+<script>
+
+/*=========================================
+        UNSCRAMBLE SENTENCES
+==========================================*/
+
+/*-----------------------------------------
+            DOM ELEMENTS
+------------------------------------------*/
+
+const logoScreen = document.getElementById("logoScreen");
+const startScreen = document.getElementById("startScreen");
+const gameScreen = document.getElementById("gameScreen");
+
+const playBtn = document.getElementById("playBtn");
+
+const picture = document.getElementById("questionImage");
+
+const slotArea = document.getElementById("slotArea");
+const optionsArea = document.getElementById("optionsArea");
+
+const scoreText = document.getElementById("score");
+
+const successPopup = document.getElementById("successPopup");
+const finishScreen = document.getElementById("finishScreen");
+
+const playAgainBtn = document.getElementById("playAgain");
+
+const correctSound = document.getElementById("correctSound");
+const wrongSound = document.getElementById("wrongSound");
+const clapSound = document.getElementById("clapSound");
+
+
+/*-----------------------------------------
+            GAME VARIABLES
+------------------------------------------*/
+
+let score = 0;
+
+let currentQuestion = 0;
+
+let selectedWords = [];
+
+let currentSentence = [];
+
+let currentCards = [];
+
+
+/*-----------------------------------------
+            GAME DATA
+------------------------------------------*/
+
+const questions = [
+
+{
+
+image:"images/sentence1.png",
+
+sentence:[
+"I",
+"see",
+"a",
+"cat"
+]
+
+},
+
+{
+
+image:"images/sentence2.png",
+
+sentence:[
+"The",
+"sun",
+"is",
+"hot"
+]
+
+},
+
+{
+
+image:"images/sentence3.png",
+
+sentence:[
+"She",
+"has",
+"a",
+"ball"
+]
+
+},
+
+{
+
+image:"images/sentence4.png",
+
+sentence:[
+"We",
+"eat",
+"red",
+"apples"
+]
+
+},
+
+{
+
+image:"images/sentence5.png",
+
+sentence:[
+"The",
+"bird",
+"can",
+"fly"
+]
+
+}
+
+];
+questions.forEach(question => {
+    const img = new Image();
+    img.src = question.image;
+});
+
+/*-----------------------------------------
+            SHUFFLE FUNCTION
+------------------------------------------*/
+
+function shuffle(array){
+
+for(let i=array.length-1;i>0;i--){
+
+const j=Math.floor(Math.random()*(i+1));
+
+[array[i],array[j]]=[array[j],array[i]];
+
+}
+
+return array;
+
+}
+/*-----------------------------------------
+        SHOW START SCREEN
+------------------------------------------*/
+
+setTimeout(() => {
+
+logoScreen.style.display = "none";
+
+startScreen.style.display = "block";
+
+},3000);
+
+
+/*-----------------------------------------
+            PLAY BUTTON
+------------------------------------------*/
+
+playBtn.addEventListener("click",()=>{
+
+startScreen.style.display="none";
+
+gameScreen.style.display="block";
+
+score=0;
+
+currentQuestion=0;
+
+scoreText.textContent=score;
+
+loadQuestion();
+
+});
+
+
+/*-----------------------------------------
+            LOAD QUESTION
+------------------------------------------*/
+
+function loadQuestion(){
+
+slotArea.innerHTML="";
+
+optionsArea.innerHTML="";
+
+selectedWords=[];
+
+const question=questions[currentQuestion];
+
+currentSentence=[...question.sentence];
+
+picture.src=question.image;
+
+
+/*-----------------------------------------
+        CREATE EMPTY SLOTS
+------------------------------------------*/
+
+currentSentence.forEach((word,index)=>{
+
+const slot=document.createElement("div");
+
+slot.className="wordSlot";
+
+slot.dataset.index=index;
+
+slotArea.appendChild(slot);
+
+});
+
+
+/*-----------------------------------------
+        CREATE WORD CARDS
+------------------------------------------*/
+
+const shuffled=shuffle([...currentSentence]);
+
+currentCards=[];
+
+shuffled.forEach(word=>{
+
+const card=document.createElement("div");
+
+card.className="wordCard";
+
+card.textContent=word;
+
+card.addEventListener("click",()=>{
+
+selectWord(card);
+
+});
+
+optionsArea.appendChild(card);
+
+currentCards.push(card);
+
+});
+
+}
+/*-----------------------------------------
+        SELECT A WORD
+------------------------------------------*/
+
+function selectWord(card){
+
+if(card.classList.contains("used")) return;
+
+const slots=document.querySelectorAll(".wordSlot");
+
+for(let i=0;i<slots.length;i++){
+
+if(slots[i].textContent===""){
+
+slots[i].textContent=card.textContent;
+
+card.classList.add("used");
+
+selectedWords.push({
+
+word:card.textContent,
+
+card:card
+
+});
+
+checkIfComplete();
+
+return;
+
+}
+
+}
+
+}
+
+
+/*-----------------------------------------
+        REMOVE A WORD
+------------------------------------------*/
+
+document.addEventListener("click",function(e){
+
+if(!e.target.classList.contains("wordSlot")) return;
+
+const slot=e.target;
+
+if(slot.textContent==="") return;
+
+const word=slot.textContent;
+
+slot.textContent="";
+
+for(let i=0;i<selectedWords.length;i++){
+
+if(selectedWords[i].word===word){
+
+selectedWords[i].card.classList.remove("used");
+
+selectedWords.splice(i,1);
+
+break;
+
+}
+
+}
+
+reArrangeSlots();
+
+});
+
+
+/*-----------------------------------------
+        REARRANGE SLOTS
+------------------------------------------*/
+
+function reArrangeSlots(){
+
+const slots=document.querySelectorAll(".wordSlot");
+
+slots.forEach(slot=>{
+
+slot.textContent="";
+
+});
+
+selectedWords.forEach((item,index)=>{
+
+slots[index].textContent=item.word;
+
+});
+
+}
+/*-----------------------------------------
+        CHECK IF SENTENCE IS COMPLETE
+------------------------------------------*/
+
+function checkIfComplete(){
+
+const slots=document.querySelectorAll(".wordSlot");
+
+let answer=[];
+
+slots.forEach(slot=>{
+
+answer.push(slot.textContent);
+
+});
+
+if(answer.includes("")) return;
+
+let correct=true;
+
+for(let i=0;i<currentSentence.length;i++){
+
+if(answer[i]!==currentSentence[i]){
+
+correct=false;
+
+break;
+
+}
+
+}
+
+if(correct){
+
+showCorrect(slots);
+
+}else{
+
+showWrong(slots);
+
+}
+
+}
+
+
+/*-----------------------------------------
+            CORRECT ANSWER
+------------------------------------------*/
+
+function showCorrect(slots){
+
+slots.forEach(slot=>{
+
+slot.classList.add("correct");
+
+slot.classList.remove("wrong");
+
+});
+
+score++;
+
+scoreText.textContent=score;
+
+correctSound.currentTime=0;
+correctSound.play();
+
+clapSound.currentTime=0;
+clapSound.play();
+
+successPopup.style.display="flex";
+
+setTimeout(()=>{
+
+successPopup.style.display="none";
+
+currentQuestion++;
+
+if(currentQuestion>=questions.length){
+
+showFinishScreen();
+
+}else{
+
+loadQuestion();
+
+}
+
+},1300);
+
+}
+
+
+/*-----------------------------------------
+            WRONG ANSWER
+------------------------------------------*/
+
+function showWrong(slots){
+
+slots.forEach(slot=>{
+
+slot.classList.add("wrong");
+
+});
+
+wrongSound.currentTime=0;
+wrongSound.play();
+
+setTimeout(()=>{
+
+slots.forEach(slot=>{
+
+slot.classList.remove("wrong");
+
+slot.textContent="";
+
+});
+
+currentCards.forEach(card=>{
+
+card.classList.remove("used");
+
+});
+
+selectedWords=[];
+
+},1200);
+
+}
+
+
+/*-----------------------------------------
+        FINISH SCREEN
+------------------------------------------*/
+
+function showFinishScreen(){
+
+gameScreen.style.display="none";
+
+finishScreen.style.display="flex";
+
+}
+
+
+/*-----------------------------------------
+        PLAY AGAIN
+------------------------------------------*/
+
+playAgainBtn.addEventListener("click",()=>{
+
+finishScreen.style.display="none";
+
+logoScreen.style.display="flex";
+
+score=0;
+currentQuestion=0;
+scoreText.textContent=score;
+
+// Show logo again
+setTimeout(()=>{
+
+logoScreen.style.display="none";
+
+startScreen.style.display="block";
+
+},3000);
+
+});
+
+
+</script>
+
+</body>
+
+</html>
