@@ -522,6 +522,18 @@ filter:drop-shadow(0 0 8px #41C95E);
 
 }
 
+ .card.selected{
+
+transform:scale(1.08);
+
+border:4px solid #FFD93D;
+
+border-radius:14px;
+
+box-shadow:0 0 18px #FFD93D;
+
+}
+ 
 .shake{
 
 animation:shake .35s;
@@ -1142,9 +1154,7 @@ let round=0;
 
 let placed=[];
 
-let draggedCard=null;
-
-let dragSource=null;
+let selectedCard=null;
 
 /*======================================================
 LOGO SCREEN
@@ -1236,13 +1246,7 @@ slot.className="slot";
 
 slot.dataset.index=i;
 
-slot.addEventListener("dragover",e=>{
-
-e.preventDefault();
-
-});
-
-slot.addEventListener("drop",dropCard);
+slot.addEventListener("click",placeCard);
 
 answerBoard.appendChild(slot);
 
@@ -1264,17 +1268,31 @@ card.dataset.word=word;
 
 card.innerHTML=`<img src="assets/${word}.png" draggable="false">`;
 
-card.addEventListener("dragstart",dragStart);
-
-card.addEventListener("dragend",dragEnd);
+card.addEventListener("click",selectCard);
 
 cards.appendChild(card);
+ 
 
 });
 
 }
 
-/*======================================================
+ function selectCard(){
+
+// Remove highlight from previously selected card
+document.querySelectorAll(".card").forEach(card=>{
+card.classList.remove("selected");
+});
+
+// Save selected card
+selectedCard=this;
+
+// Highlight selected card
+this.classList.add("selected");
+
+}
+
+ /*======================================================
 SHUFFLE
 ======================================================*/
 
@@ -1289,40 +1307,18 @@ const j=Math.floor(Math.random()*(i+1));
 }
 
 }
-/*======================================================
-DRAG EVENTS
-======================================================*/
-
-function dragStart(e){
-
-draggedCard=this;
-dragSource=this.parentElement;
-
-setTimeout(()=>{
-
-this.style.visibility="hidden";
-
-},0);
-
-}
-
-function dragEnd(){
-
-this.style.visibility="visible";
-
-}
 
 /*======================================================
-DROP CARD
+PLACE CARD
 ======================================================*/
 
-function dropCard(e){
+function placeCard(){
 
-e.preventDefault();
+if(!selectedCard) return;
 
 const slot=this;
 
-if(slot.children.length>0)return;
+if(slot.children.length>0) return;
 
 const current=rounds[round];
 
@@ -1330,19 +1326,23 @@ const index=Number(slot.dataset.index);
 
 const expected=current.answer[index];
 
-const selected=draggedCard.dataset.word;
+const selected=selectedCard.dataset.word;
 
 /*---------------CORRECT----------------*/
 
 if(selected===expected){
 
-slot.appendChild(draggedCard);
+slot.appendChild(selectedCard);
 
 slot.classList.add("correct");
 
-draggedCard.classList.add("correct");
+selectedCard.classList.add("correct");
+
+selectedCard.classList.remove("selected");
 
 placed[index]=selected;
+
+selectedCard=null;
 
 checkComplete();
 
@@ -1356,11 +1356,11 @@ wrong.currentTime=0;
 
 wrong.play();
 
-draggedCard.classList.add("shake");
+selectedCard.classList.add("shake");
 
 setTimeout(()=>{
 
-draggedCard.classList.remove("shake");
+selectedCard.classList.remove("shake");
 
 },350);
 
@@ -1483,74 +1483,6 @@ startScreen.classList.remove("hidden");
 },5000);
 
 };
-
-/*======================================================
-TOUCH SUPPORT
-======================================================*/
-
-let activeCard=null;
-
-document.addEventListener("touchstart",function(e){
-
-const card=e.target.closest(".card");
-
-if(!card)return;
-
-activeCard=card;
-
-card.style.opacity=".7";
-
-},{passive:false});
-
-document.addEventListener("touchmove",function(e){
-
-if(!activeCard)return;
-
-e.preventDefault();
-
-const touch=e.touches[0];
-
-activeCard.style.position="fixed";
-
-activeCard.style.left=(touch.clientX-activeCard.offsetWidth/2)+"px";
-
-activeCard.style.top=(touch.clientY-activeCard.offsetHeight/2)+"px";
-
-activeCard.style.zIndex="9999";
-
-},{passive:false});
-
-document.addEventListener("touchend",function(e){
-
-if(!activeCard)return;
-
-const touch=e.changedTouches[0];
-
-const element=document.elementFromPoint(touch.clientX,touch.clientY);
-
-const slot=element?.closest(".slot");
-
-activeCard.style.opacity="1";
-
-activeCard.style.position="";
-
-activeCard.style.left="";
-
-activeCard.style.top="";
-
-activeCard.style.zIndex="";
-
-if(slot){
-
-draggedCard=activeCard;
-
-dropCard.call(slot,{preventDefault(){}});
-
-}
-
-activeCard=null;
-
-});
 
 /*======================================================
 CONFETTI
