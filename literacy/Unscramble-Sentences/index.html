@@ -933,7 +933,7 @@ PART 1B.1
 =========================================================*/
 
 const QUESTION =
-"Arrange the word cards to form the correct sentence by dragging and dropping them into the given box.";
+"Tap the word cards in the correct order to make the sentence.";
 
 const rounds = [
 
@@ -1218,6 +1218,8 @@ function loadRound(){
 
 placed=[];
 
+selectedCard=null; 
+
 cards.innerHTML="";
 
 answerBoard.innerHTML="";
@@ -1246,8 +1248,6 @@ slot.className="slot";
 
 slot.dataset.index=i;
 
-slot.addEventListener("click",placeCard);
-
 answerBoard.appendChild(slot);
 
 }
@@ -1262,8 +1262,6 @@ const card=document.createElement("div");
 
 card.className="card";
 
-card.draggable=true;
-
 card.dataset.word=word;
 
 card.innerHTML=`<img src="assets/${word}.png" draggable="false">`;
@@ -1277,18 +1275,20 @@ cards.appendChild(card);
 
 }
 
- function selectCard(){
+function selectCard(){
 
-// Remove highlight from previously selected card
 document.querySelectorAll(".card").forEach(card=>{
+
 card.classList.remove("selected");
+
 });
 
-// Save selected card
 selectedCard=this;
 
-// Highlight selected card
 this.classList.add("selected");
+
+// Automatically place the card
+placeCard();
 
 }
 
@@ -1316,13 +1316,10 @@ function placeCard(){
 
 if(!selectedCard) return;
 
-const slot=this;
-
-if(slot.children.length>0) return;
-
 const current=rounds[round];
 
-const index=Number(slot.dataset.index);
+// Find the next empty position
+const index=placed.length;
 
 const expected=current.answer[index];
 
@@ -1332,6 +1329,8 @@ const selected=selectedCard.dataset.word;
 
 if(selected===expected){
 
+const slot=document.querySelectorAll(".slot")[index];
+
 slot.appendChild(selectedCard);
 
 slot.classList.add("correct");
@@ -1340,7 +1339,7 @@ selectedCard.classList.add("correct");
 
 selectedCard.classList.remove("selected");
 
-placed[index]=selected;
+placed.push(selected);
 
 selectedCard=null;
 
