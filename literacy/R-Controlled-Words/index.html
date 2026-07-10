@@ -132,15 +132,6 @@ color:#AB47BC;
 
 /* ---------- Start ---------- */
 
-#startScreen{
-
-display:none;
-
-padding:3vh;
-
-text-align:center;
-
-}
 
 #gameTitle{
 
@@ -675,7 +666,6 @@ let locked=false;
 
 const logoScreen=document.getElementById("logoScreen");
 const titleScreen=document.getElementById("titleScreen");
-const startScreen=document.getElementById("startScreen");
 const gameScreen=document.getElementById("gameScreen");
 
 const picture=document.getElementById("picture");
@@ -1029,14 +1019,17 @@ finishScreen.style.display="none";
 
 gameScreen.style.display="none";
 
-startScreen.style.display="none";
-
 titleScreen.style.display="none";
 
 logoScreen.style.display="flex";
 
 currentRound=0;
 
+locked=false;
+
+opt1.className="option";
+opt2.className="option";
+   
 setTimeout(()=>{
 
 logoScreen.style.display="none";
