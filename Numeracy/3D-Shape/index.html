@@ -733,19 +733,23 @@ titleScreen.classList.add("show");
 Start Game
 ------------------------------*/
 
-document.getElementById("startBtn").onclick=()=>{
+ document.getElementById("startBtn").onclick = () => {
+
+speechSynthesis.cancel();
+
+currentRound = 0;
+
+loadRound();
 
 titleScreen.classList.remove("show");
 game.classList.add("show");
 
-currentRound=0;
+// wait until the game screen is visible
+setTimeout(() => {
+    speakQuestion();
+}, 300);
 
-loadRound();
-
-// Speak immediately as part of the user's tap
-speakQuestion();
-
-};    
+}; 
 
 /*-----------------------------
 Load Round
@@ -848,8 +852,13 @@ if(currentRound<rounds.length){
 loadRound();
 
 setTimeout(() => {
+
     speechSynthesis.cancel();
-    speakQuestion();
+
+    requestAnimationFrame(() => {
+        speakQuestion();
+    });
+
 },500);
 
 }
