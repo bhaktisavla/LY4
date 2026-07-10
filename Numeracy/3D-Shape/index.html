@@ -701,25 +701,19 @@ let speaking=false;
 /*-----------------------------
 Speech
 ------------------------------*/
-
 function speakQuestion(){
 
-    if(!window.speechSynthesis) return;
+    alert("Speak function called");
 
     speechSynthesis.cancel();
 
-    const msg = new SpeechSynthesisUtterance(rounds[currentRound].question);
+    const msg = new SpeechSynthesisUtterance("Hello");
 
-    msg.rate = 0.9;
-    msg.pitch = 1;
-    msg.volume = 1;
+    msg.lang = "en-US";
 
     speechSynthesis.speak(msg);
 
 }
-speaker.onclick = () => {
-    speakQuestion();
-};
     
 /*-----------------------------
 Start Screen Flow
