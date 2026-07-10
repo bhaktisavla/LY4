@@ -711,6 +711,18 @@ function speakQuestion(){
 
     msg.lang = "en-US";
 
+    msg.onstart = () => {
+    alert("Speech started");
+};
+
+msg.onend = () => {
+    alert("Speech ended");
+};
+
+msg.onerror = (e) => {
+    alert("Speech error: " + e.error);
+};
+
     speechSynthesis.speak(msg);
 
 }
