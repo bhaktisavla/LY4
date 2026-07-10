@@ -704,41 +704,23 @@ Speech
 
 function speakQuestion(){
 
-if(!window.speechSynthesis){
-alert("Speech not supported");
-return;
+    if(!window.speechSynthesis) return;
+
+    speechSynthesis.cancel();
+
+    const msg = new SpeechSynthesisUtterance(rounds[currentRound].question);
+
+    msg.rate = 0.9;
+    msg.pitch = 1;
+    msg.volume = 1;
+
+    speechSynthesis.speak(msg);
+
 }
-
-speechSynthesis.cancel();
-
-const voices=speechSynthesis.getVoices();
-
-if(voices.length===0){
-
-speechSynthesis.onvoiceschanged=()=>{
-
-speakQuestion();
-
+speaker.onclick = () => {
+    speakQuestion();
 };
-
-return;
-
-}
-
-const msg=new SpeechSynthesisUtterance(rounds[currentRound].question);
-
-msg.voice=voices.find(v=>v.lang.startsWith("en")) || voices[0];
-
-msg.lang=msg.voice.lang;
-
-msg.rate=0.9;
-msg.pitch=1;
-msg.volume=1;
-
-speechSynthesis.speak(msg);
-
-}
-
+    
 /*-----------------------------
 Start Screen Flow
 ------------------------------*/
@@ -763,9 +745,10 @@ currentRound=0;
 
 loadRound();
 
-setTimeout(speakQuestion,500);
+// Speak immediately as part of the user's tap
+speakQuestion();
 
-};
+};    
 
 /*-----------------------------
 Load Round
@@ -867,7 +850,10 @@ if(currentRound<rounds.length){
 
 loadRound();
 
-setTimeout(speakQuestion,300);
+setTimeout(() => {
+    speechSynthesis.cancel();
+    speakQuestion();
+},500);
 
 }
 
