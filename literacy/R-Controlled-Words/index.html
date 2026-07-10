@@ -86,6 +86,8 @@ background:linear-gradient(135deg,#FFF8E7,#E3F2FD);
 
 z-index:25;
 
+gap:35px;   
+
 }
 
 #titleFlash{
@@ -542,17 +544,12 @@ font-size:32px;
 R-Controlled Words
 </div>
 
-</div>
-
-<!-- Start -->
-
-<div id="startScreen" class="screen">
-
 <button id="startBtn">
 Tap to Start
 </button>
 
 </div>
+
 
 <!-- Game -->
 
@@ -659,14 +656,8 @@ window.onload=()=>{
 setTimeout(()=>{
 
 logoScreen.style.display="none";
+
 titleScreen.style.display="flex";
-
-setTimeout(()=>{
-
-titleScreen.style.display="none";
-startScreen.style.display="flex";
-
-},5000);
 
 },5000);
 
@@ -678,7 +669,8 @@ startScreen.style.display="flex";
 
 document.getElementById("startBtn").onclick=()=>{
 
-startScreen.style.display="none";
+titleScreen.style.display="none";
+
 gameScreen.style.display="flex";
 
 currentRound=0;
@@ -1003,14 +995,6 @@ setTimeout(()=>{
 logoScreen.style.display="none";
 
 titleScreen.style.display="flex";
-
-setTimeout(()=>{
-
-titleScreen.style.display="none";
-
-startScreen.style.display="flex";
-
-},5000);
 
 },5000);
 
