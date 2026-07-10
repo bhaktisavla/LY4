@@ -540,10 +540,6 @@ R-Controlled Words
 
 <div id="startScreen" class="screen">
 
-<div id="gameTitle">
-R-Controlled Words
-</div>
-
 <button id="startBtn">
 Tap to Start
 </button>
@@ -882,6 +878,8 @@ FINISH
 -------------------------*/
 
 const pieces=[];
+let confettiAnimation=null;
+let confettiRunning=false;   
 
 function resizeCanvas(){
 
@@ -897,6 +895,7 @@ window.addEventListener("resize",resizeCanvas);
 function startConfetti(){
 
 pieces.length=0;
+confettiRunning=true;
 
 for(let i=0;i<180;i++){
 
@@ -951,11 +950,17 @@ p.x=Math.random()*confettiCanvas.width;
 
 });
 
-requestAnimationFrame(animateConfetti);
+if(confettiRunning){
+
+confettiAnimation=requestAnimationFrame(animateConfetti);
+
+}
 
 }
 
 function showFinish(){
+
+gameScreen.style.display="none";
 
 finishScreen.style.display="flex";
 
@@ -966,6 +971,12 @@ startConfetti();
 document.getElementById("playAgain").onclick=()=>{
 
 speechSynthesis.cancel();
+
+ confettiRunning=false;
+
+cancelAnimationFrame(confettiAnimation);
+
+ctx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);  
 
 finishScreen.style.display="none";
 
