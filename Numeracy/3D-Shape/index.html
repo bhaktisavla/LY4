@@ -704,13 +704,33 @@ Speech
 
 function speakQuestion(){
 
-if(!("speechSynthesis" in window)) return;
+if(!window.speechSynthesis){
+alert("Speech not supported");
+return;
+}
 
 speechSynthesis.cancel();
 
+const voices=speechSynthesis.getVoices();
+
+if(voices.length===0){
+
+speechSynthesis.onvoiceschanged=()=>{
+
+speakQuestion();
+
+};
+
+return;
+
+}
+
 const msg=new SpeechSynthesisUtterance(rounds[currentRound].question);
 
-msg.lang="en-US";
+msg.voice=voices.find(v=>v.lang.startsWith("en")) || voices[0];
+
+msg.lang=msg.voice.lang;
+
 msg.rate=0.9;
 msg.pitch=1;
 msg.volume=1;
@@ -718,12 +738,6 @@ msg.volume=1;
 speechSynthesis.speak(msg);
 
 }
-
-speaker.onclick=()=>{
-
-speakQuestion();
-
-};
 
 /*-----------------------------
 Start Screen Flow
