@@ -703,25 +703,16 @@ Speech
 ------------------------------*/
 function speakQuestion(){
 
-    alert("Speak function called");
-
     speechSynthesis.cancel();
 
-    const msg = new SpeechSynthesisUtterance("Hello");
+    const msg = new SpeechSynthesisUtterance(
+        rounds[currentRound].question
+    );
 
     msg.lang = "en-US";
-
-    msg.onstart = () => {
-    alert("Speech started");
-};
-
-msg.onend = () => {
-    alert("Speech ended");
-};
-
-msg.onerror = (e) => {
-    alert("Speech error: " + e.error);
-};
+    msg.rate = 0.9;
+    msg.pitch = 1;
+    msg.volume = 1;
 
     speechSynthesis.speak(msg);
 
