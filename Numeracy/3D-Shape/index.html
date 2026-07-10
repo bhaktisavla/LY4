@@ -717,6 +717,14 @@ function speakQuestion(){
     speechSynthesis.speak(msg);
 
 }
+
+ speaker.onclick = () => {
+
+    speechSynthesis.cancel();
+
+    speakQuestion();
+
+};
     
 /*-----------------------------
 Start Screen Flow
