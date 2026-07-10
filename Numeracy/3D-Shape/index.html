@@ -501,12 +501,6 @@ font-size:24px;
 
 <h1>3D Shape - Cylinder</h1>
 
-</div>
-
-<!-- Start -->
-
-<div id="startScreen" class="screen">
-
 <button id="startBtn">
 
 Tap to Start
@@ -588,7 +582,6 @@ PART 2
 
 const logoScreen=document.getElementById("logoScreen");
 const titleScreen=document.getElementById("titleScreen");
-const startScreen=document.getElementById("startScreen");
 const game=document.getElementById("game");
 const finish=document.getElementById("finish");
 
@@ -711,12 +704,13 @@ Speech
 
 function speakQuestion(){
 
+if(!("speechSynthesis" in window)) return;
+
 speechSynthesis.cancel();
 
-const msg=new SpeechSynthesisUtterance(
-rounds[currentRound].question
-);
+const msg=new SpeechSynthesisUtterance(rounds[currentRound].question);
 
+msg.lang="en-US";
 msg.rate=0.9;
 msg.pitch=1;
 msg.volume=1;
@@ -740,13 +734,6 @@ setTimeout(()=>{
 logoScreen.classList.remove("show");
 titleScreen.classList.add("show");
 
-setTimeout(()=>{
-
-titleScreen.classList.remove("show");
-startScreen.classList.add("show");
-
-},5000);
-
 },5000);
 
 /*-----------------------------
@@ -755,12 +742,14 @@ Start Game
 
 document.getElementById("startBtn").onclick=()=>{
 
-startScreen.classList.remove("show");
+titleScreen.classList.remove("show");
 game.classList.add("show");
 
 currentRound=0;
 
 loadRound();
+
+setTimeout(speakQuestion,500);
 
 };
 
@@ -801,8 +790,6 @@ card.onclick=()=>selectCard(card,item);
 options.appendChild(card);
 
 });
-
-setTimeout(speakQuestion,400);
 
 }
 
@@ -890,6 +877,8 @@ const canvas=document.getElementById("confetti");
 const ctx=canvas.getContext("2d");
 
 let pieces=[];
+let confettiAnimation=null;
+let confettiRunning=false;
 
 function resizeCanvas(){
 
@@ -905,6 +894,8 @@ window.addEventListener("resize",resizeCanvas);
 function startConfetti(){
 
 pieces=[];
+
+confettiRunning=true;
 
 for(let i=0;i<180;i++){
 
@@ -940,6 +931,14 @@ animateConfetti();
 
 function animateConfetti(){
 
+if(!confettiRunning){
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+return;
+
+}
+
 ctx.clearRect(0,0,canvas.width,canvas.height);
 
 pieces.forEach(p=>{
@@ -960,7 +959,7 @@ p.y=-20;
 
 });
 
-requestAnimationFrame(animateConfetti);
+confettiAnimation=requestAnimationFrame(animateConfetti);
 
 }
 
@@ -972,9 +971,13 @@ playAgain.onclick=()=>{
 
 speechSynthesis.cancel();
 
-finish.classList.remove("show");
+confettiRunning=false;
+
+cancelAnimationFrame(confettiAnimation);
 
 ctx.clearRect(0,0,canvas.width,canvas.height);
+
+finish.classList.remove("show");
 
 currentRound=0;
 
@@ -985,14 +988,6 @@ setTimeout(()=>{
 logoScreen.classList.remove("show");
 
 titleScreen.classList.add("show");
-
-setTimeout(()=>{
-
-titleScreen.classList.remove("show");
-
-startScreen.classList.add("show");
-
-},5000);
 
 },5000);
 
