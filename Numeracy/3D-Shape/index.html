@@ -735,6 +735,15 @@ function speakQuestion(){
     }, 100);
 
 }
+speaker.onclick = () => {
+
+    speechSynthesis.cancel();
+
+    setTimeout(() => {
+        speakQuestion();
+    }, 100);
+
+};
     
 /*-----------------------------
 Start Screen Flow
@@ -756,8 +765,6 @@ Start Game
 speechSynthesis.cancel();
 
 currentRound = 0;
-
-loadRound();
 
 loadRound();
 
