@@ -698,6 +698,15 @@ let selectedCorrect=0;
 let totalCorrect=0;
 let speaking=false;
 
+// Load voices for Android/iPhone
+speechSynthesis.getVoices();
+
+if (speechSynthesis.onvoiceschanged !== undefined) {
+    speechSynthesis.onvoiceschanged = () => {
+        speechSynthesis.getVoices();
+    };
+}
+    
 /*-----------------------------
 Speech
 ------------------------------*/
@@ -714,17 +723,18 @@ function speakQuestion(){
     msg.pitch = 1;
     msg.volume = 1;
 
-    speechSynthesis.speak(msg);
+    // wait until voices are loaded
+    const voices = speechSynthesis.getVoices();
+
+    if (voices.length > 0) {
+        msg.voice = voices[0];
+    }
+
+    setTimeout(() => {
+        speechSynthesis.speak(msg);
+    }, 100);
 
 }
-
- speaker.onclick = () => {
-
-    speechSynthesis.cancel();
-
-    speakQuestion();
-
-};
     
 /*-----------------------------
 Start Screen Flow
@@ -749,13 +759,16 @@ currentRound = 0;
 
 loadRound();
 
+loadRound();
+
 titleScreen.classList.remove("show");
 game.classList.add("show");
 
-// wait until the game screen is visible
-setTimeout(() => {
-    speakQuestion();
-}, 300);
+requestAnimationFrame(() => {
+    setTimeout(() => {
+        speakQuestion();
+    }, 500);
+});
 
 }; 
 
