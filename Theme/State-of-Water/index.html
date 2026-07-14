@@ -252,9 +252,7 @@ color:transparent;
 
 #question{
 
-margin:2px 8px 4px;
-
-text-align:center;
+flex:1;
 
 font-size:clamp(18px,2vw,24px);
 
@@ -264,39 +262,47 @@ color:#E53935;
 
 }
 
-#topButtons{
-
-margin-top:2px;
-
-margin-bottom:2px; 
+ #questionBar{
 
 display:flex;
 
+align-items:center;
+
 justify-content:center;
 
-gap:12px;
+gap:10px;
 
-flex-wrap:wrap;
+margin:4px 10px 8px;
 
 }
 
 .smallBtn{
 
-padding:10px 18px;
+width:42px;
+
+height:42px;
+
+padding:0;
 
 border:none;
 
-border-radius:30px;
+border-radius:50%;
 
 background:#29B6F6;
 
 color:white;
 
-font-size:18px;
+font-size:22px;
 
-font-weight:700;
+display:flex;
+
+justify-content:center;
+
+align-items:center;
 
 cursor:pointer;
+
+flex-shrink:0;
 
 }
 
@@ -664,27 +670,42 @@ margin:2px 0;
 
 }
 
+#questionBar{
+
+gap:6px;
+
+margin:2px 6px 6px;
+
+}
+
 #question{
 
-font-size:15px;
+font-size:14px;
 
 line-height:1.2;
 
-margin:2px 8px 4px;
+text-align:left;
+
+margin:0;
 
 }
 
 .smallBtn{
 
-font-size:14px;
+width:36px;
 
-padding:6px 12px;
+height:36px;
 
-margin:4px auto 6px; 
+padding:0;
+
+font-size:18px;
+
+margin:0;
 
 }
 
 }
+
 /*------------- Correct Drop Highlight -------------*/
 
 .dropZone.correct{
@@ -784,19 +805,17 @@ State of Water
 
 </h1>
 
+<div id="questionBar">
+
 <div id="question">
 
 Look at each picture below. Drag and drop it to the correct state of water.
 
 </div>
 
-<div id="topButtons">
+<button id="speakBtn" class="smallBtn" aria-label="Hear Again" title="Hear Again">
 
-<button
-id="speakBtn"
-class="smallBtn">
-
-🔊 Hear Again
+🔊
 
 </button>
 
