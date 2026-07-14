@@ -28,7 +28,6 @@ height:100%;
 overflow:hidden;
 font-family:'Baloo 2',cursive;
 background:#FFF9EE;
-touch-action:none;
 }
 
 /*------------------------------------*/
@@ -630,8 +629,6 @@ startScreen.style.display="none";
 
 game.style.display="flex";
 
-};
-
 loadRound(0);
 
 };
@@ -905,25 +902,24 @@ finished=false;
 if(!finished)return;
 
 clap.currentTime=0;
-
 clap.play();
 
-setTimeout(()=>{
-if(currentRound < rounds.length-1){
+clap.onended=function(){
+
+clap.onended=null;
+
+if(currentRound<rounds.length-1){
 
 loadRound(currentRound+1);
 
 }
-
 else{
 
 showFinishScreen();
 
 }
 
-},1200);
-
-}
+};
 
 /*------------------------------------------*/
 /* FINISH SCREEN */
