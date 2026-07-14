@@ -298,43 +298,53 @@ cursor:pointer;
 
 /*------------- Sorting Rows ------------*/
 
+/*================ Sorting Area ================*/
+
 #rows{
 
 margin-top:1vh;
 
 display:flex;
-
 flex-direction:column;
 
-gap:1.2vh;
+gap:2vh;
 
-height:56vh;
+height:58vh;
+
+width:96%;
+
+margin-left:auto;
+margin-right:auto;
 
 }
 
 .dropRow{
 
-flex:1;
-
 display:flex;
 
 align-items:center;
 
-background:rgba(255,255,255,.65);
+height:17vh;
 
-border:3px solid #555;
+background:rgba(255,255,255,.55);
 
-border-radius:22px;
+border:3px solid #666;
 
-padding:10px;
+border-radius:28px;
+
+padding:10px 14px;
+
+box-shadow:0 5px 12px rgba(0,0,0,.15);
 
 }
 
+/*================ Left Picture =================*/
+
 .labelBox{
 
-width:18%;
+width:170px;
 
-min-width:95px;
+height:100%;
 
 display:flex;
 
@@ -342,17 +352,27 @@ justify-content:center;
 
 align-items:center;
 
+flex-shrink:0;
+
+background:white;
+
+border-radius:20px;
+
+border:2px solid #cccccc;
+
 }
 
 .labelBox img{
 
-width:100%;
+width:90%;
 
-max-width:110px;
+height:90%;
 
 object-fit:contain;
 
 }
+
+/*================ Large Drop Area =================*/
 
 .dropZone{
 
@@ -360,23 +380,35 @@ flex:1;
 
 height:100%;
 
-border:3px dashed #999;
+margin-left:18px;
 
-border-radius:18px;
+border:4px dashed #9E9E9E;
+
+border-radius:22px;
+
+background:rgba(255,255,255,.75);
 
 display:flex;
+
+align-items:center;
 
 flex-wrap:wrap;
 
 align-content:flex-start;
 
-align-items:center;
+gap:10px;
 
-gap:8px;
+padding:10px;
 
-padding:8px;
+transition:.25s;
 
-background:rgba(255,255,255,.45);
+}
+
+.dropZone.correct{
+
+border-color:#4CAF50;
+
+background:#E8F5E9;
 
 }
 
@@ -435,49 +467,94 @@ pointer-events:none;
 #finish{
 
 position:absolute;
-
 inset:0;
 
 display:none;
 
 justify-content:center;
 align-items:center;
-
 flex-direction:column;
 
-background:rgba(255,255,255,.93);
+background:rgba(255,255,255,.25);
+
+backdrop-filter:blur(2px);
 
 z-index:20;
 
 }
 
-#finish h2{
+#excellent{
 
-font-size:clamp(34px,6vw,60px);
-
-color:#FF5722;
-
-margin-bottom:25px;
-
-}
-
-#playAgain{
-
-padding:18px 42px;
-
-border:none;
-
-border-radius:50px;
-
-font-size:26px;
+font-size:clamp(40px,7vw,72px);
 
 font-weight:800;
 
-background:#43A047;
+background:linear-gradient(
+90deg,
+#FF5252,
+#FF9800,
+#FFD600,
+#4CAF50,
+#29B6F6,
+#7E57C2,
+#EC407A);
+
+-webkit-background-clip:text;
+
+color:transparent;
+
+animation:bounce .8s infinite alternate;
+
+text-shadow:3px 3px 8px rgba(0,0,0,.2);
+
+}
+
+@keyframes bounce{
+
+from{
+
+transform:translateY(0);
+
+}
+
+to{
+
+transform:translateY(-10px);
+
+}
+
+} 
+
+#playAgain{
+
+padding:18px 50px;
+
+border:none;
+
+border-radius:60px;
+
+font-size:28px;
+
+font-weight:800;
+
+background:linear-gradient(
+45deg,
+#4CAF50,
+#81C784);
 
 color:white;
 
 cursor:pointer;
+
+box-shadow:0 8px 20px rgba(0,0,0,.25);
+
+transition:.3s;
+
+}
+
+#playAgain:hover{
+
+transform:scale(1.08);
 
 }
 
@@ -497,7 +574,19 @@ z-index:19;
 
 @media(max-width:700px){
 
+@media(max-width:700px){
+
+#rows{
+
+height:54vh;
+
+gap:1.5vh;
+
+}
+
 .dropRow{
+
+height:16vh;
 
 padding:6px;
 
@@ -505,16 +594,25 @@ padding:6px;
 
 .labelBox{
 
-width:24%;
+width:105px;
 
-min-width:82px;
+}
+
+.dropZone{
+
+margin-left:8px;
+
+padding:6px;
 
 }
 
 .card{
 
-width:70px;
-height:70px;
+width:68px;
+
+height:68px;
+
+}
 
 }
 
@@ -821,10 +919,10 @@ data-answer="liquid">
 
 <div id="finish">
 
-<h2>
+<h2 id="excellent">
 
-🌟 Excellent! 🌟
-
+🎉 Excellent! 🎉
+ 
 </h2>
 
 <button id="playAgain">
@@ -1187,7 +1285,7 @@ function startConfetti(){
 
 pieces=[];
 
-for(let i=0;i<180;i++){
+for(let i=0;i<350;i++){
 
 pieces.push({
 
@@ -1195,11 +1293,11 @@ x:random(0,canvas.width),
 
 y:random(-canvas.height,0),
 
-r:random(4,8),
+r:random(8,16),
 
 dx:random(-2,2),
 
-dy:random(2,6),
+dy:random(5,10),
 
 rot:random(0,360),
 
