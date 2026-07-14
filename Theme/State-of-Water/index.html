@@ -509,11 +509,15 @@ justify-content:center;
 align-items:center;
 flex-direction:column;
 
-background:rgba(255,255,255,.25);
+background:linear-gradient(
+135deg,
+#FFF8E1,
+#E1F5FE,
+#E8F5E9);
 
 backdrop-filter:blur(2px);
 
-z-index:20;
+z-index:90;
 
 }
 
@@ -600,15 +604,13 @@ inset:0;
 
 pointer-events:none;
 
-z-index:19;
+z-index:100;
 
 }
 
 /*-------------- Mobile ----------------*/
 
-@media(max-width:700px){
-
-@media(max-width:700px){
+@media(max-width:700px)
 
 #rows{
 
@@ -1230,6 +1232,9 @@ clap.currentTime=0;
 clap.play();
 
 startConfetti();
+setTimeout(stopConfetti,5000);
+ 
+playScreen.style.display="none";   // Hide the game
 
 finish.style.display="flex";
 
@@ -1244,9 +1249,9 @@ stopConfetti();
 
 finish.style.display="none";
 
-playScreen.style.display="none";
-
 titleScreen.style.display="none";
+
+speechSynthesis.cancel();
 
 logoScreen.style.display="flex";
 
@@ -1259,6 +1264,11 @@ const cards=[
 ];
 
 cards.forEach(card=>{
+
+card.style.position="";
+card.style.left="";
+card.style.top="";
+card.style.zIndex=""; 
 
 card.draggable=true;
 
