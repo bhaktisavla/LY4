@@ -440,7 +440,13 @@ cursor:pointer;
 
 touch-action:none;
 
-transition:.25s;
+transition:transform .2s;
+
+position:relative;
+
+user-select:none;
+
+-webkit-user-select:none;
 
 }
 
@@ -458,7 +464,23 @@ width:100%;
 
 display:block;
 
+pointer-events:none;
+
 }
+
+.card.dragging{
+
+position:fixed;
+
+z-index:9999;
+
+transform:translate(-50%,-50%) scale(1.08);
+
+pointer-events:none;
+
+transition:none;
+
+}  
 
 /*------------------------------------*/
 /* Responsive */
@@ -788,10 +810,89 @@ enableDrag();
 function enableDrag(){
 
 const allCards=document.querySelectorAll(".card");
-
 const allBoxes=document.querySelectorAll(".dropBox");
 
 let dragging=null;
+let startParent=null;
+let startNextSibling=null;
+
+/*---------------------------*/
+/* Place Card */
+/*---------------------------*/
+
+function placeCard(box){
+
+if(!dragging)return;
+
+if(box.dataset.filled=="true"){
+
+resetCard();
+return;
+
+}
+
+if(dragging.dataset.name==box.dataset.answer){
+
+dragging.classList.remove("dragging");
+
+dragging.style.left="";
+dragging.style.top="";
+
+box.innerHTML="";
+box.appendChild(dragging);
+
+box.classList.add("correct");
+box.dataset.filled="true";
+
+dragging.draggable=false;
+
+checkRound();
+
+}
+else{
+
+wrong.currentTime=0;
+wrong.play();
+
+resetCard();
+
+}
+
+dragging=null;
+
+}
+
+/*---------------------------*/
+/* Return Card */
+/*---------------------------*/
+
+function resetCard(){
+
+if(!dragging)return;
+
+dragging.classList.remove("dragging");
+
+dragging.style.left="";
+dragging.style.top="";
+
+if(startNextSibling){
+
+startParent.insertBefore(dragging,startNextSibling);
+
+}
+else{
+
+startParent.appendChild(dragging);
+
+}
+
+dragging=null;
+
+}
+
+/*---------------------------*/
+/* Desktop Drag */
+/*---------------------------*/
 
 allCards.forEach(card=>{
 
@@ -803,8 +904,6 @@ dragging=card;
 
 });
 
-/* Desktop */
-
 allBoxes.forEach(box=>{
 
 box.addEventListener("dragover",e=>{
@@ -813,7 +912,7 @@ e.preventDefault();
 
 });
 
-box.addEventListener("drop",function(e){
+box.addEventListener("drop",e=>{
 
 e.preventDefault();
 
@@ -823,66 +922,72 @@ placeCard(box);
 
 });
 
-/*--------------------------------*/
-/* Mobile Touch */
-/*--------------------------------*/
+/*---------------------------*/
+/* Mobile Drag */
+/*---------------------------*/
 
 allCards.forEach(card=>{
 
-card.addEventListener("touchstart",function(){
+card.addEventListener("touchstart",function(e){
+
+if(card.parentElement.classList.contains("dropBox")) return;
 
 dragging=card;
 
-});
+startParent=card.parentNode;
+startNextSibling=card.nextSibling;
+
+card.classList.add("dragging");
+
+moveCard(e.touches[0]);
+
+e.preventDefault();
+
+},{passive:false});
 
 });
 
-allBoxes.forEach(box=>{
-
-box.addEventListener("touchend",function(){
-
-placeCard(box);
-
-});
-
-});
-
-function placeCard(box){
+document.addEventListener("touchmove",function(e){
 
 if(!dragging)return;
 
-if(box.dataset.filled=="true")return;
+moveCard(e.touches[0]);
 
-if(dragging.dataset.name==box.dataset.answer){
+e.preventDefault();
 
-box.innerHTML="";
+},{passive:false});
 
-box.appendChild(dragging);
+document.addEventListener("touchend",function(e){
 
-box.classList.add("correct");
+if(!dragging)return;
 
-box.dataset.filled="true";
+const touch=e.changedTouches[0];
 
-dragging.draggable=false;
+const element=document.elementFromPoint(touch.clientX,touch.clientY);
 
-checkRound();
+const box=element ? element.closest(".dropBox") : null;
+
+if(box){
+
+placeCard(box);
 
 }
-
 else{
 
-wrong.currentTime=0;
-
-wrong.play();
+resetCard();
 
 }
 
-dragging=null;
+});
+
+function moveCard(touch){
+
+dragging.style.left=touch.clientX+"px";
+dragging.style.top=touch.clientY+"px";
 
 }
 
 }
-
 /*------------------------------------------*/
 
 function checkRound(){
