@@ -323,7 +323,6 @@ padding:7px 12px;
 display:none !important;
 }
 
-
 /* MOBILE PORTRAIT */
 
 @media(max-width:500px){
@@ -341,11 +340,13 @@ font-size:16px;
 line-height:1.4;
 }
 
+/* PET PARADE - FIT ALL 10 PETS */
+
 .paradeRow{
-width:100%;
-padding:6px 8px;
+width:96%;
+padding:8px 12px;
 display:grid;
-grid-template-columns:repeat(10,minmax(0,1fr));
+grid-template-columns:repeat(10, 1fr);
 gap:0;
 overflow:hidden;
 }
@@ -353,20 +354,21 @@ overflow:hidden;
 .petBox{
 width:100%;
 min-width:0;
-padding:1px;
+padding:0;
 display:flex;
 justify-content:center;
 align-items:center;
 }
 
 .petBox img{
-width:100%;
-max-width:34px;
-height:auto;
+width:30px;
+height:30px;
+max-width:30px;
 object-fit:contain;
 }
 
 }
+
 
 
 </style>
