@@ -326,6 +326,26 @@ padding:6px 2px;
 
 }
 
+.mobileBreak{
+display:none;
+}
+
+
+/* MOBILE PORTRAIT */
+
+@media(max-width:500px){
+
+.mobileBreak{
+display:inline;
+}
+
+.question{
+font-size:16px;
+line-height:1.4;
+}
+
+}
+  
 @media(max-width:500px){
 
 .petBox img{
@@ -362,7 +382,7 @@ src="assets/freesound_community-claps-44774.mp3"></audio>
 <div class="title">Pet Parade</div>
 
 <div class="subTitle">
-Ordinal Numbers Game
+Ordinal Number Game
 </div>
 
 <button class="startBtn"
@@ -517,7 +537,7 @@ roundText.innerHTML =
 `Round ${currentRound+1} / 10`;
 
 questionText.innerHTML =
-`Who is in the ${ordinals[correctPosition]} place?<br>Tap on the image.`;
+`Who is in the ${ordinals[correctPosition]} place?<span class="mobileBreak"><br></span> Tap on the image.`;
 
 speakQuestion();
 
