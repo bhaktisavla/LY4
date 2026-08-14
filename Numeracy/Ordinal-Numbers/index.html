@@ -117,8 +117,8 @@ margin-top:2px;
 /* QUESTION BOX */
 
 .questionBox{
-width:78%;
-max-width:750px;
+width:90%;
+max-width:850px;
 background:
 linear-gradient(135deg,
 #fff0a6,
@@ -555,7 +555,7 @@ roundText.innerHTML =
 `Round ${currentRound+1} / 10`;
 
 questionText.innerHTML =
-`Who is in the ${ordinals[correctPosition]} place?<span class="mobileBreak"><br></span><span class="tapText"> Tap on the image.</span>`;
+`Who is in the ${ordinals[correctPosition]} place?<span class="mobileBreak"><br></span><span class="tapText"> Tap on the correct image.</span>`;
 
 speakQuestion();
 
@@ -656,7 +656,7 @@ questionOrder[currentRound];
 const speech =
 new SpeechSynthesisUtterance(
 
-`Who is in the ${ordinals[correctPosition]} place?`
+`Who is in the ${ordinals[correctPosition]} place? Tap on the correct image.`
 
 );
 
