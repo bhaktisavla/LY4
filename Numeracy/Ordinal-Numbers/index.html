@@ -341,13 +341,32 @@ font-size:16px;
 line-height:1.4;
 }
 
+.paradeRow{
+width:100%;
+padding:6px 8px;
+display:grid;
+grid-template-columns:repeat(10,minmax(0,1fr));
+gap:0;
+overflow:hidden;
+}
+
+.petBox{
+width:100%;
+min-width:0;
+padding:1px;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
 .petBox img{
-width:40px;
-height:40px;
+width:100%;
+max-width:34px;
+height:auto;
+object-fit:contain;
 }
 
 }
-
 
 
 </style>
