@@ -118,7 +118,7 @@ margin-top:2px;
 
 .questionBox{
 width:78%;
-max-width:620px;
+max-width:750px;
 background:
 linear-gradient(135deg,
 #fff0a6,
@@ -330,6 +330,24 @@ padding:6px 2px;
 display:none;
 }
 
+.tapText{
+display:inline;
+}
+
+
+@media(max-width:500px){
+
+.mobileBreak{
+display:inline;
+}
+
+.question{
+font-size:16px;
+line-height:1.4;
+}
+
+}
+
 
 /* MOBILE PORTRAIT */
 
@@ -537,7 +555,7 @@ roundText.innerHTML =
 `Round ${currentRound+1} / 10`;
 
 questionText.innerHTML =
-`Who is in the ${ordinals[correctPosition]} place?<span class="mobileBreak"><br></span> Tap on the image.`;
+`Who is in the ${ordinals[correctPosition]} place?<span class="mobileBreak"><br></span><span class="tapText"> Tap on the image.</span>`;
 
 speakQuestion();
 
