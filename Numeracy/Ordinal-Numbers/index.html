@@ -183,14 +183,6 @@ gap:0;
   
 .petBox{
 flex:1;
-}
-
-.petBox img{
-max-width:100%;
-height:auto;
-}
-  
-.petBox{
 display:flex;
 justify-content:center;
 align-items:center;
@@ -201,8 +193,9 @@ transition:0.2s;
 }
 
 .petBox img{
-width:82px;
-height:82px;
+width:100%;
+max-width:82px;
+height:auto;
 object-fit:contain;
 }
 
@@ -302,13 +295,24 @@ width:92%;
 padding:5px 8px;
 }
 
-.petBox img{
-width:48px;
-height:48px;
+.paradeRow{
+padding:4px 0;
 }
 
-.question{
-font-size:15px;
+.petBox{
+padding:1px;
+}
+
+.petBox img{
+width:100%;
+max-width:38px;
+height:auto;
+}
+
+.questionBox{
+width:96%;
+}
+
 }
 
 .listenBtn{
